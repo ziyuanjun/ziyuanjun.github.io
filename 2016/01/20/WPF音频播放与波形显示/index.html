@@ -1,0 +1,188 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>WPF音频播放与波形显示(一) | Ziyuan&#39;s blog</title>
+  <meta name="author" content="Zi-Yuan">
+  
+  <meta name="description" content="ziyuan">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="WPF音频播放与波形显示(一)"/>
+  <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Ziyuan&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Ziyuan&#39;s blog</a></h1>
+  <h2><a href="/">梓辕身在此山中</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-01-20T11:02:35.000Z"><a href="/2016/01/20/WPF音频播放与波形显示/">Jan 20 2016</a></time>
+      
+      
+  
+    <h1 class="title">WPF音频播放与波形显示(一)</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><strong>实现目标：</strong></p>
+<ol>
+<li>自定义控件，可显示实时波形，响应鼠标事件；</li>
+<li>用listBox的方式同时显示多个控件，分别显示不同的波形，有区别的响应鼠标事件。</li>
+</ol>
+<a id="more"></a>
+<h2 id="u4E00-__u63A7_u4EF6_u5916_u89C2_u8BBE_u8BA1"><a href="#u4E00-__u63A7_u4EF6_u5916_u89C2_u8BBE_u8BA1" class="headerlink" title="一. 控件外观设计"></a>一. 控件外观设计</h2><p>新建一个WPF User Control Library，构建如下外观：<br><img src="/Images/WPF/Tutorial1_1.jpg" alt=""></p>
+<p>从左至右依次为WPF自带的label、button、canvas控件，xaml代码：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;UserControl x:Class=<span class="string">"libUserC.User1"</span></span><br><span class="line">             xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span></span><br><span class="line">             xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span></span><br><span class="line">             xmlns:mc=<span class="string">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span> </span><br><span class="line">             xmlns:d=<span class="string">"http://schemas.microsoft.com/expression/blend/2008"</span> </span><br><span class="line">             mc:Ignorable=<span class="string">"d"</span> Height=<span class="string">"80"</span> d:Width=<span class="string">"485"</span>&gt;</span><br><span class="line">    &lt;Grid Background=<span class="string">"#FFECF3F5"</span>&gt;</span><br><span class="line">        &lt;Grid.ColumnDefinitions&gt;</span><br><span class="line">            &lt;ColumnDefinition Width=<span class="string">"50"</span>/&gt;</span><br><span class="line">            &lt;ColumnDefinition Width=<span class="string">"48"</span>/&gt;</span><br><span class="line">            &lt;ColumnDefinition Width=<span class="string">"*"</span>/&gt;</span><br><span class="line">        &lt;/Grid.ColumnDefinitions&gt;</span><br><span class="line">        &lt;Button x:Name=<span class="string">"btn"</span> Margin=<span class="string">"10,10,4,10"</span> Grid.Column=<span class="string">"1"</span> Click=<span class="string">"btn_Click"</span>/&gt;</span><br><span class="line">        &lt;Label x:Name=<span class="string">"label"</span> Background=<span class="string">"#FFEAC0C0"</span> Margin=<span class="string">"10"</span> HorizontalContentAlignment=<span class="string">"Center"</span> VerticalContentAlignment=<span class="string">"Center"</span> FontSize=<span class="string">"18"</span>/&gt;</span><br><span class="line">        &lt;Canvas x:Name=<span class="string">"canvas"</span> Grid.Column=<span class="string">"2"</span> HorizontalAlignment=<span class="string">"Stretch"</span> Height=<span class="string">"60"</span> Margin=<span class="string">"10"</span> VerticalAlignment=<span class="string">"Top"</span> Background=<span class="string">"#FFEAE4E4"</span> M<span class="keyword">in</span>Width=<span class="string">"300"</span>/&gt;</span><br><span class="line">    &lt;/Grid&gt;</span><br><span class="line">&lt;/UserControl&gt;</span><br></pre></td></tr></table></figure></p>
+<h2 id="2-__u63A7_u4EF6_u7684_u540E_u53F0_u4EE3_u7801"><a href="#2-__u63A7_u4EF6_u7684_u540E_u53F0_u4EE3_u7801" class="headerlink" title="2. 控件的后台代码"></a>2. 控件的后台代码</h2><p><strong>功能简介</strong>： 点击按钮能够在label上、button上显示内容(显示一个int数据，可通过控件的Num属性修改)；控件能够定时刷新canvas，显示波形，控件初始创建时，波形数据data为零。调用控件的程序可以通过直接修改data，将想要显示的波形传递给该控件。</p>
+<p><strong>C#代码:</strong><br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br></pre></td><td class="code"><pre><span class="line">using System;</span><br><span class="line">using System.Windows;</span><br><span class="line">using System.Windows.Controls;</span><br><span class="line">using System.Windows.Media;</span><br><span class="line">using System.Windows.Threading;</span><br><span class="line">namespace libUserC</span><br><span class="line">&#123;</span><br><span class="line">    public partial class User1 : UserControl</span><br><span class="line">    &#123;</span><br><span class="line">        public short[] data = new short[<span class="number">1000</span>];//波形数据</span><br><span class="line">        private <span class="built_in">readonly</span> DispatcherTimer PlotTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle);</span><br><span class="line">        public System.Windows.Shapes.Path WavePath = new System.Windows.Shapes.Path();</span><br><span class="line">        public <span class="function"><span class="title">User1</span></span>()</span><br><span class="line">        &#123;</span><br><span class="line">            InitializeComponent();</span><br><span class="line">            PlotTimer.IsEnabled = <span class="literal">true</span>;</span><br><span class="line">            PlotTimer.Interval = TimeSpan.FromMilliseconds(<span class="number">500</span>);</span><br><span class="line">            PlotTimer.Tick += PlotTimer_Tick;</span><br><span class="line">        &#125;</span><br><span class="line">        private void PlotTimer_Tick(object sender, EventArgs e)</span><br><span class="line">        &#123;</span><br><span class="line">            double cvsHeightHalf=canvas.RenderSize.Height / <span class="number">2</span>;</span><br><span class="line">            int cvsWidth=(int)canvas.RenderSize.Width;</span><br><span class="line">            PathGeometry Geometry = new PathGeometry();</span><br><span class="line">            PathFigure PathFigure = new PathFigure();</span><br><span class="line">            PolyLineSegment PolyLine = new PolyLineSegment();</span><br><span class="line">            PathFigure.StartPoint = new Point(<span class="number">0</span>, cvsHeightHalf);</span><br><span class="line">            int[] maxIndexPlot = new int[cvsWidth + <span class="number">1</span>];</span><br><span class="line">            int SampleCount = data.Length; </span><br><span class="line">            <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt;= cvsWidth; i++)</span><br><span class="line">            &#123;//将像素点的位置与数据在数组中的索引位置相对应</span><br><span class="line">                maxIndexPlot[i] = (int)((double)i / cvsWidth * SampleCount); </span><br><span class="line">            &#125;</span><br><span class="line">            <span class="built_in">float</span> maxVaulePlot = float.M<span class="keyword">in</span>Value;</span><br><span class="line">            <span class="built_in">float</span> minVaulePlot = float.MaxValue;</span><br><span class="line">            <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; cvsWidth; i++)</span><br><span class="line">            &#123;</span><br><span class="line">                maxVaulePlot = float.M<span class="keyword">in</span>Value;</span><br><span class="line">                minVaulePlot = float.MaxValue;</span><br><span class="line">                <span class="keyword">for</span> (int j = maxIndexPlot[i]; j &lt; maxIndexPlot[i + <span class="number">1</span>]; j++)</span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">if</span> (maxVaulePlot &lt; data[j])</span><br><span class="line">                        maxVaulePlot = (<span class="built_in">float</span>)data[j];</span><br><span class="line">                    <span class="keyword">if</span> (minVaulePlot &gt; data[j])</span><br><span class="line">                        minVaulePlot = (<span class="built_in">float</span>)data[j];</span><br><span class="line">                &#125;</span><br><span class="line">                maxVaulePlot /= <span class="number">32767</span>f;</span><br><span class="line">                <span class="keyword">if</span> (maxVaulePlot &gt; <span class="number">1</span>) maxVaulePlot = <span class="number">1</span>;</span><br><span class="line">                minVaulePlot /= <span class="number">32767</span>f;</span><br><span class="line">                <span class="keyword">if</span> (minVaulePlot &lt; -<span class="number">1</span>) minVaulePlot = -<span class="number">1</span>;</span><br><span class="line">                PolyLine.Points.Add(new Point(i, -maxVaulePlot * cvsHeightHalf * <span class="number">1</span> + cvsHeightHalf));</span><br><span class="line">                PolyLine.Points.Add(new Point(i, -minVaulePlot * cvsHeightHalf * <span class="number">1</span> + cvsHeightHalf));</span><br><span class="line">            &#125;</span><br><span class="line">            PathFigure.Segments.Add(PolyLine);</span><br><span class="line">            Geometry.Figures.Add(PathFigure);</span><br><span class="line">            WavePath.Data = Geometry;</span><br><span class="line">            WavePath.Stroke = new SolidColorBrush(Colors.OrangeRed);</span><br><span class="line">            WavePath.StrokeThickness = <span class="number">1</span>;</span><br><span class="line">            <span class="keyword">if</span> (!canvas.Children.Contains(WavePath))</span><br><span class="line">                canvas.Children.Add(WavePath);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        int _Num = <span class="number">0</span>;//显示在label上的数值</span><br><span class="line">        public int Num</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">set</span> &#123; <span class="keyword">if</span> (_Num != value) _Num = value; &#125;</span><br><span class="line">            get &#123; <span class="built_in">return</span> _Num; &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        private void btn_Click(object sender, RoutedEventArgs e)</span><br><span class="line">        &#123;</span><br><span class="line">            btn.Content = _Num;</span><br><span class="line">            label.Content = _Num;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="3-__u8C03_u7528_u63A7_u4EF6"><a href="#3-__u8C03_u7528_u63A7_u4EF6" class="headerlink" title="3. 调用控件"></a>3. 调用控件</h2><p><strong>功能描述：</strong> 在一个ListBox中放置多个上面设计的控件，通过修改控件的public属性，实现不同的波形显示(data)，不同设备编号显示(Num)。</p>
+<h3 id="3-1_Xaml_u4EE3_u7801"><a href="#3-1_Xaml_u4EE3_u7801" class="headerlink" title="3.1 Xaml代码"></a>3.1 Xaml代码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">&lt;Window xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span></span><br><span class="line">        xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span></span><br><span class="line">        xmlns:libUserC=<span class="string">"clr-namespace:libUserC;assembly=libUserC"</span> x:Class=<span class="string">"wpfTest.MainWindow"</span></span><br><span class="line">        Title=<span class="string">"MainWindow"</span> Height=<span class="string">"546.522"</span> Width=<span class="string">"841.418"</span> SizeChanged=<span class="string">"Window_SizeChanged"</span>&gt;</span><br><span class="line">    &lt;Grid&gt;</span><br><span class="line">        &lt;Grid.RowDefinitions&gt;</span><br><span class="line">            &lt;RowDefinition Height=<span class="string">"227*"</span>/&gt;</span><br><span class="line">        &lt;/Grid.RowDefinitions&gt;</span><br><span class="line">        &lt;ListBox Name=<span class="string">"listShower"</span> Grid.Row=<span class="string">"1"</span>&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U0"</span> Num=<span class="string">"0"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1  Name=<span class="string">"U1"</span> Num=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U2"</span>  Num=<span class="string">"2"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U3"</span>  Num=<span class="string">"3"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U4"</span>  Num=<span class="string">"4"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U5"</span>  Num=<span class="string">"5"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">        &lt;/ListBox&gt;</span><br><span class="line">    &lt;/Grid&gt;</span><br><span class="line">&lt;/Window&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2__u540E_u53F0_u4EE3_u7801"><a href="#3-2__u540E_u53F0_u4EE3_u7801" class="headerlink" title="3.2    后台代码"></a>3.2    后台代码</h3><p>为简单起见，波形是采用Random随机数的方式生成的。<br>这里也使用了一个定时器，定时地产生波形数据，更新控件的data属性。控件会自动更新波形显示。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">using System;</span><br><span class="line">using System.Collections.Generic;</span><br><span class="line">using System.Windows;</span><br><span class="line">using System.Windows.Threading;</span><br><span class="line">namespace wpfTest</span><br><span class="line">&#123;</span><br><span class="line">    public partial class MainWindow : Window</span><br><span class="line">    &#123;</span><br><span class="line">        public <span class="function"><span class="title">MainWindow</span></span>()</span><br><span class="line">        &#123;</span><br><span class="line">            InitializeComponent(); </span><br><span class="line">            PlotTimer.IsEnabled = <span class="literal">true</span>;</span><br><span class="line">            PlotTimer.Interval = TimeSpan.FromMilliseconds(<span class="number">500</span>);</span><br><span class="line">            PlotTimer.Tick += PlotTimer_Tick;</span><br><span class="line">        &#125; </span><br><span class="line">        Random ra = new Random();</span><br><span class="line">        List&lt;short[]&gt; listData = new List&lt;short[]&gt;(); </span><br><span class="line">        private void PlotTimer_Tick(object sender, EventArgs e)</span><br><span class="line">        &#123; </span><br><span class="line">            <span class="keyword">for</span> (int dataGroupIndex = <span class="number">0</span>; dataGroupIndex &lt; <span class="number">5</span>; dataGroupIndex++)</span><br><span class="line">            &#123;</span><br><span class="line">                short[] data = new short[<span class="number">2000</span>];</span><br><span class="line">                <span class="keyword">for</span> (int i = <span class="number">0</span>; i &lt; <span class="number">2000</span>; i++)</span><br><span class="line">                &#123;</span><br><span class="line">                    data[i] = (short)ra.Next(short.M<span class="keyword">in</span>Value, short.MaxValue);</span><br><span class="line">                &#125;</span><br><span class="line">                listData.Add(data);</span><br><span class="line">                libUserC.User1 temp = listShower.Items[dataGroupIndex] as libUserC.User1;</span><br><span class="line">                temp.data = data;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        private <span class="built_in">readonly</span> DispatcherTimer PlotTimer = new DispatcherTimer(DispatcherPriority.ApplicationIdle);</span><br><span class="line">        private void Window_SizeChanged(object sender, SizeChangedEventArgs e)</span><br><span class="line">        &#123;</span><br><span class="line">            listShower.Width = this.RenderSize.Width;</span><br><span class="line">            foreach(libUserC.User1 item <span class="keyword">in</span> listShower.Items)</span><br><span class="line">            &#123;</span><br><span class="line">                item.Width = this.RenderSize.Width;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="3-3__u8FD0_u884C_u6548_u679C"><a href="#3-3__u8FD0_u884C_u6548_u679C" class="headerlink" title="3.3 运行效果"></a>3.3 运行效果</h3><p><img src="/Images/WPF/Tutorial1_2.jpg" alt=""><br>点击按钮，会分别显示0-5六个不同的编号，波形也在不停变化。</p>
+<h2 id="4-__u603B_u7ED3"><a href="#4-__u603B_u7ED3" class="headerlink" title="4. 总结"></a>4. 总结</h2><p>基本的目标已实现，可以看到自定义控件极大地简化了最终的实现。<br>每个控件都使用了定时器，这样做占用了大量资源，而且即使是没有数据变化的时候，控件也在定时的刷新显示，例如上面的第六个控件。下一篇将进行优化，并加入声音播放功能。 </p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/WPF/">WPF</a>
+  </div>
+
+        
+  <div class="addthis addthis_toolbox addthis_default_style">
+    
+      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    
+    
+      <a class="addthis_button_tweet"></a>
+    
+    
+      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    
+    
+      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
+    
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://yoursite.com/2016/01/20/WPF音频播放与波形显示/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Hexo/">Hexo</a><small>1</small></li>
+  
+    <li><a href="/tags/WPF/">WPF</a><small>2</small></li>
+  
+    <li><a href="/tags/vim/">vim</a><small>1</small></li>
+  
+    <li><a href="/tags/生活/">生活</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Zi-Yuan
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
