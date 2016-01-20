@@ -1,0 +1,191 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Win7中的vimdiff不能用？ | Ziyuan&#39;s blog</title>
+  <meta name="author" content="Zi-Yuan">
+  
+  <meta name="description" content="ziyuan">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Win7中的vimdiff不能用？"/>
+  <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Ziyuan&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Ziyuan&#39;s blog</a></h1>
+  <h2><a href="/">梓辕身在此山中</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2014-12-23T01:02:35.000Z"><a href="/2014/12/23/Win7中的vimdiff不能用？/">Dec 23 2014</a></time>
+      
+      
+  
+    <h1 class="title">Win7中的vimdiff不能用？</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <h2 id="u4E00_u3001vimdiff_u542F_u52A8_u65B9_u5F0F_3A"><a href="#u4E00_u3001vimdiff_u542F_u52A8_u65B9_u5F0F_3A" class="headerlink" title="一、vimdiff启动方式:"></a>一、vimdiff启动方式:</h2><ol>
+<li>鼠标选中两个要进行比较的文件，右键-&gt;Diff with Vim</li>
+<li>(管理员/一般用户)打开cmd，cd到文件目录下，运行命令gvimdiff file1 file2 </li>
+<li>(管理员/一般用户)用gvim打开file1, 在以命令方式运行diffs file2</li>
+</ol>
+<h2 id="u4E8C_u3001_u4E0A_u9762_u7684_u6240_u6709_u65B9_u5F0F_u90FD_u4F1A_u51FA_u73B0_u9519_u8BEF_u4FE1_u606F_3A"><a href="#u4E8C_u3001_u4E0A_u9762_u7684_u6240_u6709_u65B9_u5F0F_u90FD_u4F1A_u51FA_u73B0_u9519_u8BEF_u4FE1_u606F_3A" class="headerlink" title="二、上面的所有方式都会出现错误信息:"></a>二、上面的所有方式都会出现错误信息:</h2><p><img src="/Images/vimdifferror1.png" alt="Drawing" width="500px"><br><a id="more"></a><br>回车继续后，两个文件打开了，可是两个文件有差异的地方却没有高亮出来：<br><img src="/Images/vimdifferror2.png" alt="Drawing" width="500px"></p>
+<h2 id="u4E09_u3001_u89E3_u51B3_u65B9_u6CD5"><a href="#u4E09_u3001_u89E3_u51B3_u65B9_u6CD5" class="headerlink" title="三、解决方法"></a>三、解决方法</h2><p>在网页<a href="http://vimdoc.sourceforge.net/htmldoc/diff.html" target="_blank" rel="external">http://vimdoc.sourceforge.net/htmldoc/diff.html</a><br>中可以查看到两个错误信息E810和E97的说明:</p>
+<p style="text-align:left;"><br>Vim will do a test if the diff output looks alright.  If it doesn’t, you will<br>get an error message.  Possible causes:<br>-  The “diff” program cannot be executed.<br>-  The “diff” program doesn’t produce normal “ed” style diffs (see above).<br>-  The ‘shell’ and associated options are not set correctly.  Try if filtering<br>   works with a command like “:!sort”.<br>-  You are using ‘diffexpr’ and it doesn’t work.<br>If it’s not clear what the problem is set the ‘verbose’ option to one or more<br>to see more messages.<br><br>The self-installing Vim for MS-Windows includes a diff program.  If you don’t<br>have it you might want to download a diff.exe.  For example from<br>    <a href="http://gnuwin32.sourceforge.net/packages/diffutils.htm" target="_blank" rel="external">http://gnuwin32.sourceforge.net/packages/diffutils.htm</a>.<br></p>    
+
+<p>逐一排查这些问题</p>
+<ol>
+<li>是否是系统缺少diff？cmd确实不能识别这个命令，于是从<a href="http://sourceforge.net/projects/gnuwin32/?source=typ_redirect" target="_blank" rel="external">http://sourceforge.net/projects/gnuwin32/?source=typ_redirect</a> 下载安装，并将路径添加到Path中。<br>第一步完成后问题依然存在。</li>
+<li>运行在vim中运行:se查看对默认设置做了些什么更改，可以发现diffexpr被定义成了Mydiff，这是在_vimrc中设置的，打开_vimrc可以发现如下设置代码：<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">set</span> diffexpr=MyDiff()</span><br><span class="line"><span class="keyword">function</span> MyDiff()</span><br><span class="line">  <span class="built_in">let</span> opt = <span class="string">'-a --binary '</span></span><br><span class="line">  <span class="keyword">if</span> &amp;diffopt =~ <span class="string">'icase'</span> | <span class="built_in">let</span> opt = opt . <span class="string">'-i '</span> | endif</span><br><span class="line">  <span class="keyword">if</span> &amp;diffopt =~ <span class="string">'iwhite'</span> | <span class="built_in">let</span> opt = opt . <span class="string">'-b '</span> | endif</span><br><span class="line">  <span class="built_in">let</span> arg1 = v:fname_<span class="keyword">in</span></span><br><span class="line">  <span class="keyword">if</span> arg1 =~ <span class="string">' '</span> | <span class="built_in">let</span> arg1 = <span class="string">'"'</span> . arg1 . <span class="string">'"'</span> | endif</span><br><span class="line">  <span class="built_in">let</span> arg2 = v:fname_new</span><br><span class="line">  <span class="keyword">if</span> arg2 =~ <span class="string">' '</span> | <span class="built_in">let</span> arg2 = <span class="string">'"'</span> . arg2 . <span class="string">'"'</span> | endif</span><br><span class="line">  <span class="built_in">let</span> arg3 = v:fname_out</span><br><span class="line">  <span class="keyword">if</span> arg3 =~ <span class="string">' '</span> | <span class="built_in">let</span> arg3 = <span class="string">'"'</span> . arg3 . <span class="string">'"'</span> | endif</span><br><span class="line">  <span class="built_in">let</span> eq = <span class="string">''</span></span><br><span class="line">  <span class="keyword">if</span> <span class="variable">$VIMRUNTIME</span> =~ <span class="string">' '</span></span><br><span class="line">    <span class="keyword">if</span> &amp;sh =~ <span class="string">'\&lt;cmd'</span></span><br><span class="line">      <span class="built_in">let</span> cmd = <span class="string">'""'</span> . <span class="variable">$VIMRUNTIME</span> . <span class="string">'\diff"'</span></span><br><span class="line">      <span class="built_in">let</span> eq = <span class="string">'"'</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">      <span class="built_in">let</span> cmd = substitute(<span class="variable">$VIMRUNTIME</span>, <span class="string">' '</span>, <span class="string">'" '</span>, <span class="string">''</span>) . <span class="string">'\diff"'</span></span><br><span class="line">    endif</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">    <span class="built_in">let</span> cmd = <span class="variable">$VIMRUNTIME</span> . <span class="string">'\diff'</span></span><br><span class="line">  endif</span><br><span class="line">  silent execute <span class="string">'!'</span> . cmd . <span class="string">' '</span> . opt . arg1 . <span class="string">' '</span> . arg2 . <span class="string">' &gt; '</span> . arg3 . eq</span><br><span class="line">endfunction</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>注释掉之后，vimdiff就可以正常工作了！<br><img src="/Images/vimdifferror3.png" alt="Drawing" width="500px"></p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/vim/">vim</a>
+  </div>
+
+        
+  <div class="addthis addthis_toolbox addthis_default_style">
+    
+      <a class="addthis_button_facebook_like" fb:like:layout="button_count"></a>
+    
+    
+      <a class="addthis_button_tweet"></a>
+    
+    
+      <a class="addthis_button_google_plusone" g:plusone:size="medium"></a>
+    
+    
+      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
+    
+    <a class="addthis_counter addthis_pill_style"></a>
+  </div>
+  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+<section id="comment">
+  <h1 class="title">留言</h1>
+
+  
+      <div id="fb-root"></div>
+<script>
+  (function(d, s, id) {
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));
+</script>
+
+<div class="fb-comments" data-href="http://yoursite.com/2014/12/23/Win7中的vimdiff不能用？/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
+      
+  
+</section>
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Hexo/">Hexo</a><small>1</small></li>
+  
+    <li><a href="/tags/vim/">vim</a><small>1</small></li>
+  
+    <li><a href="/tags/vimdiff/">vimdiff</a><small>0</small></li>
+  
+    <li><a href="/tags/win7/">win7</a><small>0</small></li>
+  
+    <li><a href="/tags/生活/">生活</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Zi-Yuan
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
