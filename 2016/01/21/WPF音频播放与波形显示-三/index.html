@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Ziyuan&#39;s blog</title>
+  <title>WPF音频播放与波形显示(三) | Ziyuan&#39;s blog</title>
   <meta name="author" content="Zi-Yuan">
   
   <meta name="description" content="ziyuan">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  
+  <meta property="og:title" content="WPF音频播放与波形显示(三)"/>
   <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
 
   
@@ -45,8 +45,7 @@
 <div class="clearfix"></div>
 </header>
   <div id="content" class="inner">
-    <div id="main-col" class="alignleft"><div id="wrapper">
-  <article class="post">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
   
   <div class="post-content">
     <header>
@@ -56,7 +55,7 @@
       
       
   
-    <h1 class="title"><a href="/2016/01/21/WPF音频播放与波形显示-三/">WPF音频播放与波形显示(三)</a></h1>
+    <h1 class="title">WPF音频播放与波形显示(三)</h1>
   
 
     </header>
@@ -280,6 +279,15 @@
       
         
         
+  
+  <div class="tags">
+    <a href="/tags/WPF/">WPF</a>
+  </div>
+
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
       
       <div class="clearfix"></div>
     </footer>
@@ -287,187 +295,25 @@
 </article>
 
 
+ <nav id="pagination" >
+    
+    
+    <a href="/2016/01/20/WPF音频播放与波形显示-二/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+
+<section id="comment">
+<!-- 多说评论框 start -->
+ <div class="ds-thread" data-thread-key="2016/01/21/WPF音频播放与波形显示-三/" data-title="WPF音频播放与波形显示(三)" data-url="http://yoursite.com/2016/01/21/WPF音频播放与波形显示-三/"></div> 
+<!-- 多说评论框 end --> 
+<!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
+</section>
 
 
 
 
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-01-20T13:40:47.000Z"><a href="/2016/01/20/WPF音频播放与波形显示-二/">Jan 20 2016</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/01/20/WPF音频播放与波形显示-二/">WPF音频播放与波形显示(二)</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p><strong>实现目标：</strong></p>
-<ol>
-<li>修改绘图时机，提高效率<br> 方案: 将控件中的绘图事件变成其data改变时才触发。</li>
-<li>绘图的同时播放声音<br> 方案：模拟的不同频率声音<br> 编写自定义的音频数据生成类，播音时同时把数据写入buffer（short数组），并记录写的位置。在定时器中将buffer赋值给控件中的data（根据写位置重新排序）。<br> Ps: 排序的目的是使控件刷新波形时能始终保证最新写入的数据在窗口的最右端显示，模拟实时播放的效果。
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/01/20/WPF音频播放与波形显示-二/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-01-20T11:02:35.000Z"><a href="/2016/01/20/WPF音频播放与波形显示/">Jan 20 2016</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/01/20/WPF音频播放与波形显示/">WPF音频播放与波形显示(一)</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p><strong>实现目标：</strong></p>
-<ol>
-<li>自定义控件，可显示实时波形，响应鼠标事件；</li>
-<li>用listBox的方式同时显示多个控件，分别显示不同的波形，有区别的响应鼠标事件。</li>
-</ol>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/01/20/WPF音频播放与波形显示/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2016-01-19T16:32:04.000Z"><a href="/2016/01/20/奇葩的房型/">Jan 20 2016</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2016/01/20/奇葩的房型/">奇葩的房型</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <p>寸土寸金的帝都，一户劈成两户的结果：<br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2016/01/20/奇葩的房型/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-
-  <article class="post">
-  
-  <div class="post-content">
-    <header>
-      
-        <div class="icon"></div>
-        <time datetime="2014-12-23T01:02:35.000Z"><a href="/2014/12/23/Win7中的vimdiff不能用？/">Dec 23 2014</a></time>
-      
-      
-  
-    <h1 class="title"><a href="/2014/12/23/Win7中的vimdiff不能用？/">Win7中的vimdiff不能用？</a></h1>
-  
-
-    </header>
-    <div class="entry">
-      
-        <h2 id="u4E00_u3001vimdiff_u542F_u52A8_u65B9_u5F0F_3A"><a href="#u4E00_u3001vimdiff_u542F_u52A8_u65B9_u5F0F_3A" class="headerlink" title="一、vimdiff启动方式:"></a>一、vimdiff启动方式:</h2><ol>
-<li>鼠标选中两个要进行比较的文件，右键-&gt;Diff with Vim</li>
-<li>(管理员/一般用户)打开cmd，cd到文件目录下，运行命令gvimdiff file1 file2 </li>
-<li>(管理员/一般用户)用gvim打开file1, 在以命令方式运行diffs file2</li>
-</ol>
-<h2 id="u4E8C_u3001_u4E0A_u9762_u7684_u6240_u6709_u65B9_u5F0F_u90FD_u4F1A_u51FA_u73B0_u9519_u8BEF_u4FE1_u606F_3A"><a href="#u4E8C_u3001_u4E0A_u9762_u7684_u6240_u6709_u65B9_u5F0F_u90FD_u4F1A_u51FA_u73B0_u9519_u8BEF_u4FE1_u606F_3A" class="headerlink" title="二、上面的所有方式都会出现错误信息:"></a>二、上面的所有方式都会出现错误信息:</h2><p><img src="/Images/vimdifferror1.png" alt="Drawing" width="500px" /><br>
-      
-    </div>
-    <footer>
-      
-        
-          <div class="alignleft">
-            <a href="/2014/12/23/Win7中的vimdiff不能用？/#more" class="more-link">Read More</a>
-          </div>
-        
-        
-      
-      <div class="clearfix"></div>
-    </footer>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-<nav id="pagination">
-  
-  
-    <a href="/page/2/" class="alignright next">下一页</a>
-  
-  <div class="clearfix"></div>
-</nav></div></div>
+</div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
   <form action="//google.com/search" method="get" accept-charset="utf-8">
