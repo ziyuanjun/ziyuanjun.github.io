@@ -68,8 +68,40 @@
 <p>结合线性分类器，分类方法写为：</p>
 <p>\begin{equation}<br>h_{\theta}(x)=\frac{1}{1+e^{-\theta^Tx}}<br>\end{equation}</p>
 <p>其中，$\theta$和$x$都是矢量，如果$h_{\theta}(x)&gt;0.5$则$y=1$, 否则$y=0$。根据$y$的取值，样本$x$就被分成两类。<br>下面的问题是如何求出最优的$\theta$？</p>
-<h2 id="u76EE_u6807_u51FD_u6570"><a href="#u76EE_u6807_u51FD_u6570" class="headerlink" title="目标函数"></a>目标函数</h2><p>一般而言目标函数会写成所有训练样本的误差项求和的形式<br><span>$J(\theta)=\frac{1}{N}\sum_{i=1}^N \frac{1}{2}[y^{(i)}-h_{\theta}(x^{(i)})]^2$</span><!-- Has MathJax --></p>
+<h2 id="u76EE_u6807_u51FD_u6570"><a href="#u76EE_u6807_u51FD_u6570" class="headerlink" title="目标函数"></a>目标函数</h2><p>一般而言目标函数会写成所有训练样本的误差项求和的形式<br><span>$$\begin{equation}
+J(\theta)=\frac{1}{N}\sum_{i=1}^N \frac{1}{2}[y^{(i)}-h_{\theta}(x^{(i)})]^2
+\end{equation}$$</span><!-- Has MathJax --></p>
 <p>但是对于Logstic回归来说，这个目标函数并不好，相对于自变量是一个非凸函数，<br>因此使用另外的目标函数，这个目标函数是</p>
+<span>$$\begin{equation}
+J^{(i)}(\theta)=
+\begin{cases}
+ -\log(1-h_{\theta}(x^{(i)})) &amp; \text{if } y^{(i)}=0\\
+-\log(h_{\theta}(x^{(i)}) &amp;\text{if } y^{(i)}=1
+\end{cases}
+\end{equation}$$</span><!-- Has MathJax -->
+<p>定义如下函数<br><span>$$\begin{equation}
+\text{Cost}(h_{\theta}(x),y)=
+-y\log(h_{\theta}(x))-(1-y)\log(1-h_{\theta}(x))
+\end{equation}$$</span><!-- Has MathJax --><br>并将目标函数写为<br><span>$$\begin{equation}
+J^{(i)}(\theta)=
+\frac{1}{m}\sum_{i=1}^N\text{Cost}(h_{\theta}(x^{(i)}),y^{(i)})=
+-\frac{1}{m}[y^{(i)}\log(h_{\theta}(x^{(i)}))+(1-y^{(i)})\log(1-h_{\theta}(x^{(i)}))]
+\end{equation}$$</span><!-- Has MathJax --></p>
+<h2 id="u68AF_u5EA6_u4E0B_u964D_u6CD5_u6C42_u89E3_24_5Cfrac_7B_5Cpartial_7D_7B_5Cpartial_5Ctheta_j_7DJ_28_5Ctheta_29_24"><a href="#u68AF_u5EA6_u4E0B_u964D_u6CD5_u6C42_u89E3_24_5Cfrac_7B_5Cpartial_7D_7B_5Cpartial_5Ctheta_j_7DJ_28_5Ctheta_29_24" class="headerlink" title="梯度下降法求解$\frac{\partial}{\partial\theta_j}J(\theta)$"></a>梯度下降法求解$\frac{\partial}{\partial\theta_j}J(\theta)$</h2><h3 id="u62EC_u53F7_5B_5D_u5185_u7B2C_u4E00_u6C42_u548C_u9879_u7684_u5BFC_u6570"><a href="#u62EC_u53F7_5B_5D_u5185_u7B2C_u4E00_u6C42_u548C_u9879_u7684_u5BFC_u6570" class="headerlink" title="括号[]内第一求和项的导数"></a>括号[]内第一求和项的导数</h3><span>$$\begin{align}
+\frac{\partial y^{(i)}\log(h_{\theta}(x^{(i)})}{\partial \theta_j}
+=&amp;y^{(i)}(1+e^{-\theta^T x})\frac{e^{-\theta^T x}x^{(j)}}{(1+e^{-\theta^T x})^2}\\
+=&amp;y^{(i)}\frac{e^{-\theta^T x}x^{(j)}}{1+e^{-\theta^T x}}\\
+\end{align}$$</span><!-- Has MathJax -->
+<h3 id="u62EC_u53F7_5B_5D_u5185_u7B2C_u4E8C_u6C42_u548C_u9879_u7684_u5BFC_u6570"><a href="#u62EC_u53F7_5B_5D_u5185_u7B2C_u4E8C_u6C42_u548C_u9879_u7684_u5BFC_u6570" class="headerlink" title="括号[]内第二求和项的导数"></a>括号[]内第二求和项的导数</h3><span>$$\begin{align}
+\frac{\partial (1-y^{(i)})\log(1-h_{\theta}(x^{(i)})}{\partial \theta_j}
+=&amp;(1-y^{(i)}) \frac{(1+e^{-\theta^T x})}{e^{-\theta^T x}} \times \frac{-e^{-\theta^T x}}{(1+e^{-\theta^T x})^2}x^{(j)}\\
+=&amp;(y^{(i)}-1)\frac{x^{(j)}}{1+e^{-\theta^T x}}\\
+\end{align}$$</span><!-- Has MathJax -->
+<p>以上两式求和得<br><span>$$\begin{equation}
+ (y^{(i)}-h_{\theta}(x^{(i)}))x^{(j)}
+ \end{equation}$$</span><!-- Has MathJax --><br> 因此<br><span>$$\begin{equation}
+\frac{\partial}{\partial\theta_j}J(\theta)=\frac{1}{m}(h_{\theta}(x^{(i)})-y^{(i)})x^{(j)}
+ \end{equation}$$</span><!-- Has MathJax --></p>
 
       
     </div>
