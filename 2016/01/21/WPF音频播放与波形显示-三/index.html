@@ -30,7 +30,7 @@
 <body>
   <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Ziyuan&#39;s blog</a></h1>
-  <h2><a href="/">梓辕身在此山中</a></h2>
+  <h2><a href="/">人生就是这样，你永远不知道计划明天完成的事，是否来得及去完成。</a></h2>
 </div>
 <nav id="main-nav" class="alignright">
   <ul>
@@ -63,7 +63,7 @@
       
         <p><strong>目标：</strong><br>添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。</p>
 <p><strong>关键词：</strong>：RadioButton；WAV文件；绑定<br><a id="more"></a></p>
-<p>##一. 控件外观修改<br>添加一个RadioButton，被选中时为默认的单频声音，否则为文件播放。相当于控件具有两<br>种工作模式。处于文件播放模式时，频率的输入被禁用，这是用WPF的绑定实现的，将<br>TextBox的IsEnable属性绑定到RadioButton的IsCheck属性。<br><img src="/Images/WPF/Tutorial3_1.jpg" alt=""></p>
+<h2 id="u4E00-__u63A7_u4EF6_u5916_u89C2_u4FEE_u6539"><a href="#u4E00-__u63A7_u4EF6_u5916_u89C2_u4FEE_u6539" class="headerlink" title="一. 控件外观修改"></a>一. 控件外观修改</h2><p>添加一个RadioButton，被选中时为默认的单频声音，否则为文件播放。相当于控件具有两<br>种工作模式。处于文件播放模式时，频率的输入被禁用，这是用WPF的绑定实现的，将<br>TextBox的IsEnable属性绑定到RadioButton的IsCheck属性。<br><img src="/Images/WPF/Tutorial3_1.jpg" alt=""></p>
 <h3 id="1-1_Xaml_u4EE3_u7801"><a href="#1-1_Xaml_u4EE3_u7801" class="headerlink" title="1.1 Xaml代码"></a>1.1 Xaml代码</h3><pre><code class="csharp">&lt;UserControl x:Class=<span class="string">"libUserC.User1"</span>
              xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
              xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
@@ -275,7 +275,7 @@
 <h3 id="u8FD0_u884C_u7ED3_u679C"><a href="#u8FD0_u884C_u7ED3_u679C" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="/Images/WPF/Tutorial3_2.jpg" alt=""><br>不同文件可以同时播放，原有的单频播放功能也保留下来了。</p>
 <h2 id="u56DB-__u603B_u7ED3"><a href="#u56DB-__u603B_u7ED3" class="headerlink" title="四. 总结"></a>四. 总结</h2><ol>
 <li>调用代码几乎不需做任何修改，进一步说明了自定义控件的好处。</li>
-<li>本文增加了文件播放的模式，下一篇将增加网络文件的播放模式。</li>
+<li>本文增加了文件播放的模式，下一篇将增加网络数据流的播放模式。</li>
 </ol>
 
       
