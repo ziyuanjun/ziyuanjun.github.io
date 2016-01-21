@@ -64,8 +64,9 @@
         <p><strong>实现目标：</strong></p>
 <ol>
 <li>自定义控件，可显示实时波形，响应鼠标事件；</li>
-<li>用listBox的方式同时显示多个控件，分别显示不同的波形，有区别的响应鼠标事件。<br><strong>关键词：</strong> Button; Label; Canvas; 绘图; 自定义控件</li>
+<li>用listBox的方式同时显示多个控件，分别显示不同的波形，有区别的响应鼠标事件。</li>
 </ol>
+<p><strong>关键词：</strong> Button; Label; Canvas; 绘图; 自定义控件</p>
 <a id="more"></a>
 <h2 id="u4E00-__u63A7_u4EF6_u5916_u89C2_u8BBE_u8BA1"><a href="#u4E00-__u63A7_u4EF6_u5916_u89C2_u8BBE_u8BA1" class="headerlink" title="一. 控件外观设计"></a>一. 控件外观设计</h2><p>新建一个WPF User Control Library，构建如下外观：<br><img src="/Images/WPF/Tutorial1_1.jpg" alt=""></p>
 <p>从左至右依次为WPF自带的label、button、canvas控件，xaml代码：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;UserControl x:Class=<span class="string">"libUserC.User1"</span></span><br><span class="line">             xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span></span><br><span class="line">             xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span></span><br><span class="line">             xmlns:mc=<span class="string">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span> </span><br><span class="line">             xmlns:d=<span class="string">"http://schemas.microsoft.com/expression/blend/2008"</span> </span><br><span class="line">             mc:Ignorable=<span class="string">"d"</span> Height=<span class="string">"80"</span> d:Width=<span class="string">"485"</span>&gt;</span><br><span class="line">    &lt;Grid Background=<span class="string">"#FFECF3F5"</span>&gt;</span><br><span class="line">        &lt;Grid.ColumnDefinitions&gt;</span><br><span class="line">            &lt;ColumnDefinition Width=<span class="string">"50"</span>/&gt;</span><br><span class="line">            &lt;ColumnDefinition Width=<span class="string">"48"</span>/&gt;</span><br><span class="line">            &lt;ColumnDefinition Width=<span class="string">"*"</span>/&gt;</span><br><span class="line">        &lt;/Grid.ColumnDefinitions&gt;</span><br><span class="line">        &lt;Button x:Name=<span class="string">"btn"</span> Margin=<span class="string">"10,10,4,10"</span> Grid.Column=<span class="string">"1"</span> Click=<span class="string">"btn_Click"</span>/&gt;</span><br><span class="line">        &lt;Label x:Name=<span class="string">"label"</span> Background=<span class="string">"#FFEAC0C0"</span> Margin=<span class="string">"10"</span> HorizontalContentAlignment=<span class="string">"Center"</span> VerticalContentAlignment=<span class="string">"Center"</span> FontSize=<span class="string">"18"</span>/&gt;</span><br><span class="line">        &lt;Canvas x:Name=<span class="string">"canvas"</span> Grid.Column=<span class="string">"2"</span> HorizontalAlignment=<span class="string">"Stretch"</span> Height=<span class="string">"60"</span> Margin=<span class="string">"10"</span> VerticalAlignment=<span class="string">"Top"</span> Background=<span class="string">"#FFEAE4E4"</span> MinWidth=<span class="string">"300"</span>/&gt;</span><br><span class="line">    &lt;/Grid&gt;</span><br><span class="line">&lt;/UserControl&gt;</span><br></pre></td></tr></table></figure></p>
@@ -131,11 +132,19 @@
   
 
   
-<div class="widget tagcloud">
-  <h3 class="title">标签云</h3>
-  <div class="entry">
-    <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/WPF/" style="font-size: 20px;">WPF</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/生活/" style="font-size: 10px;">生活</a>
-  </div>
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Hexo/">Hexo</a><small>1</small></li>
+  
+    <li><a href="/tags/WPF/">WPF</a><small>3</small></li>
+  
+    <li><a href="/tags/vim/">vim</a><small>1</small></li>
+  
+    <li><a href="/tags/生活/">生活</a><small>1</small></li>
+  
+  </ul>
 </div>
 
 

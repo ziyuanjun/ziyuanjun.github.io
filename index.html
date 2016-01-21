@@ -62,7 +62,8 @@
     </header>
     <div class="entry">
       
-        <p><strong>目标：</strong><br>添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。<br><strong>关键词：</strong>：RadioButton；WAV文件；绑定<br>
+        <p><strong>目标：</strong><br>添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。</p>
+<p><strong>关键词：</strong>：RadioButton；WAV文件；绑定<br>
       
     </div>
     <footer>
@@ -104,7 +105,9 @@
         <p><strong>实现目标：</strong></p>
 <ol>
 <li>修改绘图时机，提高效率<br> 方案: 将控件中的绘图事件变成其data改变时才触发。</li>
-<li>绘图的同时播放声音<br> 方案：模拟的不同频率声音<br> 编写自定义的音频数据生成类，播音时同时把数据写入buffer（short数组），并记录写的位置。在定时器中将buffer赋值给控件中的data（根据写位置重新排序）。<br> Ps: 排序的目的是使控件刷新波形时能始终保证最新写入的数据在窗口的最右端显示，模拟实时播放的效果。
+<li>绘图的同时播放声音<br> 方案：模拟的不同频率声音<br> 编写自定义的音频数据生成类，播音时同时把数据写入buffer（short数组），并记录写的位置。在定时器中将buffer赋值给控件中的data（根据写位置重新排序）。<br> Ps: 排序的目的是使控件刷新波形时能始终保证最新写入的数据在窗口的最右端显示，模拟实时播放的效果。</li>
+</ol>
+<p><strong>关键词：</strong> Naudio<br>
       
     </div>
     <footer>
@@ -146,8 +149,9 @@
         <p><strong>实现目标：</strong></p>
 <ol>
 <li>自定义控件，可显示实时波形，响应鼠标事件；</li>
-<li>用listBox的方式同时显示多个控件，分别显示不同的波形，有区别的响应鼠标事件。<br><strong>关键词：</strong> Button; Label; Canvas; 绘图; 自定义控件</li>
+<li>用listBox的方式同时显示多个控件，分别显示不同的波形，有区别的响应鼠标事件。</li>
 </ol>
+<p><strong>关键词：</strong> Button; Label; Canvas; 绘图; 自定义控件</p>
       
     </div>
     <footer>
@@ -272,11 +276,19 @@
   
 
   
-<div class="widget tagcloud">
-  <h3 class="title">标签云</h3>
-  <div class="entry">
-    <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/WPF/" style="font-size: 20px;">WPF</a> <a href="/tags/vim/" style="font-size: 10px;">vim</a> <a href="/tags/生活/" style="font-size: 10px;">生活</a>
-  </div>
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Hexo/">Hexo</a><small>1</small></li>
+  
+    <li><a href="/tags/WPF/">WPF</a><small>3</small></li>
+  
+    <li><a href="/tags/vim/">vim</a><small>1</small></li>
+  
+    <li><a href="/tags/生活/">生活</a><small>1</small></li>
+  
+  </ul>
 </div>
 
 
