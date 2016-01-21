@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>奇葩的房型 | Ziyuan&#39;s blog</title>
+  <title>Logistic回归的梯度下降法推导 | Ziyuan&#39;s blog</title>
   <meta name="author" content="Zi-Yuan">
   
   <meta name="description" content="ziyuan">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="奇葩的房型"/>
+  <meta property="og:title" content="Logistic回归的梯度下降法推导"/>
   <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
 
   
@@ -51,17 +51,25 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-01-19T16:32:04.000Z"><a href="/2016/01/20/奇葩的房型/">Jan 20 2016</a></time>
+        <time datetime="2016-01-21T14:52:29.000Z"><a href="/2016/01/21/Logistic回归的梯度下降法推导/">Jan 21 2016</a></time>
       
       
   
-    <h1 class="title">奇葩的房型</h1>
+    <h1 class="title">Logistic回归的梯度下降法推导</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>寸土寸金的帝都，一户劈成两户的结果：<br><a id="more"></a><br><img src="/Images/31号楼住房尺寸.jpg" alt="" title="安宁庄路某院内的奇葩房型"></p>
+        <p><em>Marchine Learning in Action</em> 一书第五章将逻辑回归(Logistic regression)，但是书中没有给出目标函数，也没有给出梯度下降法的推导。在解释代码出文中指出：<br><blockquote><p>A little math is needed to derive the equations used here, and I’ll leave you to look into that further if desired.</p>
+</blockquote></p>
+<p>So, 本文的目的就是展示所谓的<code>A little math</code>。<br><a id="more"></a></p>
+<h2 id="Logistic_regression"><a href="#Logistic_regression" class="headerlink" title="Logistic regression"></a>Logistic regression</h2><h3 id="sigmoid_function"><a href="#sigmoid_function" class="headerlink" title="sigmoid function"></a>sigmoid function</h3><p>$$<br>\sigma(z)=\frac{1}{1+e^{-z}}<br>$$</p>
+<p>结合线性分类器，分类方法写为：</p>
+<p>\begin{equation}<br>h_{\theta}(x)=\frac{1}{1+e^{-\theta^Tx}}<br>\end{equation}</p>
+<p>其中，$\theta$和$x$都是矢量，如果$h_{\theta}(x)&gt;0.5$则$y=1$, 否则$y=0$。根据$y$的取值，样本$x$就被分成两类。<br>下面的问题是如何求出最优的$\theta$？</p>
+<h2 id="u76EE_u6807_u51FD_u6570"><a href="#u76EE_u6807_u51FD_u6570" class="headerlink" title="目标函数"></a>目标函数</h2><p>一般而言目标函数会写成所有训练样本的误差项求和的形式<br><span>$J(\theta)=\frac{1}{N}\sum_{i=1}^N \frac{1}{2}[y^{(i)}-h_{\theta}(x^{(i)})]^2$</span><!-- Has MathJax --></p>
+<p>但是对于Logstic回归来说，这个目标函数并不好，相对于自变量是一个非凸函数，<br>因此使用另外的目标函数，这个目标函数是</p>
 
       
     </div>
@@ -71,7 +79,7 @@
         
   
   <div class="tags">
-    <a href="/tags/生活/">生活</a>
+    <a href="/tags/Marchine-Learning/">Marchine Learning</a>
   </div>
 
 
@@ -87,17 +95,15 @@
 
  <nav id="pagination" >
     
-    <a href="/2016/01/20/WPF音频播放与波形显示/" class="alignleft prev" >上一页</a>
     
-    
-    <a href="/2014/12/23/Win7中的vimdiff不能用？/" class="alignright next" >下一页</a>
+    <a href="/2016/01/21/WPF音频播放与波形显示-三/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>
 
 <section id="comment">
 <!-- 多说评论框 start -->
- <div class="ds-thread" data-thread-key="2016/01/20/奇葩的房型/" data-title="奇葩的房型" data-url="http://yoursite.com/2016/01/20/奇葩的房型/"></div> 
+ <div class="ds-thread" data-thread-key="2016/01/21/Logistic回归的梯度下降法推导/" data-title="Logistic回归的梯度下降法推导" data-url="http://yoursite.com/2016/01/21/Logistic回归的梯度下降法推导/"></div> 
 <!-- 多说评论框 end --> 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
 </section>
@@ -169,5 +175,35 @@
 })(jQuery);
 </script>
 
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
 </body>
 </html>

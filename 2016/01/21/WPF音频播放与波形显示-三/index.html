@@ -118,11 +118,11 @@
     }
     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RefreshWave</span>(<span class="params"></span>) </span>{<span class="comment">//略}</span>
 
-    <span class="keyword">string</span> _NumStr = <span class="string">"0"</span>;
-    <span class="keyword">public</span> <span class="keyword">string</span> NumStr
+    <span class="keyword">string</span> _NameStr = <span class="string">"0"</span>;
+    <span class="keyword">public</span> <span class="keyword">string</span> NameStr
     {
-        <span class="keyword">set</span> { <span class="keyword">if</span> (_NumStr != <span class="keyword">value</span>) _NumStr = <span class="keyword">value</span>; <span class="keyword">this</span>.label.Content = <span class="keyword">value</span>; }
-        <span class="keyword">get</span> { <span class="keyword">return</span> _NumStr; }
+        <span class="keyword">set</span> { <span class="keyword">if</span> (_NameStr != <span class="keyword">value</span>) _NameStr = <span class="keyword">value</span>; <span class="keyword">this</span>.label.Content = <span class="keyword">value</span>; }
+        <span class="keyword">get</span> { <span class="keyword">return</span> _NameStr; }
     }
     <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btnPlay_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
     </span>{
@@ -302,6 +302,8 @@
 
  <nav id="pagination" >
     
+    <a href="/2016/01/21/Logistic回归的梯度下降法推导/" class="alignleft prev" >上一页</a>
+    
     
     <a href="/2016/01/20/WPF音频播放与波形显示-二/" class="alignright next" >下一页</a>
     
@@ -335,6 +337,8 @@
   <ul class="entry">
   
     <li><a href="/tags/Hexo/">Hexo</a><small>1</small></li>
+  
+    <li><a href="/tags/Marchine-Learning/">Marchine Learning</a><small>1</small></li>
   
     <li><a href="/tags/WPF/">WPF</a><small>3</small></li>
   
