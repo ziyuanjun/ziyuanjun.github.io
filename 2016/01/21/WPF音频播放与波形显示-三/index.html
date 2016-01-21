@@ -61,7 +61,7 @@
     </header>
     <div class="entry">
       
-        <p><strong>目标</strong><br>添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。<br><strong>关键词</strong>：RadioButton；WAV文件；绑定<br><a id="more"></a></p>
+        <p><strong>目标：</strong><br>添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。<br><strong>关键词：</strong>：RadioButton；WAV文件；绑定<br><a id="more"></a></p>
 <p>##一. 控件外观修改<br>添加一个RadioButton，被选中时为默认的单频声音，否则为文件播放。相当于控件具有两<br>种工作模式。处于文件播放模式时，频率的输入被禁用，这是用WPF的绑定实现的，将<br>TextBox的IsEnable属性绑定到RadioButton的IsCheck属性。<br><img src="/Images/WPF/Tutorial3_1.jpg" alt=""></p>
 <h3 id="1-1_Xaml_u4EE3_u7801"><a href="#1-1_Xaml_u4EE3_u7801" class="headerlink" title="1.1 Xaml代码"></a>1.1 Xaml代码</h3><pre><code class="csharp">&lt;UserControl x:Class=<span class="string">"libUserC.User1"</span>
              xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
