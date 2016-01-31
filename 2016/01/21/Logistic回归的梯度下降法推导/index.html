@@ -84,8 +84,8 @@ J^{(i)}(\theta)=
 -y\log(h_{\theta}(x))-(1-y)\log(1-h_{\theta}(x))
 \end{equation}$$</span><!-- Has MathJax --><br>并将目标函数写为<br><span>$$\begin{equation}
 J^{(i)}(\theta)=
-\frac{1}{m}\sum_{i=1}^N\text{Cost}(h_{\theta}(x^{(i)}),y^{(i)})=
--\frac{1}{m}[y^{(i)}\log(h_{\theta}(x^{(i)}))+(1-y^{(i)})\log(1-h_{\theta}(x^{(i)}))]
+\frac{1}{N}\sum_{i=1}^N\text{Cost}(h_{\theta}(x^{(i)}),y^{(i)})=
+-\frac{1}{N}[y^{(i)}\log(h_{\theta}(x^{(i)}))+(1-y^{(i)})\log(1-h_{\theta}(x^{(i)}))]
 \end{equation}$$</span><!-- Has MathJax --></p>
 <h2 id="u68AF_u5EA6_u4E0B_u964D_u6CD5_u6C42_u89E3_24_5Cfrac_7B_5Cpartial_7D_7B_5Cpartial_5Ctheta_j_7DJ_28_5Ctheta_29_24"><a href="#u68AF_u5EA6_u4E0B_u964D_u6CD5_u6C42_u89E3_24_5Cfrac_7B_5Cpartial_7D_7B_5Cpartial_5Ctheta_j_7DJ_28_5Ctheta_29_24" class="headerlink" title="梯度下降法求解$\frac{\partial}{\partial\theta_j}J(\theta)$"></a>梯度下降法求解$\frac{\partial}{\partial\theta_j}J(\theta)$</h2><h3 id="u62EC_u53F7_5B_5D_u5185_u7B2C_u4E00_u6C42_u548C_u9879_u7684_u5BFC_u6570"><a href="#u62EC_u53F7_5B_5D_u5185_u7B2C_u4E00_u6C42_u548C_u9879_u7684_u5BFC_u6570" class="headerlink" title="括号[]内第一求和项的导数"></a>括号[]内第一求和项的导数</h3><span>$$\begin{align}
 \frac{\partial y^{(i)}\log(h_{\theta}(x^{(i)})}{\partial \theta_j}
@@ -100,7 +100,7 @@ J^{(i)}(\theta)=
 <p>以上两式求和得<br><span>$$\begin{equation}
  (y^{(i)}-h_{\theta}(x^{(i)}))x^{(j)}
  \end{equation}$$</span><!-- Has MathJax --><br> 因此<br><span>$$\begin{equation}
-\frac{\partial}{\partial\theta_j}J(\theta)=\frac{1}{m}(h_{\theta}(x^{(i)})-y^{(i)})x^{(j)}
+\frac{\partial}{\partial\theta_j}J(\theta)=\frac{1}{N}(h_{\theta}(x^{(i)})-y^{(i)})x^{(j)}
  \end{equation}$$</span><!-- Has MathJax --></p>
 
       
@@ -126,6 +126,8 @@ J^{(i)}(\theta)=
 
 
  <nav id="pagination" >
+    
+    <a href="/2016/01/30/C-实现的基于TCP传输的数据组包程序/" class="alignleft prev" >上一页</a>
     
     
     <a href="/2016/01/21/WPF音频播放与波形显示-三/" class="alignright next" >下一页</a>
@@ -158,6 +160,8 @@ J^{(i)}(\theta)=
 <div class="widget tag">
   <h3 class="title">标签</h3>
   <ul class="entry">
+  
+    <li><a href="/tags/C/">C#</a><small>5</small></li>
   
     <li><a href="/tags/Hexo/">Hexo</a><small>1</small></li>
   
