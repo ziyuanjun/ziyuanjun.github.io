@@ -1,0 +1,182 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>C#中使用NAudio做自定义播放器 | Ziyuan&#39;s blog</title>
+  <meta name="author" content="Zi-Yuan">
+  
+  <meta name="description" content="ziyuan">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="C#中使用NAudio做自定义播放器"/>
+  <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Ziyuan&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Ziyuan&#39;s blog</a></h1>
+  <h2><a href="/">人生就是这样，你永远不知道计划明天完成的事，是否来得及去完成。</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-03-02T10:52:03.000Z"><a href="/2016/03/02/C-中使用NAudio做自定义播放器/">Mar 2 2016</a></time>
+      
+      
+  
+    <h1 class="title">C#中使用NAudio做自定义播放器</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><strong>目的：</strong><br>利用<a href="http://naudio.codeplex.com/" target="_blank" rel="external">NAudio</a>中提供的WaveProvider编写出自定义的声音播放器，能够播放自己想要的声音数据。</p>
+<a id="more"></a>
+<h2 id="u4E00_u3001_u81EA_u5B9A_u4E49_u7684WaveProvider"><a href="#u4E00_u3001_u81EA_u5B9A_u4E49_u7684WaveProvider" class="headerlink" title="一、自定义的WaveProvider"></a>一、自定义的WaveProvider</h2><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">SelfPlayer</span>: <span class="title">WaveProvider16</span> <span class="comment">//继承自WaveProvider16</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">SelfPlayer</span>(<span class="params"></span>): <span class="title">base</span>(<span class="params"></span>) </span>&#123; &#125;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">SelfPlayer</span>(<span class="params"><span class="keyword">int</span> sampleRate</span>): <span class="title">base</span>(<span class="params">sampleRate, <span class="number">1</span></span>) </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">int</span> audioRate = <span class="number">1000</span>; <span class="comment">//测试音频的频率</span></span><br><span class="line"> <span class="keyword">double</span> Amplitude = <span class="number">0.5</span>; <span class="comment">//测试音频的振幅</span></span><br><span class="line"> </span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">short</span>[] waveData = <span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">2000</span>]; <span class="comment">//模拟的音频数据点数</span></span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">int</span> playPos = <span class="number">0</span>; <span class="comment">//播放点的位置</span></span><br><span class="line"> <span class="keyword">double</span> t = <span class="number">0</span>; <span class="comment">//起始时刻</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span> WaveOut selfWaveout = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> <span class="title">Read</span>(<span class="params"><span class="keyword">short</span>[] buffer, <span class="keyword">int</span> offset, <span class="keyword">int</span> sampleCount</span>)</span><br><span class="line"> </span>&#123;<span class="comment">//通过该函数给播放数据 buffer 提供数据</span></span><br><span class="line">    <span class="keyword">short</span> dataTemp = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; sampleCount; index++)</span><br><span class="line">    &#123;</span><br><span class="line">	t += <span class="number">1</span>/(<span class="keyword">double</span>)<span class="keyword">base</span>.WaveFormat.SampleRate;</span><br><span class="line">	dataTemp = (<span class="keyword">short</span>)(<span class="keyword">short</span>.MaxValue * Amplitude * Math.Sin(<span class="number">2</span> * Math.PI * audioRate * t));</span><br><span class="line">	buffer[offset + index] = dataTemp;</span><br><span class="line">	waveData[playPos] = dataTemp;</span><br><span class="line">	playPos++;</span><br><span class="line">	<span class="keyword">if</span> (playPos == <span class="number">2000</span>)</span><br><span class="line">	    playPos = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sampleCount;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在主函数中使用如下方式播放测试音频：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        player.selfWaveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        player.selfWaveout.Init(player);</span><br><span class="line">        player.selfWaveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="u4E8C_u3001_u72EC_u7ACB_u7EBF_u7A0B_u7684_u64AD_u653E"><a href="#u4E8C_u3001_u72EC_u7ACB_u7EBF_u7A0B_u7684_u64AD_u653E" class="headerlink" title="二、独立线程的播放"></a>二、独立线程的播放</h2><p>通常声音数据的获取和播放会使用独立的线程，这是如果采用下面的方式，则不能获得连续的声音：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        Thread th = <span class="keyword">new</span> Thread(threadPlay); <span class="comment">//在新线程中播放声音</span></span><br><span class="line">        th.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">threadPlay</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        player.selfWaveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        player.selfWaveout.Init(player);</span><br><span class="line">        player.selfWaveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>只听到首次较短时间的声音，之后就没有声音播出了。暂时还不清楚原因，可能的原因之一是不能用Player自身的Waveout来播放自身，于是编写如下测试：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    WaveOut waveout = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        Thread th = <span class="keyword">new</span> Thread(threadPlay);</span><br><span class="line">        th.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">threadPlay</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        waveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        waveout.Init(player);</span><br><span class="line">        waveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>结果发现依然只能播出短暂的声音。可能的原因：Waveout在Init之后需要一定的延迟，但经测试仍然不对。最后将初始化的语句放到线程之外，就可以了：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    WaveOut waveout = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        waveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        waveout.Init(player);</span><br><span class="line">        Thread th = <span class="keyword">new</span> Thread(threadPlay);</span><br><span class="line">        th.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">threadPlay</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        waveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>类似地，下面的代码也是可行的：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        player.selfWaveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        player.selfWaveout.Init(player);</span><br><span class="line">        Thread th = <span class="keyword">new</span> Thread(threadPlay);</span><br><span class="line">        th.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">threadPlay</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        player.selfWaveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">```    </span><br><span class="line">事实上，可以把许多播放的细节都隐藏到自定义的Player中：</span><br><span class="line">``` csharp</span><br><span class="line"><span class="keyword">class</span> <span class="title">SelfPlayer</span>: <span class="title">WaveProvider16</span></span><br><span class="line">&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">SelfPlayer</span>(<span class="params"></span>): <span class="title">base</span>(<span class="params"></span>) </span>&#123; &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">SelfPlayer</span>(<span class="params"><span class="keyword">int</span> sampleRate</span>): <span class="title">base</span>(<span class="params">sampleRate, <span class="number">1</span></span>) </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">int</span> audioRate = <span class="number">1000</span>;</span><br><span class="line">     <span class="keyword">double</span> Amplitude = <span class="number">0.5</span>;</span><br><span class="line">     </span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">short</span>[] waveData = <span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">2000</span>];        </span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">int</span> playPos = <span class="number">0</span>;</span><br><span class="line">     <span class="keyword">double</span> t = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> WaveOut selfWaveout = <span class="keyword">null</span>;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params"></span>)<span class="comment">//自初始化</span></span><br><span class="line">     </span>&#123;</span><br><span class="line">         <span class="keyword">this</span>.selfWaveout = <span class="keyword">new</span> WaveOut();</span><br><span class="line">         <span class="keyword">this</span>.selfWaveout.Init(<span class="keyword">this</span>);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ThPlay</span>(<span class="params"></span>)<span class="comment">//线程自播放</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        Thread thplay = <span class="keyword">new</span> Thread(ThPlaying);</span><br><span class="line">        thplay.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ThPlaying</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.Play();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Play</span>(<span class="params"></span>)<span class="comment">//自播放</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.selfWaveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> <span class="title">Read</span>(<span class="params"><span class="keyword">short</span>[] buffer, <span class="keyword">int</span> offset, <span class="keyword">int</span> sampleCount</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">short</span> dataTemp = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; sampleCount; index++)</span><br><span class="line">        &#123;</span><br><span class="line">            t += <span class="number">1</span>/(<span class="keyword">double</span>)<span class="keyword">base</span>.WaveFormat.SampleRate;</span><br><span class="line">            dataTemp = (<span class="keyword">short</span>)(<span class="keyword">short</span>.MaxValue * Amplitude * Math.Sin(<span class="number">2</span> * Math.PI * audioRate * t));</span><br><span class="line">            buffer[offset + index] = dataTemp;</span><br><span class="line">            waveData[playPos] = dataTemp;</span><br><span class="line">            playPos++;</span><br><span class="line">            <span class="keyword">if</span> (playPos == <span class="number">2000</span>)</span><br><span class="line">                playPos = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sampleCount;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样在调用函数中就可以比较简洁：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        player.Init();</span><br><span class="line">        player.ThPlay();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="u603B_u7ED3"><a href="#u603B_u7ED3" class="headerlink" title="总结"></a>总结</h2><p>Waveout的初始化（<code>Init</code>)和播放（<code>Play</code>）不能在同一个进程中。</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/C/">C#</a>
+  </div>
+
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+ <nav id="pagination" >
+    
+    
+    <a href="/2016/01/30/C-的InteropServices类实现特殊的内存操作/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+
+<section id="comment">
+<!-- 多说评论框 start -->
+ <div class="ds-thread" data-thread-key="2016/03/02/C-中使用NAudio做自定义播放器/" data-title="C#中使用NAudio做自定义播放器" data-url="http://yoursite.com/2016/03/02/C-中使用NAudio做自定义播放器/"></div> 
+<!-- 多说评论框 end --> 
+<!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
+</section>
+
+
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/C/">C#</a><small>6</small></li>
+  
+    <li><a href="/tags/Hexo/">Hexo</a><small>1</small></li>
+  
+    <li><a href="/tags/Marchine-Learning/">Marchine Learning</a><small>1</small></li>
+  
+    <li><a href="/tags/WPF/">WPF</a><small>3</small></li>
+  
+    <li><a href="/tags/vim/">vim</a><small>1</small></li>
+  
+    <li><a href="/tags/生活/">生活</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=8&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2900179830&verifier=78598ae5&dpc=1"></iframe>
+
+
+  <div class="widget tag">
+<h3 class="title">友情链接</h3>
+<ul class="entry">
+<li><a href="https://www.researchgate.net/profile/Ziyuan_Xiong" title="Ziyuan's ResearchGate">Ziyuan Research</a></li>
+</ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Zi-Yuan
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
