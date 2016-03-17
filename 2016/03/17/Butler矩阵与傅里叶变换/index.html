@@ -67,7 +67,8 @@
 </ol>
 <a id="more"></a>
 <h2 id="u4E00-__u8F93_u5165_u4E0E_u8F93_u51FA_u4E4B_u95F4_u7684_u8BA1_u7B97"><a href="#u4E00-__u8F93_u5165_u4E0E_u8F93_u51FA_u4E4B_u95F4_u7684_u8BA1_u7B97" class="headerlink" title="一. 输入与输出之间的计算"></a>一. 输入与输出之间的计算</h2><p>以8×8的接收阵角度为例，输入用$x_1$,…,$x_8$来表示， 输入用$y_1$,…,$y_8$来表示，如下图。</p>
-<p><img src="/Images/Array/ButterEightElement.png" alt="Drawing" width="500px"><br>下面来分析如何从输入的$x$得出输出$y$。图中的耦合器在其直连通道上信号不产生相移，而在<br>其交叉通道上信号具有90°的相移，90°的相移相当于-4x (x=$pi/8$)。<br>$$y_8=x_1+e^{j(3x-4x)}x_2+e^{j(2x-4x)}x_3+e^{j(2x-4x+3x-4x)}x_4+e^{j(-4x)}x_5+e^{j(-4x+3x-4x)}x_6+e^{j(-4x+2x-4x)}x_7+e^{j(-4x+2x-4x+3x-4x)}x_8$$<br>$$y_7=e^{j-4x}x_1+e^{j(3x)}x_2+e^{j(2x-4x-4x)}x_3+e^{j(2x-4x+3x)}x_4+e^{j(-4x-4x)}x_5+e^{j(-4x+3x)}x_6+e^{j(-4x+2x-4x-4x)}x_7+e^{j(-4x+2x-4x+3x)}x_8$$</p>
+<p><img src="/Images/Array/ButlerEightElement.png" alt="Drawing" width="500px"></p>
+<p>下面来分析如何从输入的$x$得出输出$y$。图中的耦合器在其直连通道上信号不产生相移，而在<br>其交叉通道上信号具有90°的相移，90°的相移相当于-4x (x=$pi/8$)。<br>$$y_8=x_1+e^{j(3x-4x)}x_2+e^{j(2x-4x)}x_3+e^{j(2x-4x+3x-4x)}x_4+e^{j(-4x)}x_5+e^{j(-4x+3x-4x)}x_6+e^{j(-4x+2x-4x)}x_7+e^{j(-4x+2x-4x+3x-4x)}x_8$$<br>$$y_7=e^{j-4x}x_1+e^{j(3x)}x_2+e^{j(2x-4x-4x)}x_3+e^{j(2x-4x+3x)}x_4+e^{j(-4x-4x)}x_5+e^{j(-4x+3x)}x_6+e^{j(-4x+2x-4x-4x)}x_7+e^{j(-4x+2x-4x+3x)}x_8$$</p>
 <p>…</p>
 <p>$$y_8=x_1+e^{j(-x)}x_2+e^{j(-2x)}x_3+e^{j(-3x)}x_4+e^{j(-4x)}x_5+e^{j(-5x)}x_6+e^{j(-6x)}x_7+e^{j(-7x)}x_8$$<br>$$y_7=e^{j-4x}x_1+e^{j(3x)}x_2+e^{j(-6x)}x_3+e^{j(x)}x_4+e^{j(-8x)}x_5+e^{j(-x)}x_6+e^{j(-10x)}x_7+e^{j(-3x)}x_8$$</p>
 <p>…</p>
