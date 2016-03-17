@@ -68,7 +68,7 @@
 <a id="more"></a>
 <h2 id="u4E00-__u8F93_u5165_u4E0E_u8F93_u51FA_u4E4B_u95F4_u7684_u8BA1_u7B97"><a href="#u4E00-__u8F93_u5165_u4E0E_u8F93_u51FA_u4E4B_u95F4_u7684_u8BA1_u7B97" class="headerlink" title="一. 输入与输出之间的计算"></a>一. 输入与输出之间的计算</h2><p>以8×8的接收阵角度为例，输入用$x_1$,…,$x_8$来表示， 输入用$y_1$,…,$y_8$来表示，如下图。</p>
 <p><img src="/Images/Array/ButlerEightElement.png" alt="Drawing" width="500px"></p>
-<p>下面来分析如何从输入的$x$得出输出$y$。图中的耦合器在其直连通道上信号不产生相移，而在<br>其交叉通道上信号具有90°的相移，90°的相移相当于-4x (x=$pi/8$)。<br><span>$$\begin{aligned}
+<p>下面来分析如何从输入的$x$得出输出$y$。图中的耦合器在其直连通道上信号不产生相移，而在<br>其交叉通道上信号具有90°的相移，90°的相移相当于-4x (x=$\pi/8$)。<br><span>$$\begin{aligned}
 y_8=&amp;x_1+e^{j(3x-4x)}x_2+e^{j(2x-4x)}x_3+e^{j(2x-4x+3x-4x)}x_4+e^{j(-4x)}x_5 \\
 &amp;+e^{j(-4x+3x-4x)}x_6+e^{j(-4x+2x-4x)}x_7+e^{j(-4x+2x-4x+3x-4x)}x_8
 \end{aligned}$$</span><!-- Has MathJax --></p>
@@ -93,17 +93,17 @@ e^{0} &amp; e^{j(-x)} &amp; e^{j(-2x)} &amp; e^{j(-3x)} &amp; e^{j(-4x)} &amp; e
 \end{bmatrix}
 \begin{bmatrix} x_1\\ x_2\\x_3\\x_4\\x_5\\x_6\\x_7\\x_8\end{bmatrix}
 \end{equation}$$</span><!-- Has MathJax -->
-<p>将$x=pi/8$带入上式可得<br><span>$$\begin{equation}
+<p>将$x=\pi/8$带入上式可得<br><span>$$\begin{equation}
 \begin{bmatrix} y_1\\ y_2\\y_3\\y_4\\y_5\\y_6\\y_7\\y_8\end{bmatrix}
 =\begin{bmatrix}
-e^{j(-7pi/8)} &amp; e^{j(-6pi/8)} &amp; e^{j(-5pi/8)} &amp; e^{j(-4pi/8)} &amp; e^{j(-3pi/8)} &amp; e^{j(-2pi/8)} &amp; e^{j(-pi/8)} &amp; e^{0} \\ 
-e^{j(-3pi/8)} &amp; e^{j(-10pi/8)} &amp; e^{j(-pi/8)} &amp; e^{j(-8pi/8)} &amp; e^{j(pi/8)} &amp; e^{j(-6pi/8)} &amp; e^{j(3pi/8)} &amp; e^{j(-4pi/8)} \\ 
-e^{j(-6pi/8)} &amp; e^{j(-pi/8)} &amp; e^{j(-12pi/8)} &amp; e^{j(-7pi/8)} &amp; e^{j(-2pi/8)} &amp; e^{j(3pi/8)} &amp; e^{j(-8pi/8)} &amp; e^{j(-3pi/8)} \\ 
-e^{j(-2pi/8)} &amp; e^{j(-5pi/8)} &amp; e^{j(-8pi/8)} &amp; e^{j(-11pi/8)} &amp; e^{j(2pi/8)} &amp; e^{j(-pi/8)} &amp; e^{j(-4pi/8)} &amp; e^{j(-7pi/8)} \\ 
-e^{j(-7pi/8)} &amp; e^{j(-4pi/8)} &amp; e^{j(-pi/8)} &amp; e^{j(2pi/8)} &amp; e^{j(-11pi/8)} &amp; e^{j(-8pi/8)} &amp; e^{j(-5pi/8)} &amp; e^{j(-2pi/8)} \\ 
-e^{j(-3pi/8)} &amp; e^{j(-8pi/8)} &amp; e^{j(3pi/8)} &amp; e^{j(-2pi/8)} &amp; e^{j(-7pi/8)} &amp; e^{j(-12pi/8)} &amp; e^{j(-pi/8)} &amp; e^{j(-6pi/8)} \\ 
-e^{j(-4pi/8)} &amp; e^{j(3pi/8)} &amp; e^{j(-6pi/8)} &amp; e^{j(pi/8)} &amp; e^{j(-8pi/8)} &amp; e^{j(-pi/8)} &amp; e^{j(-10pi/8)} &amp; e^{j(-3pi/8)} \\ 
-e^{0} &amp; e^{j(-pi/8)} &amp; e^{j(-2pi/8)} &amp; e^{j(-3pi/8)} &amp; e^{j(-4pi/8)} &amp; e^{j(-5pi/8)} &amp; e^{j(-6pi/8)} &amp; e^{j(-7pi/8)}
+e^{j(-7\pi/8)} &amp; e^{j(-6\pi/8)} &amp; e^{j(-5\pi/8)} &amp; e^{j(-4\pi/8)} &amp; e^{j(-3\pi/8)} &amp; e^{j(-2\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{0} \\ 
+e^{j(-3\pi/8)} &amp; e^{j(-10\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(\pi/8)} &amp; e^{j(-6\pi/8)} &amp; e^{j(3\pi/8)} &amp; e^{j(-4\pi/8)} \\ 
+e^{j(-6\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-12\pi/8)} &amp; e^{j(-7\pi/8)} &amp; e^{j(-2\pi/8)} &amp; e^{j(3\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(-3\pi/8)} \\ 
+e^{j(-2\pi/8)} &amp; e^{j(-5\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(-11\pi/8)} &amp; e^{j(2\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-4\pi/8)} &amp; e^{j(-7\pi/8)} \\ 
+e^{j(-7\pi/8)} &amp; e^{j(-4\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(2\pi/8)} &amp; e^{j(-11\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(-5\pi/8)} &amp; e^{j(-2\pi/8)} \\ 
+e^{j(-3\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(3\pi/8)} &amp; e^{j(-2\pi/8)} &amp; e^{j(-7\pi/8)} &amp; e^{j(-12\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-6\pi/8)} \\ 
+e^{j(-4\pi/8)} &amp; e^{j(3\pi/8)} &amp; e^{j(-6\pi/8)} &amp; e^{j(\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-10\pi/8)} &amp; e^{j(-3\pi/8)} \\ 
+e^{0} &amp; e^{j(-\pi/8)} &amp; e^{j(-2\pi/8)} &amp; e^{j(-3\pi/8)} &amp; e^{j(-4\pi/8)} &amp; e^{j(-5\pi/8)} &amp; e^{j(-6\pi/8)} &amp; e^{j(-7\pi/8)}
 \end{bmatrix}
 \begin{bmatrix} x_1\\ x_2\\x_3\\x_4\\x_5\\x_6\\x_7\\x_8\end{bmatrix}
 \end{equation}$$</span><!-- Has MathJax --></p>
