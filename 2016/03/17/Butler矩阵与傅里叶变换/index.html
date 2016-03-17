@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Logistic回归的梯度下降法推导 | Ziyuan&#39;s blog</title>
+  <title>Butler矩阵与傅里叶变换 | Ziyuan&#39;s blog</title>
   <meta name="author" content="Zi-Yuan">
   
   <meta name="description" content="ziyuan">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Logistic回归的梯度下降法推导"/>
+  <meta property="og:title" content="Butler矩阵与傅里叶变换"/>
   <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
 
   
@@ -51,57 +51,22 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-01-21T14:52:29.000Z"><a href="/2016/01/21/Logistic回归的梯度下降法推导/">Jan 21 2016</a></time>
+        <time datetime="2016-03-17T12:43:36.000Z"><a href="/2016/03/17/Butler矩阵与傅里叶变换/">Mar 17 2016</a></time>
       
       
   
-    <h1 class="title">Logistic回归的梯度下降法推导</h1>
+    <h1 class="title">Butler矩阵与傅里叶变换</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><em>Marchine Learning in Action</em> 一书第五章介绍了逻辑回归(Logistic regression)，但是书中没有给出目标函数，也没有给出梯度下降法的推导。在解释代码处文中指出：<br><blockquote><p>A little math is needed to derive the equations used here, and I’ll leave you to look into that further if desired.</p>
-</blockquote></p>
-<p>So, 本文的目的就是展示所谓的<code>A little math</code>。<br><a id="more"></a></p>
-<h2 id="Logistic_regression"><a href="#Logistic_regression" class="headerlink" title="Logistic regression"></a>Logistic regression</h2><h3 id="sigmoid_function"><a href="#sigmoid_function" class="headerlink" title="sigmoid function"></a>sigmoid function</h3><p>$$<br>\sigma(z)=\frac{1}{1+e^{-z}}<br>$$</p>
-<p>结合线性分类器，分类方法写为：</p>
-<p>\begin{equation}<br>h_{\theta}(x)=\frac{1}{1+e^{-\theta^Tx}}<br>\end{equation}</p>
-<p>其中，$\theta$和$x$都是矢量，如果$h_{\theta}(x)&gt;0.5$则$y=1$, 否则$y=0$。根据$y$的取值，样本$x$就被分成两类。<br>下面的问题是如何求出最优的$\theta$？</p>
-<h2 id="u76EE_u6807_u51FD_u6570"><a href="#u76EE_u6807_u51FD_u6570" class="headerlink" title="目标函数"></a>目标函数</h2><p>一般而言目标函数会写成所有训练样本的误差项求和的形式<br><span>$$\begin{equation}
-J(\theta)=\frac{1}{N}\sum_{i=1}^N \frac{1}{2}[y^{(i)}-h_{\theta}(x^{(i)})]^2
-\end{equation}$$</span><!-- Has MathJax --></p>
-<p>但是对于Logstic回归来说，这个目标函数并不好，相对于自变量是一个非凸函数，<br>因此使用另外的目标函数，这个目标函数是</p>
-<span>$$\begin{equation}
-J^{(i)}(\theta)=
-\begin{cases}
- -\log(1-h_{\theta}(x^{(i)})) &amp; \text{if } y^{(i)}=0\\
--\log(h_{\theta}(x^{(i)}) &amp;\text{if } y^{(i)}=1
-\end{cases}
-\end{equation}$$</span><!-- Has MathJax -->
-<p>定义如下函数<br><span>$$\begin{equation}
-\text{Cost}(h_{\theta}(x),y)=
--y\log(h_{\theta}(x))-(1-y)\log(1-h_{\theta}(x))
-\end{equation}$$</span><!-- Has MathJax --><br>并将目标函数写为<br><span>$$\begin{equation}
-J^{(i)}(\theta)=
-\frac{1}{N}\sum_{i=1}^N\text{Cost}(h_{\theta}(x^{(i)}),y^{(i)})=
--\frac{1}{N}[y^{(i)}\log(h_{\theta}(x^{(i)}))+(1-y^{(i)})\log(1-h_{\theta}(x^{(i)}))]
-\end{equation}$$</span><!-- Has MathJax --></p>
-<h2 id="u68AF_u5EA6_u4E0B_u964D_u6CD5_u6C42_u89E3_24_5Cfrac_7B_5Cpartial_7D_7B_5Cpartial_5Ctheta_j_7DJ_28_5Ctheta_29_24"><a href="#u68AF_u5EA6_u4E0B_u964D_u6CD5_u6C42_u89E3_24_5Cfrac_7B_5Cpartial_7D_7B_5Cpartial_5Ctheta_j_7DJ_28_5Ctheta_29_24" class="headerlink" title="梯度下降法求解$\frac{\partial}{\partial\theta_j}J(\theta)$"></a>梯度下降法求解$\frac{\partial}{\partial\theta_j}J(\theta)$</h2><h3 id="u62EC_u53F7_5B_5D_u5185_u7B2C_u4E00_u6C42_u548C_u9879_u7684_u5BFC_u6570"><a href="#u62EC_u53F7_5B_5D_u5185_u7B2C_u4E00_u6C42_u548C_u9879_u7684_u5BFC_u6570" class="headerlink" title="括号[]内第一求和项的导数"></a>括号[]内第一求和项的导数</h3><span>$$\begin{align}
-\frac{\partial y^{(i)}\log(h_{\theta}(x^{(i)})}{\partial \theta_j}
-=&amp;y^{(i)}(1+e^{-\theta^T x})\frac{e^{-\theta^T x}x^{(j)}}{(1+e^{-\theta^T x})^2}\\
-=&amp;y^{(i)}\frac{e^{-\theta^T x}x^{(j)}}{1+e^{-\theta^T x}}\\
-\end{align}$$</span><!-- Has MathJax -->
-<h3 id="u62EC_u53F7_5B_5D_u5185_u7B2C_u4E8C_u6C42_u548C_u9879_u7684_u5BFC_u6570"><a href="#u62EC_u53F7_5B_5D_u5185_u7B2C_u4E8C_u6C42_u548C_u9879_u7684_u5BFC_u6570" class="headerlink" title="括号[]内第二求和项的导数"></a>括号[]内第二求和项的导数</h3><span>$$\begin{align}
-\frac{\partial (1-y^{(i)})\log(1-h_{\theta}(x^{(i)})}{\partial \theta_j}
-=&amp;(1-y^{(i)}) \frac{(1+e^{-\theta^T x})}{e^{-\theta^T x}} \times \frac{-e^{-\theta^T x}}{(1+e^{-\theta^T x})^2}x^{(j)}\\
-=&amp;(y^{(i)}-1)\frac{x^{(j)}}{1+e^{-\theta^T x}}\\
-\end{align}$$</span><!-- Has MathJax -->
-<p>以上两式求和得<br><span>$$\begin{equation}
- (y^{(i)}-h_{\theta}(x^{(i)}))x^{(j)}
- \end{equation}$$</span><!-- Has MathJax --><br> 因此<br><span>$$\begin{equation}
-\frac{\partial}{\partial\theta_j}J(\theta)=\frac{1}{N}(h_{\theta}(x^{(i)})-y^{(i)})x^{(j)}
- \end{equation}$$</span><!-- Has MathJax --></p>
+        <p><strong>实现目标：</strong></p>
+<ol>
+<li>分析Butler矩阵与傅里叶变换直接的关系</li>
+</ol>
+<a id="more"></a>
+<h2 id="u4E00-__u8F93_u5165_u4E0E_u8F93_u51FA_u4E4B_u95F4_u7684_u8BA1_u7B97"><a href="#u4E00-__u8F93_u5165_u4E0E_u8F93_u51FA_u4E4B_u95F4_u7684_u8BA1_u7B97" class="headerlink" title="一. 输入与输出之间的计算"></a>一. 输入与输出之间的计算</h2><p>以8×8的接收阵角度为例，输入用$$x_1$$,…,$$x_8$$来表示， 输入用$$y_1$$,…,$$y_8$$来表示，如下图。</p>
 
       
     </div>
@@ -111,7 +76,7 @@ J^{(i)}(\theta)=
         
   
   <div class="tags">
-    <a href="/tags/Marchine-Learning/">Marchine Learning</a>
+    <a href="/tags/Antenna/">Antenna</a>, <a href="/tags/Array/">Array</a>
   </div>
 
 
@@ -127,17 +92,15 @@ J^{(i)}(\theta)=
 
  <nav id="pagination" >
     
-    <a href="/2016/01/30/C-实现的基于TCP传输的数据组包程序/" class="alignleft prev" >上一页</a>
     
-    
-    <a href="/2016/01/21/WPF音频播放与波形显示-三/" class="alignright next" >下一页</a>
+    <a href="/2016/03/08/WPF解决Win7管理员权限/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>
 
 <section id="comment">
 <!-- 多说评论框 start -->
- <div class="ds-thread" data-thread-key="2016/01/21/Logistic回归的梯度下降法推导/" data-title="Logistic回归的梯度下降法推导" data-url="http://yoursite.com/2016/01/21/Logistic回归的梯度下降法推导/"></div> 
+ <div class="ds-thread" data-thread-key="2016/03/17/Butler矩阵与傅里叶变换/" data-title="Butler矩阵与傅里叶变换" data-url="http://yoursite.com/2016/03/17/Butler矩阵与傅里叶变换/"></div> 
 <!-- 多说评论框 end --> 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
 </section>

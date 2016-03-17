@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hello World | Ziyuan&#39;s blog</title>
+  <title>WPF解决Win7管理员权限 | Ziyuan&#39;s blog</title>
   <meta name="author" content="Zi-Yuan">
   
   <meta name="description" content="ziyuan">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="Hello World"/>
+  <meta property="og:title" content="WPF解决Win7管理员权限"/>
   <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
 
   
@@ -51,34 +51,27 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2014-11-23T01:02:35.000Z"><a href="/2014/11/23/hello-world/">Nov 23 2014</a></time>
+        <time datetime="2016-03-08T07:51:55.000Z"><a href="/2016/03/08/WPF解决Win7管理员权限/">Mar 8 2016</a></time>
       
       
   
-    <h1 class="title">Hello World</h1>
+    <h1 class="title">WPF解决Win7管理员权限</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
+        <p><strong>实现目标：</strong><br>在win7或以上系统运行时，向注册表添加信息，通常会遇到管理员权限问题。有两种解决办法：</p>
 <a id="more"></a>
-<h2 id="1-_Quick_Start"><a href="#1-_Quick_Start" class="headerlink" title="1. Quick Start"></a>1. Quick Start</h2><h3 id="1-1_Create_a_new_post"><a href="#1-1_Create_a_new_post" class="headerlink" title="1.1 Create a new post"></a>1.1 Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">"My New Post"</span></span><br></pre></td></tr></table></figure>
-<p><strong>[ZiYuan Ps:]</strong> 不使用hexo命令也可以新建post，直接在_post目录下新建markdown文件即可，<br>只不过需要自己加入title，date，tags标记。<br>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="1-2_Run_server"><a href="#1-2_Run_server" class="headerlink" title="1.2 Run server"></a>1.2 Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-<p><strong>[ZiYuan Ps:]</strong> 生成后即可访问<code>localhost:4000</code> 。<br>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="1-3_Generate_static_files"><a href="#1-3_Generate_static_files" class="headerlink" title="1.3 Generate static files"></a>1.3 Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="1-4_Deploy_to_remote_sites"><a href="#1-4_Deploy_to_remote_sites" class="headerlink" title="1.4 Deploy to remote sites"></a>1.4 Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-<p><strong>[ZiYuan Ps:]</strong><br>总结：</p>
-<ol>
-<li>最常用的命令只有三个：<code>hexo g</code>, <code>hexo s</code>, <code>hexo d</code>。</li>
-<li>墙裂推荐zhaowei的<a href="http://zipperary.com/categories/hexo/" target="_blank" rel="external">博客</a></li>
-</ol>
-<h2 id="2-__u8FDB_u9636"><a href="#2-__u8FDB_u9636" class="headerlink" title="2. 进阶"></a>2. 进阶</h2><h3 id="2-1__u4EE3_u7801_u9AD8_u4EAE"><a href="#2-1__u4EE3_u7801_u9AD8_u4EAE" class="headerlink" title="2.1 代码高亮"></a>2.1 代码高亮</h3><p>使用符号：`<br><strong>代码段</strong><br>``` 语言类型<br>bla bla bla<br>```<br>注意结束时不要有空格。</p>
-<p><strong>行内代码</strong><br>`bla bla`</p>
-<h3 id="2-2_Latex"><a href="#2-2_Latex" class="headerlink" title="2.2 Latex"></a>2.2 Latex</h3><h3 id="2-3__u8D85_u94FE_u63A5"><a href="#2-3__u8D85_u94FE_u63A5" class="headerlink" title="2.3 超链接"></a>2.3 超链接</h3><p>[连接描述](连接地址)</p>
+<h2 id="u4E00-__u7F16_u8BD1_u540E_u4FEE_u6539"><a href="#u4E00-__u7F16_u8BD1_u540E_u4FEE_u6539" class="headerlink" title="一. 编译后修改"></a>一. 编译后修改</h2><h3 id="u76F4_u63A5_u4FEE_u6539_u201Cexe_u201D_u6587_u4EF6"><a href="#u76F4_u63A5_u4FEE_u6539_u201Cexe_u201D_u6587_u4EF6" class="headerlink" title="直接修改“exe”文件"></a>直接修改“exe”文件</h3><h3 id="u5B89_u88C5_u7ED3_u675F_u540E_u4FEE_u6539_u5F00_u59CB_u83DC_u5355"><a href="#u5B89_u88C5_u7ED3_u675F_u540E_u4FEE_u6539_u5F00_u59CB_u83DC_u5355" class="headerlink" title="安装结束后修改开始菜单"></a>安装结束后修改开始菜单</h3><h2 id="u4E8C-__u7F16_u8BD1_u524D_u4FEE_u6539"><a href="#u4E8C-__u7F16_u8BD1_u524D_u4FEE_u6539" class="headerlink" title="二. 编译前修改"></a>二. 编译前修改</h2><p>在程序中加入Manifest  资源</p>
+<p> 在打开的工程中，看下Properties 下面是否有app.manifest 这个文件，如果没有，右击工程在菜单中选择“属性”，</p>
+<p>选中”Security”，在界面中勾选”Enable ClickOnce Security Settings”后，在Properties下就有自动生成app.manifest文件。</p>
+<p>打开app.manifest文件，将</p>
+<p><code>&lt;requestedExecutionLevel level=&quot;asInvoker&quot; uiAccess=&quot;false&quot; /&gt;</code></p>
+<p>改为</p>
+<p><code>&lt;requestedExecutionLevel level=&quot;requireAdministrator&quot; uiAccess=&quot;false&quot; /&gt;</code></p>
+<p>然后在”Security”中再勾去”Enable ClickOnce Security Settings”后，重新编译即可。</p>
+<p>参考链接：<a href="http://zouqinghua11111.blog.163.com/blog/static/67997654201242334620628/" target="_blank" rel="external">http://zouqinghua11111.blog.163.com/blog/static/67997654201242334620628/</a> </p>
 
       
     </div>
@@ -88,7 +81,7 @@
         
   
   <div class="tags">
-    <a href="/tags/Hexo/">Hexo</a>
+    <a href="/tags/C/">C#</a>, <a href="/tags/WPF/">WPF</a>
   </div>
 
 
@@ -104,15 +97,17 @@
 
  <nav id="pagination" >
     
-    <a href="/2014/12/23/Win7中的vimdiff不能用？/" class="alignleft prev" >上一页</a>
+    <a href="/2016/03/17/Butler矩阵与傅里叶变换/" class="alignleft prev" >上一页</a>
     
+    
+    <a href="/2016/03/08/WPF如何使用相对路径创建鼠标光标/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>
 
 <section id="comment">
 <!-- 多说评论框 start -->
- <div class="ds-thread" data-thread-key="2014/11/23/hello-world/" data-title="Hello World" data-url="http://yoursite.com/2014/11/23/hello-world/"></div> 
+ <div class="ds-thread" data-thread-key="2016/03/08/WPF解决Win7管理员权限/" data-title="WPF解决Win7管理员权限" data-url="http://yoursite.com/2016/03/08/WPF解决Win7管理员权限/"></div> 
 <!-- 多说评论框 end --> 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
 </section>
