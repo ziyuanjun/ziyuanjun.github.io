@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>WPF如何使用相对路径创建鼠标光标 | Ziyuan&#39;s blog</title>
+  <title>用树莓派制作FM无线发射站 | Ziyuan&#39;s blog</title>
   <meta name="author" content="Zi-Yuan">
   
   <meta name="description" content="ziyuan">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="WPF如何使用相对路径创建鼠标光标"/>
+  <meta property="og:title" content="用树莓派制作FM无线发射站"/>
   <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
 
   
@@ -51,19 +51,43 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-03-08T03:22:30.000Z"><a href="/2016/03/08/WPF如何使用相对路径创建鼠标光标/">Mar 8 2016</a></time>
+        <time datetime="2016-03-17T12:43:36.000Z"><a href="/2016/03/17/用树莓派制作FM无线发射站/">Mar 17 2016</a></time>
       
       
   
-    <h1 class="title">WPF如何使用相对路径创建鼠标光标</h1>
+    <h1 class="title">用树莓派制作FM无线发射站</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><strong>目的：</strong><br>如果在代码中使用需要 this.Cursor = new Cursor(“鼠标资源路径”); 此处的[鼠标资源路径]需要使用绝对路径，这样不便于程序移植。</p>
-<a id="more"></a>
-<p><strong>解决方法</strong><br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">StreamResourceInfo sri=Application.GetResourceStream(<span class="keyword">new</span> Uri(<span class="string">"Cur\\xx.cur"</span>,UriKind.Relative));</span><br><span class="line">Cursor customCursor=<span class="keyword">new</span> Cursor(sri.Stream);</span><br><span class="line"><span class="keyword">this</span>.Cursor=customCursor;</span><br></pre></td></tr></table></figure></p>
+        <a id="more"></a>
+<h1 id="u5B89_u88C5_u64CD_u4F5C_u7CFB_u7EDF"><a href="#u5B89_u88C5_u64CD_u4F5C_u7CFB_u7EDF" class="headerlink" title="安装操作系统"></a>安装操作系统</h1><ol>
+<li>官网下载镜像 <a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank" rel="external">https://www.raspberrypi.org/downloads/raspbian/</a></li>
+<li>使用 Win32DiskImager 镜像烧录软件，将镜像烧录到 SD 卡<br><a href="https://sourceforge.net/projects/win32diskimager/" target="_blank" rel="external">https://sourceforge.net/projects/win32diskimager/</a></li>
+<li>sudo apt-get update sudo apt-get upgrade</li>
+<li>sudo raspi-config 配置系统，主要是区域设置，这样键盘才能输入特殊字符</li>
+<li>sudo apt-get install xrdp 安装远程桌面支持</li>
+</ol>
+<h1 id="u6587_u4EF6_u8FC1_u79FB"><a href="#u6587_u4EF6_u8FC1_u79FB" class="headerlink" title="文件迁移"></a>文件迁移</h1><ol>
+<li>从 win7 向 pi 传送文件 下载 WinSCP, 参考链接：</li>
+</ol>
+<h1 id="u5C06_pi__u4F5C_u4E3A_u4E00_u4E2A_FM__u53D1_u5C04_u7AD9"><a href="#u5C06_pi__u4F5C_u4E3A_u4E00_u4E2A_FM__u53D1_u5C04_u7AD9" class="headerlink" title="将 pi 作为一个 FM 发射站"></a>将 pi 作为一个 FM 发射站</h1><ol>
+<li>下载 PiFm 工程<br><a href="http://www.icrobotics.co.uk/wiki/index.php/Turning_the_Raspberry_Pi_Into_an_FM_Transmitter" target="_blank" rel="external">http://www.icrobotics.co.uk/wiki/index.php/Turning_the_Raspberry_Pi_Into_an_FM_Transmitter</a>,<br>参照网页进行配置</li>
+<li>安装 ffmpeg</li>
+</ol>
+<p>使用 sudo apt-get install ffmpeg 的方式无法安装，于是只能编译安装。linux<br>中通常 在两种情况下需要编译安装，一是默认的安装方式找不到软件，就像<br>ffmpeg；二是想安装最 新版的软件。 在 linux 下编译安装软件的步骤如下：</p>
+<ul>
+<li>下载源码</li>
+<li>解压文件</li>
+<li>tar.gz 和 tar.bz2 打包软件，大多是通过 ./configure ;make ;make<br>install 来 安装的。进入源码目录依次执行 ./configure; make; make<br>install。</li>
+<li>编译中的配置：安装路径 ./configure –prefix=安装路径</li>
+<li>安装完成后，有的软件需要修改一下 PATH，才能在 shell<br>中调用其可执行文件。修改 PATH 的方法是 vim ~/.bashrc<br>在文件尾加上一行：PATH=\$PATH:路径 1:路径 2</li>
+<li>音频测试</li>
+</ul>
+<h1 id="u97F3_u9891_u6587_u4EF6"><a href="#u97F3_u9891_u6587_u4EF6" class="headerlink" title="音频文件"></a>音频文件</h1><ol>
+<li>在树莓派上可以用 aplay xxx.wav 来播放测试音频文件</li>
+</ol>
 
       
     </div>
@@ -73,7 +97,7 @@
         
   
   <div class="tags">
-    <a href="/tags/WPF/">WPF</a>
+    <a href="/tags/raspberry-pi/">raspberry pi</a>
   </div>
 
 
@@ -89,17 +113,15 @@
 
  <nav id="pagination" >
     
-    <a href="/2016/03/08/WPF解决Win7管理员权限/" class="alignleft prev" >上一页</a>
     
-    
-    <a href="/2016/03/02/C-中使用NAudio做自定义播放器/" class="alignright next" >下一页</a>
+    <a href="/2016/03/17/Butler矩阵与傅里叶变换/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>
 
 <section id="comment">
 <!-- 多说评论框 start -->
- <div class="ds-thread" data-thread-key="2016/03/08/WPF如何使用相对路径创建鼠标光标/" data-title="WPF如何使用相对路径创建鼠标光标" data-url="http://yoursite.com/2016/03/08/WPF如何使用相对路径创建鼠标光标/"></div> 
+ <div class="ds-thread" data-thread-key="2016/03/17/用树莓派制作FM无线发射站/" data-title="用树莓派制作FM无线发射站" data-url="http://yoursite.com/2016/03/17/用树莓派制作FM无线发射站/"></div> 
 <!-- 多说评论框 end --> 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
 </section>
