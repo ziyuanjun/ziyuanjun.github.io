@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>WPF解决Win7管理员权限 | Ziyuan&#39;s blog</title>
+  <title>在ubuntu中安装mono | Ziyuan&#39;s blog</title>
   <meta name="author" content="Zi-Yuan">
   
   <meta name="description" content="ziyuan">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="WPF解决Win7管理员权限"/>
+  <meta property="og:title" content="在ubuntu中安装mono"/>
   <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
 
   
@@ -51,27 +51,32 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-03-08T07:51:55.000Z"><a href="/2016/03/08/WPF解决Win7管理员权限/">Mar 8 2016</a></time>
+        <time datetime="2016-08-28T01:27:03.000Z"><a href="/2016/08/28/在ubuntu中安装mono/">Aug 28 2016</a></time>
       
       
   
-    <h1 class="title">WPF解决Win7管理员权限</h1>
+    <h1 class="title">在ubuntu中安装mono</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><strong>实现目标：</strong><br>在win7或以上系统运行时，向注册表添加信息，通常会遇到管理员权限问题。有两种解决办法：</p>
+        <p>我想在Ubuntu下玩一玩SDRsharp，通过<a href="http://rtlsdr.org/softwarelinux" target="_blank" rel="external">http://rtlsdr.org/softwarelinux</a> 的介绍，可以知道SDR#主要还是在windows平台上运行，但也可以通过mono在Linux平台上运行。</p>
 <a id="more"></a>
-<h2 id="u4E00-__u7F16_u8BD1_u540E_u4FEE_u6539"><a href="#u4E00-__u7F16_u8BD1_u540E_u4FEE_u6539" class="headerlink" title="一. 编译后修改"></a>一. 编译后修改</h2><h3 id="u76F4_u63A5_u4FEE_u6539_u201Cexe_u201D_u6587_u4EF6"><a href="#u76F4_u63A5_u4FEE_u6539_u201Cexe_u201D_u6587_u4EF6" class="headerlink" title="直接修改“exe”文件"></a>直接修改“exe”文件</h3><h3 id="u5B89_u88C5_u7ED3_u675F_u540E_u4FEE_u6539_u5F00_u59CB_u83DC_u5355"><a href="#u5B89_u88C5_u7ED3_u675F_u540E_u4FEE_u6539_u5F00_u59CB_u83DC_u5355" class="headerlink" title="安装结束后修改开始菜单"></a>安装结束后修改开始菜单</h3><h2 id="u4E8C-__u7F16_u8BD1_u524D_u4FEE_u6539"><a href="#u4E8C-__u7F16_u8BD1_u524D_u4FEE_u6539" class="headerlink" title="二. 编译前修改"></a>二. 编译前修改</h2><p>在程序中加入Manifest  资源</p>
-<p> 在打开的工程中，看下Properties 下面是否有app.manifest 这个文件，如果没有，右击工程在菜单中选择“属性”，</p>
-<p>选中”Security”，在界面中勾选”Enable ClickOnce Security Settings”后，在Properties下就有自动生成app.manifest文件。</p>
-<p>打开app.manifest文件，将</p>
-<p><code>&lt;requestedExecutionLevel level=&quot;asInvoker&quot; uiAccess=&quot;false&quot; /&gt;</code></p>
-<p>改为</p>
-<p><code>&lt;requestedExecutionLevel level=&quot;requireAdministrator&quot; uiAccess=&quot;false&quot; /&gt;</code></p>
-<p>然后在”Security”中再勾去”Enable ClickOnce Security Settings”后，重新编译即可。</p>
-<p>参考链接：<a href="http://zouqinghua11111.blog.163.com/blog/static/67997654201242334620628/" target="_blank" rel="external">http://zouqinghua11111.blog.163.com/blog/static/67997654201242334620628/</a> </p>
+<p>本以为参考MONO的官网介绍就能搞定的(<a href="http://www.mono-project.com/docs/getting-started/install/linux/#usage)。" target="_blank" rel="external">http://www.mono-project.com/docs/getting-started/install/linux/#usage)。</a> 可是并没有那么容易，<br>遇到了<a href="http://sushihangover.github.io/mono-ubuntu-broken/" target="_blank" rel="external">http://sushihangover.github.io/mono-ubuntu-broken/</a> 这个网站介绍的问题。</p>
+<h1 id="u89E3_u51B3_u65B9_u6CD5_uFF1A"><a href="#u89E3_u51B3_u65B9_u6CD5_uFF1A" class="headerlink" title="解决方法："></a>解决方法：</h1><p>简而言之，就是下载libjpeg62-turbo和libjpeg62并安装。<br>但是网页上介绍的两个安装包的链接都失效了</p>
+<ol>
+<li><p>google了一下找到安装包的下载地址是： <a href="http://http.kali.org/kali/pool/main/libj/libjpeg-turbo/" target="_blank" rel="external">http://http.kali.org/kali/pool/main/libj/libjpeg-turbo/</a> 和 <a href="http://http.kali.org/kali/pool/main/libj/libjpeg6b/" target="_blank" rel="external">http://http.kali.org/kali/pool/main/libj/libjpeg6b/</a> 。</p>
+<p> 其中libjpeg6b是可以直接用sudo apt安装的：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libjpeg62</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>随后下载了安装包libjpeg62-turbo_1.5.0-1_amd64.deb。<br>双击运行安装（ubuntu的软件中心可以使用双击安装.deb包）。</p>
+</li>
+<li><p>安装完成后就是用下面的语句来完成mono的安装了：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install mono-devel</span><br><span class="line">sudo apt-get mono-complete</span><br><span class="line">sudo apt-get referenceassemblies-pcl</span><br><span class="line">sudo apt-get mono-xsp4</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这样mono就安装好了，可以运行例子进行测试。</p>
 
       
     </div>
@@ -81,7 +86,7 @@
         
   
   <div class="tags">
-    <a href="/tags/C/">C#</a>, <a href="/tags/WPF/">WPF</a>
+    <a href="/tags/Hexo/">Hexo</a>, <a href="/tags/linux/">linux</a>
   </div>
 
 
@@ -97,17 +102,15 @@
 
  <nav id="pagination" >
     
-    <a href="/2016/03/17/Butler矩阵与傅里叶变换/" class="alignleft prev" >上一页</a>
     
-    
-    <a href="/2016/03/08/WPF如何使用相对路径创建鼠标光标/" class="alignright next" >下一页</a>
+    <a href="/2016/06/25/windows安装portaudio/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>
 
 <section id="comment">
 <!-- 多说评论框 start -->
- <div class="ds-thread" data-thread-key="2016/03/08/WPF解决Win7管理员权限/" data-title="WPF解决Win7管理员权限" data-url="http://yoursite.com/2016/03/08/WPF解决Win7管理员权限/"></div> 
+ <div class="ds-thread" data-thread-key="2016/08/28/在ubuntu中安装mono/" data-title="在ubuntu中安装mono" data-url="http://yoursite.com/2016/08/28/在ubuntu中安装mono/"></div> 
 <!-- 多说评论框 end --> 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
 </section>
