@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>windows安装portaudio | Ziyuan&#39;s blog</title>
+  <title>给自己的网站增加访问统计 | Ziyuan&#39;s blog</title>
   <meta name="author" content="Zi-Yuan">
   
   <meta name="description" content="ziyuan">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="windows安装portaudio"/>
+  <meta property="og:title" content="给自己的网站增加访问统计"/>
   <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
 
   
@@ -51,19 +51,22 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-06-25T12:43:36.000Z"><a href="/2016/06/25/windows安装portaudio/">Jun 25 2016</a></time>
+        <time datetime="2016-08-28T07:54:34.000Z"><a href="/2016/08/28/给自己的网站增加访问统计/">Aug 28 2016</a></time>
       
       
   
-    <h1 class="title">windows安装portaudio</h1>
+    <h1 class="title">给自己的网站增加访问统计</h1>
   
 
     </header>
     <div class="entry">
       
-        <p><strong>实现目标：</strong><br>portaudio是一个开源的跨平台Audio API。它为多种声音设备提供了统一的编程接口。</p>
+        <p>使用最简单的<a href="http://service.ibruce.info/" target="_blank" rel="external">不蒜子</a>来给我的博客增加访客数的统计。</p>
 <a id="more"></a>
-<h1 id="u5B89_u88C5Pyaudio"><a href="#u5B89_u88C5Pyaudio" class="headerlink" title="安装Pyaudio"></a>安装Pyaudio</h1><p>PyAudio provides Python bindings for PortAudio, the cross-platform audio I/O<br>library. With PyAudio, you can easily use Python to play and record audio on a<br>variety of platforms, such as GNU/Linux, Microsoft Windows, and Apple Mac OS X. <a href="http://people.csail.mit.edu/hubert/pyaudio/" target="_blank" rel="external">http://people.csail.mit.edu/hubert/pyaudio/</a></p>
+<p>参考链接：<a href="http://ibruce.info/2015/04/04/busuanzi/" target="_blank" rel="external">http://ibruce.info/2015/04/04/busuanzi/</a></p>
+<p>链接里已经写的比较详细了，我只用了最简单的uv方式计算访客数，单个用户连续点击n篇文章，只记录1次访客数。</p>
+<p>将两行配置写入themes/你的主题/layout/_partial/footer.ejs中，</p>
+<p>我的footer.ejs文件如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;div class=&#34;alignleft&#34;&#62;&#10;  &#60;% if (config.author)&#123; %&#62;&#10;  &#38;copy; &#60;%= new Date().getFullYear() %&#62; &#60;%= config.author %&#62;&#10;  &#60;% &#125; else &#123; %&#62;&#10;  &#38;copy; &#60;%= new Date().getFullYear() %&#62; &#60;%= config.title %&#62;&#10;  &#60;% &#125; %&#62;&#10;&#10;&#60;script async src=&#34;https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js&#34;&#62;&#10;&#60;/script&#62;&#10;&#60;span id=&#34;busuanzi_container_site_uv&#34;&#62;&#10;  &#26412;&#31449;&#35775;&#23458;&#25968;&#60;span id=&#34;busuanzi_value_site_uv&#34;&#62;&#60;/span&#62;&#20154;&#27425;&#10;&#60;/span&#62;&#10;&#60;/div&#62;&#10;&#60;div class=&#34;clearfix&#34;&#62;&#60;/div&#62;</span><br></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -73,7 +76,7 @@
         
   
   <div class="tags">
-    <a href="/tags/portaudio/">portaudio</a>
+    <a href="/tags/Hexo/">Hexo</a>
   </div>
 
 
@@ -89,17 +92,15 @@
 
  <nav id="pagination" >
     
-    <a href="/2016/08/28/在ubuntu中安装mono/" class="alignleft prev" >上一页</a>
     
-    
-    <a href="/2016/06/21/解决Win7网络出现有限的访问权限/" class="alignright next" >下一页</a>
+    <a href="/2016/08/28/在ubuntu中安装mono/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>
 
 <section id="comment">
 <!-- 多说评论框 start -->
- <div class="ds-thread" data-thread-key="2016/06/25/windows安装portaudio/" data-title="windows安装portaudio" data-url="http://yoursite.com/2016/06/25/windows安装portaudio/"></div> 
+ <div class="ds-thread" data-thread-key="2016/08/28/给自己的网站增加访问统计/" data-title="给自己的网站增加访问统计" data-url="http://yoursite.com/2016/08/28/给自己的网站增加访问统计/"></div> 
 <!-- 多说评论框 end --> 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
 </section>
