@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   
-  <title>解决Win7网络出现有限的访问权限 | Ziyuan&#39;s blog</title>
+  <title>录制Emacs gif | Ziyuan&#39;s blog</title>
   <meta name="author" content="Zi-Yuan">
   
   <meta name="description" content="ziyuan">
@@ -11,7 +11,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
-  <meta property="og:title" content="解决Win7网络出现有限的访问权限"/>
+  <meta property="og:title" content="录制Emacs gif"/>
   <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
 
   
@@ -51,17 +51,38 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-06-21T12:43:36.000Z"><a href="/2016/06/21/解决Win7网络出现有限的访问权限/">Jun 21 2016</a></time>
+        <time datetime="2016-09-03T07:52:08.000Z"><a href="/2016/09/03/录制Emacs-gif/">Sep 3 2016</a></time>
       
       
   
-    <h1 class="title">解决Win7网络出现有限的访问权限</h1>
+    <h1 class="title">录制Emacs gif</h1>
   
 
     </header>
     <div class="entry">
       
-        <p>管理员身份运行CMD，<br>输入netsh winsock reset catalog<br>再输入: netsh int ip reset reset.log</p>
+        <p><strong> 目的 </strong><br>使用Emacs可以录制一些很有(zhuang)用(bi)的gif。本文介绍使用方法。</p>
+<a id="more"></a>
+<h1 id="u73AF_u5883"><a href="#u73AF_u5883" class="headerlink" title="环境"></a>环境</h1><ul>
+<li><p>：ubuntu 14.04</p>
+</li>
+<li><p>Emacs: 25.1.50.1</p>
+</li>
+</ul>
+<h1 id="u6B65_u9AA4"><a href="#u6B65_u9AA4" class="headerlink" title="步骤"></a>步骤</h1><ol>
+<li>在<a href="https://melpa.org" target="_blank" rel="external">melpa</a>上搜索<code>gif</code>可以找到<code>camcorder</code>这个package。相信它解决问题的关键。</li>
+<li>在Emacs中安装<code>camcorder</code>。</li>
+<li>在ubuntu中安装<code>recordmydesktop</code>，<code>ffmpeg</code>或者<code>mplayer</code>或者<code>imagemagick</code>.</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install recordmydesktop</span><br></pre></td></tr></table></figure>
+<ol>
+<li>进入<code>camcorder</code>的<a href="https://github.com/Malabarba/camcorder.el" target="_blank" rel="external">github</a>页面，可以找到这个package的使用方法。<ul>
+<li><code>M-x camcorder-record</code>开启录制，会要求设定路径</li>
+<li><code>F12</code> 完成录制</li>
+<li><code>F10</code> 暂停录制</li>
+</ul>
+</li>
+</ol>
 
       
     </div>
@@ -71,7 +92,7 @@
         
   
   <div class="tags">
-    <a href="/tags/Win7/">Win7</a>
+    <a href="/tags/Emacs/">Emacs</a>
   </div>
 
 
@@ -87,17 +108,17 @@
 
  <nav id="pagination" >
     
-    <a href="/2016/06/25/windows安装portaudio/" class="alignleft prev" >上一页</a>
+    <a href="/2016/09/03/录制Emacs-gif/" class="alignleft prev" >上一页</a>
     
     
-    <a href="/2016/06/16/用树莓派制作FM无线发射站/" class="alignright next" >下一页</a>
+    <a href="/2016/08/28/给自己的网站增加访问统计/" class="alignright next" >下一页</a>
     
     <div class="clearfix"></div>
 </nav>
 
 <section id="comment">
 <!-- 多说评论框 start -->
- <div class="ds-thread" data-thread-key="2016/06/21/解决Win7网络出现有限的访问权限/" data-title="解决Win7网络出现有限的访问权限" data-url="http://yoursite.com/2016/06/21/解决Win7网络出现有限的访问权限/"></div> 
+ <div class="ds-thread" data-thread-key="2016/09/03/录制Emacs-gif/" data-title="录制Emacs gif" data-url="http://yoursite.com/2016/09/03/录制Emacs-gif/"></div> 
 <!-- 多说评论框 end --> 
 <!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
 </section>
