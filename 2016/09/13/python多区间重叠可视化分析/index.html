@@ -1,0 +1,253 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>python多区间重叠可视化分析 | Ziyuan&#39;s blog</title>
+  <meta name="author" content="Zi-Yuan">
+  
+  <meta name="description" content="ziyuan">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="python多区间重叠可视化分析"/>
+  <meta property="og:site_name" content="Ziyuan&#39;s blog"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Ziyuan&#39;s blog" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Ziyuan&#39;s blog</a></h1>
+  <h2><a href="/">人生就是这样，你永远不知道计划明天完成的事，是否来得及去完成。</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">Home</a></li>
+    
+      <li><a href="/archives">Archives</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2016-09-12T23:28:38.000Z"><a href="/2016/09/13/python多区间重叠可视化分析/">Sep 13 2016</a></time>
+      
+      
+  
+    <h1 class="title">python多区间重叠可视化分析</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p><strong>实现目标：</strong><br>多个重叠区间段的可视化分析。下面给出了一个用visio绘制的例子。</p>
+<a id="more"></a>
+<p><img src="/Images/example.png" alt="Drawing" width="700px"></p>
+<p>图中用矩形来表示一个区间段，矩形的左边为区间起点，矩形的右边为区间终点。<br>带箭头的线段是特殊的区间，即其区间起点和终点重合。</p>
+<p>visio画出来效果还不错,不过这样绘制速度太慢,很多工作需要手动调整,如果需要绘制的区间较多,或者需要多次绘制,那样是很容易出错的.<br>最好能用程序自动绘制,今天就用python来小试牛刀. </p>
+<h1 id="u8BBE_u8BA1"><a href="#u8BBE_u8BA1" class="headerlink" title="设计"></a>设计</h1><p>我们首先分析出要通过程序设计自动绘制出例子中的图形需要遵循的一些原则。</p>
+<ol>
+<li>原则一：通过矩形块的不同高度来避免重合，给出层次化的展示。<br>这要求： </li>
+</ol>
+<ul>
+<li>区间的宽度越大，则其高度越小 </li>
+<li>优先绘制高度高的矩形 </li>
+<li>对于高度一致的矩形，若二者有区间有重合，则应使用更改为不同的高度 </li>
+</ul>
+<ol>
+<li>原则二：区间的名字标注应明确，不位于多个矩形上</li>
+</ol>
+<p>上图写在矩形的左上角。显然当矩形最小高度差大于文字高度时，此条件自然满足，但严格地说，应该是每个矩形的左上角与其他矩形的高度差<br>大于文字高度。 </p>
+<h1 id="Python_u5B9E_u73B0"><a href="#Python_u5B9E_u73B0" class="headerlink" title="Python实现"></a>Python实现</h1><ol>
+<li>区间参数输入<br>采用字典变量来表示区间。字典的key为需求编号，区间参数用list两个值表示，0序号值表示需求的名字(name),<br>1序号值表示区间参数。</li>
+</ol>
+<p>区间参数分以下几种情况： </p>
+<ul>
+<li>单个区间 </li>
+<li>多个区间 </li>
+<li>单个点 </li>
+<li>以上混合</li>
+</ul>
+<p>为适应上述所有可能的组合参数列表按如下方式表示 </p>
+<p>[(区间l xleft,区间1 xright),(区间2 xleft, 区间2 xright),点X,…]</p>
+<p>对于单个点的区间X, 只有xleft。可通过type是否为tuple来判断是否为一个区间。 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Requires=&#123;<span class="number">1</span>:[<span class="string">"猪肉"</span>,[(<span class="number">100</span>,<span class="number">150</span>),(<span class="number">200</span>,<span class="number">400</span>)]],</span><br><span class="line">		  <span class="number">2</span>:[<span class="string">"羊肉"</span>,[(<span class="number">200</span>,<span class="number">400</span>)]], </span><br><span class="line">	   	  <span class="number">3</span>:[<span class="string">"天山雪莲"</span>,[<span class="number">1011</span>]], &#125;</span><br></pre></td></tr></table></figure>
+<p>每个矩形块也有颜色的区别的，这有两种方案，然程序随机选择颜色，另外就是指定颜色了。采用指定颜色的方案，最简单的方法<br>就是把颜色信息加在参数列表中，用一个字符串表示。不过既然我们选择python，就有更加方便的方法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Requires=&#123;<span class="number">1</span>:[<span class="string">"猪肉"</span>,[(<span class="number">100</span>,<span class="number">150</span>),(<span class="number">200</span>,<span class="number">400</span>)],&#123;<span class="string">'color'</span>:<span class="string">'r'</span>&#125;],</span><br><span class="line">		<span class="number">2</span>:[<span class="string">"羊肉"</span>,[(<span class="number">200</span>,<span class="number">400</span>)],&#123;<span class="string">'color'</span>:<span class="string">'g'</span>&#125;],</span><br><span class="line">		<span class="number">3</span>:[<span class="string">"天山雪莲"</span>,[<span class="number">1011</span>],&#123;<span class="string">'color'</span>:<span class="string">'b'</span>&#125;], &#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里用的字典的方式，这有方便扩展别的参数，比如线宽、透明度等等都可以指定。</p>
+<ol>
+<li>从需求限制中提取出所有需要绘制的区间参数</li>
+</ol>
+<p>rects=[[区间名称,区间坐标,区间宽度,plotPara],…]</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">rects=[]</span><br><span class="line"><span class="keyword">for</span> key, var <span class="keyword">in</span> Requires.iteritems():</span><br><span class="line">    <span class="keyword">for</span> regionPra <span class="keyword">in</span> var[<span class="number">1</span>]:</span><br><span class="line">        <span class="keyword">if</span> type(regionPra) <span class="keyword">is</span> tuple:</span><br><span class="line">            rects.append([var[<span class="number">0</span>],regionPra,regionPra[<span class="number">1</span>]-regionPra[<span class="number">0</span>]],var[-<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            rects.append([var[<span class="number">0</span>],regionPra,<span class="number">0</span>],var[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>依据区间参数确定绘制顺序及绘制高度，并进行绘制</p>
+<ul>
+<li>依据width对rects从大到小排序。<br>从设计原则中我们知道,区间宽度越大,高度越小,所以我们首先来做一个排序,按区间宽度从小到大:</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">   rectsSorted=[]</span><br><span class="line">   minWidth=<span class="number">1e9</span></span><br><span class="line">   heightMin=<span class="number">0.1</span></span><br><span class="line">   heightMax=<span class="number">0.9</span></span><br><span class="line">   d=(heightMax-heightMin)/NonZeroNum</span><br><span class="line">   height=heightMax</span><br><span class="line">   <span class="keyword">for</span> sortedIndex <span class="keyword">in</span> range(len(rects)):</span><br><span class="line">minWidth=<span class="number">1e9</span></span><br><span class="line"><span class="keyword">for</span> rect <span class="keyword">in</span> rects:</span><br><span class="line">    <span class="keyword">if</span>(rect[<span class="number">2</span>]&lt;minWidth):</span><br><span class="line">	minWidth=rect[<span class="number">2</span>]</span><br><span class="line">	rectPoping=rect</span><br><span class="line">rects.remove(rectPoping)<span class="comment">#从原序列中去掉矩形宽度最小的</span></span><br><span class="line">rectPoping[-<span class="number">1</span>][<span class="string">'height'</span>]=height</span><br><span class="line"><span class="keyword">if</span> rectPoping[<span class="number">2</span>]!=<span class="number">0</span>:</span><br><span class="line">    height-=d</span><br><span class="line">rectsSorted.append(rectPoping)<span class="comment">#放到排序序列中</span></span><br></pre></td></tr></table></figure>
+<p>这里的思路是:遍历原序列,从中找到宽度最小的,将其放入新序列,并从序列中删除.不断重复此过程,直到原序列为空.</p>
+<ul>
+<li>其实在排序之前,我们可能遗漏了一种情况:多个区间完全重合.</li>
+</ul>
+<p>对于这种情况，我并不绘制多个不同高度的矩形，<br>而是将多个矩形合并为一个,把它们的name拼接在一起(name是字符串),最后绘图时在矩形的文字标注上能看出有多个条目就够了.</p>
+<p><em>预处理—去除完全重合的区间</em> </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">###############排除重合####################</span></span><br><span class="line">   <span class="comment">#排除重合-步骤1. 找出相互重合的编号集</span></span><br><span class="line">   IndexSameChecked=[] <span class="comment">#相互重合的序号</span></span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> range(len(rectsSorted)-<span class="number">1</span>):</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">1</span>, len(rectsSorted)):</span><br><span class="line">    <span class="keyword">if</span> (rectsSorted[j][<span class="number">2</span>]&gt;<span class="number">0</span> <span class="keyword">and</span> rectsSorted[i][<span class="number">2</span>]&gt;<span class="number">0</span>):<span class="comment">#都是矩形</span></span><br><span class="line">	xlefti=rectsSorted[i][<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">	xrighti=rectsSorted[i][<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">	xleftj=rectsSorted[j][<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">	xrightj=rectsSorted[j][<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">	<span class="keyword">if</span>(xrightj==xrighti <span class="keyword">and</span> xleftj==xlefti):<span class="comment">#重合</span></span><br><span class="line">	    <span class="keyword">if</span>(len(IndexSameChecked)&gt;<span class="number">0</span>):</span><br><span class="line">		hasApended=<span class="keyword">False</span></span><br><span class="line">		<span class="keyword">for</span> setNum,sameIndSet <span class="keyword">in</span> enumerate(IndexSameChecked):</span><br><span class="line">		    <span class="keyword">if</span> (i <span class="keyword">in</span> sameIndSet) <span class="keyword">or</span> (j <span class="keyword">in</span> sameIndSet):</span><br><span class="line">			IndexSameChecked[setNum]=IndexSameChecked[setNum].union(set((i,j)))</span><br><span class="line">			hasApended=<span class="keyword">True</span></span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> hasApended:                        </span><br><span class="line">		    IndexSameChecked.append(set((i,j)))</span><br><span class="line">	    <span class="keyword">elif</span> (len(IndexSameChecked)==<span class="number">0</span>):                    </span><br><span class="line">		IndexSameChecked.append(set((i,j)))</span><br><span class="line">    <span class="keyword">elif</span> (rectsSorted[j][<span class="number">2</span>]==<span class="number">0</span> <span class="keyword">and</span> rectsSorted[i][<span class="number">2</span>]==<span class="number">0</span>):<span class="comment">#都是线</span></span><br><span class="line">	xi=rectsSorted[i][<span class="number">1</span>]</span><br><span class="line">	xj=rectsSorted[j][<span class="number">1</span>]            </span><br><span class="line">	<span class="keyword">if</span>(xi==xj):                </span><br><span class="line">	    <span class="keyword">if</span>(len(IndexSameChecked)&gt;<span class="number">0</span>):</span><br><span class="line">		hasApended=<span class="keyword">False</span></span><br><span class="line">		<span class="keyword">for</span> setNum,sameIndSet <span class="keyword">in</span> enumerate(IndexSameChecked):</span><br><span class="line">		    <span class="keyword">if</span> (i <span class="keyword">in</span> sameIndSet) <span class="keyword">or</span> (j <span class="keyword">in</span> sameIndSet):</span><br><span class="line">			IndexSameChecked[setNum]=IndexSameChecked[setNum].union(set((i,j)))</span><br><span class="line">			hasApended=<span class="keyword">True</span></span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> hasApended:  </span><br><span class="line">		    IndexSameChecked.append(set((i,j)))</span><br><span class="line">	    <span class="keyword">else</span>:</span><br><span class="line">		IndexSameChecked.append(set((i,j)))</span><br><span class="line"></span><br><span class="line">   <span class="comment">#排除重合-步骤2. 剔除重合项</span></span><br><span class="line">   <span class="keyword">for</span> seti,sameIndSet <span class="keyword">in</span> enumerate(IndexSameChecked):</span><br><span class="line">name=<span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> ind <span class="keyword">in</span> sameIndSet:</span><br><span class="line">    name=name+rectsSorted[ind][<span class="number">0</span>]+<span class="string">";"</span></span><br><span class="line">rectsSorted[ind][<span class="number">0</span>]=name</span><br><span class="line">IndexSameChecked[seti].remove(ind)</span><br><span class="line"></span><br><span class="line">   readyDel=[]</span><br><span class="line">   <span class="keyword">for</span> sameIndSet <span class="keyword">in</span> IndexSameChecked: </span><br><span class="line"><span class="keyword">for</span> ind <span class="keyword">in</span> sameIndSet:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"del"</span>,ind,rectsSorted[ind][<span class="number">0</span>]</span><br><span class="line">    readyDel.append(rectsSorted[ind])</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> item2del <span class="keyword">in</span> readyDel:</span><br><span class="line">rectsSorted.remove(item2del)</span><br><span class="line">   <span class="comment">###############排除重合end####################</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>下面要来考虑区间交叠的文字标注问题</li>
+</ul>
+<p>过程应该是这样的，按高度从高到低的顺序考察每个矩形（不含线段），<br>对每个考察对象和比它次高的对象,若二者完全不相交,它们可以使用相同的高度;<br>若二者有区间相交,且较高者位于右方,则应确保较高者高于次高者”文字标注的高度”,以保证文字标注的清晰.<br>代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> recti <span class="keyword">in</span> range(len(rectsSorted)-<span class="number">1</span>):</span><br><span class="line">    <span class="keyword">if</span> (rectsSorted[recti][<span class="number">2</span>]&gt;<span class="number">0</span>):</span><br><span class="line">	xlefti=rectsSorted[recti][<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">	xrighti=rectsSorted[recti][<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">	xleftj=rectsSorted[recti+<span class="number">1</span>][<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">	xrightj=rectsSorted[recti+<span class="number">1</span>][<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">	<span class="keyword">if</span> (xrighti&lt;xleftj <span class="keyword">or</span> xrightj&lt;xlefti):<span class="comment">#不相交</span></span><br><span class="line">	    <span class="keyword">print</span> <span class="string">"equal"</span></span><br><span class="line">	    rectsSorted[recti][<span class="number">4</span>]=rectsSorted[recti+<span class="number">1</span>][<span class="number">4</span>]</span><br><span class="line">	<span class="keyword">elif</span>(xrightj==xrighti <span class="keyword">and</span> xleftj==xlefti):<span class="comment">#重合</span></span><br><span class="line">	    <span class="keyword">print</span> <span class="string">"overlap:"</span>,rectsSorted[recti][<span class="number">0</span>]</span><br><span class="line">	    rectsSorted[recti][<span class="number">4</span>]=rectsSorted[recti+<span class="number">1</span>][<span class="number">4</span>]</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">	    <span class="keyword">if</span> (xlefti&gt;xleftj):</span><br><span class="line">		rectsSorted[recti][<span class="number">4</span>]=rectsSorted[recti+<span class="number">1</span>][<span class="number">4</span>]+<span class="number">0.03</span></span><br></pre></td></tr></table></figure>
+<p>(此段代码尚待改进)</p>
+<ul>
+<li>现在各个矩形的绘制顺序、矩形高度都确定了，只需要逐个绘制出就行了。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line">myfont=matplotlib.font_manager.FontProperties(fname=<span class="string">r'C:\WINDOWS\Fonts\STSONG.ttf'</span>,size=<span class="number">10</span>)</span><br><span class="line">plt.close(<span class="string">'all'</span>)</span><br><span class="line">fig=plt.figure(figsize=[ <span class="number">17.7</span>*<span class="number">6</span>   ,   <span class="number">3.7125</span>*<span class="number">2</span>])</span><br><span class="line">fig.subplots_adjust(left=<span class="number">0.03</span>,right=<span class="number">0.97</span>,top=<span class="number">0.97</span>,bottom=<span class="number">0.11</span>)</span><br><span class="line"><span class="keyword">for</span> rect <span class="keyword">in</span> rectsSorted:</span><br><span class="line">    <span class="keyword">if</span> type(rect[<span class="number">1</span>]) <span class="keyword">is</span> tuple:</span><br><span class="line">	alpha=(rect[<span class="number">4</span>]-heightMin+<span class="number">0.05</span>)*<span class="number">0.4</span>/(heightMax-heightMin)</span><br><span class="line">    <span class="keyword">if</span> alpha&lt;<span class="number">0.15</span>:</span><br><span class="line">	alpha=<span class="number">0.15</span></span><br><span class="line">	rectDraw=plt.Rectangle((rect[<span class="number">1</span>][<span class="number">0</span>],<span class="number">0</span>),rect[<span class="number">2</span>],rect[-<span class="number">1</span>][<span class="string">'height'</span>],facecolor=rect[-<span class="number">1</span>][<span class="string">'color'</span>],alpha=alpha)</span><br><span class="line">	plt.gca().add_patch(rectDraw)</span><br><span class="line">	plt.text(rect[<span class="number">1</span>][<span class="number">0</span>],rect[-<span class="number">1</span>][<span class="string">'height'</span>],rect[<span class="number">0</span>],fontproperties=myfont,verticalalignment=<span class="string">'top'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">	plt.plot([rect[<span class="number">1</span>],rect[<span class="number">1</span>]],[<span class="number">0</span>,<span class="number">1.11</span>],color=rect[-<span class="number">1</span>][<span class="string">'color'</span>],alpha=<span class="number">0.4</span>)</span><br><span class="line">	plt.text(rect[<span class="number">1</span>],<span class="number">0.9</span>,rect[<span class="number">0</span>],fontproperties=myfont,rotation=<span class="number">90</span>,ha=<span class="string">'center'</span>,va=<span class="string">'bottom'</span>)</span><br><span class="line">plt.yticks([])</span><br><span class="line">ax=plt.gca()</span><br><span class="line">plt.grid(b=<span class="string">'on'</span>,axis=<span class="string">'x'</span>)</span><br><span class="line">ax.tick_params(axis=<span class="string">'x'</span>,labelsize=<span class="number">8</span>)</span><br><span class="line"><span class="keyword">for</span> tick <span class="keyword">in</span> ax.xaxis.get_major_ticks():</span><br><span class="line">    tick.label.set_rotation(<span class="string">'vertical'</span>)   </span><br><span class="line">plt.axis(<span class="string">'tight'</span>)</span><br></pre></td></tr></table></figure>
+<p>这段代码中,我们设置了中文字体;调整了图片四周的留白;将横坐标改成了竖直显示;设置了x,y轴的ticks.<br>这些都是使用matplotlib较常遇到的.</p>
+</li>
+</ol>
+<h1 id="u603B_u7ED3"><a href="#u603B_u7ED3" class="headerlink" title="总结"></a>总结</h1><p>最终的绘制效果还不错,这里就不展示了.可以看到程序把很多繁杂的工作自动化了.而visio可随时手动的更改也算是一种优势,如果visio也能通过程序设计自动的完成一些绘制那就最好了!如果有读者知道的话,请一定告诉我.</p>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+
+        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a></div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdPic":"","bdStyle":"0","bdSize":"16"},"share":{},"image":{"viewList":["qzone","tsina","tqq","renren","weixin"],"viewText":"分享到：","viewSize":"16"}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+
+
+ <nav id="pagination" >
+    
+    
+    <a href="/2016/09/04/The-Weight-changing-curve-of-sombody/" class="alignright next" >下一页</a>
+    
+    <div class="clearfix"></div>
+</nav>
+
+<section id="comment">
+<!-- 多说评论框 start -->
+ <div class="ds-thread" data-thread-key="2016/09/13/python多区间重叠可视化分析/" data-title="python多区间重叠可视化分析" data-url="http://yoursite.com/2016/09/13/python多区间重叠可视化分析/"></div> 
+<!-- 多说评论框 end --> 
+<!-- 多说公共JS代码 start (一个网页只需插入一次) --> <script type="text/javascript"> var duoshuoQuery = {short_name:"ziyuanblog"}; (function() { var ds = document.createElement('script'); ds.type = 'text/javascript';ds.async = true; ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js'; ds.charset = 'UTF-8'; (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds); })(); </script> <!-- 多说公共JS代码 end --> 
+</section>
+
+
+
+
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="搜索">
+    <input type="hidden" name="q" value="site:yoursite.com">
+  </form>
+</div>
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Antenna/">Antenna</a><small>1</small></li>
+  
+    <li><a href="/tags/Array/">Array</a><small>1</small></li>
+  
+    <li><a href="/tags/C/">C#</a><small>7</small></li>
+  
+    <li><a href="/tags/Emacs/">Emacs</a><small>1</small></li>
+  
+    <li><a href="/tags/Hexo/">Hexo</a><small>3</small></li>
+  
+    <li><a href="/tags/Marchine-Learning/">Marchine Learning</a><small>1</small></li>
+  
+    <li><a href="/tags/WPF/">WPF</a><small>5</small></li>
+  
+    <li><a href="/tags/Win7/">Win7</a><small>2</small></li>
+  
+    <li><a href="/tags/linux/">linux</a><small>1</small></li>
+  
+    <li><a href="/tags/portaudio/">portaudio</a><small>1</small></li>
+  
+    <li><a href="/tags/raspberry-pi/">raspberry pi</a><small>1</small></li>
+  
+    <li><a href="/tags/vim/">vim</a><small>1</small></li>
+  
+    <li><a href="/tags/生活/">生活</a><small>2</small></li>
+  
+  </ul>
+</div>
+
+
+  <iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=8&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=2900179830&verifier=78598ae5&dpc=1"></iframe>
+
+
+  <div class="widget tag">
+<h3 class="title">友情链接</h3>
+<ul class="entry">
+<li><a href="https://www.researchgate.net/profile/Ziyuan_Xiong" title="Ziyuan's ResearchGate">Ziyuan Research</a></li>
+</ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2016 Zi-Yuan
+  
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+<span id="busuanzi_container_site_uv">
+   自2016-08-28起算，你是本站第<span id="busuanzi_value_site_uv"></span>位访客
+</span>
+</div>
+<div class="clearfix"></div></footer>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+</body>
+</html>
