@@ -1,0 +1,941 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.0.1" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="C#,C++," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.0.1" />
+
+
+
+
+
+
+<meta name="description" content="Table of Contents
+
+
+1. &amp;#x9996;&amp;#x5148;&amp;#x7528; C++&amp;#x7F16;&amp;#x5199;&amp;#x4E00;&amp;#x4E2A;&amp;#x6D4B;&amp;#x8BD5;&amp;#x7528;&amp;#x7684; dll
+
+1.1. &amp;#x65B0;&amp;#x5EFA;&amp;#x4E00;&amp;#x4E2A; Win32 &amp;#x63A7;&amp;#x5236;&amp;#x53F0;&amp;#x5DE5;&amp;#x">
+<meta property="og:type" content="article">
+<meta property="og:title" content="C#调用 C++的 dll 动态链接库">
+<meta property="og:url" content="http://yoursite.com/2016/09/22/C#调用C++的dll动态链接库/index.html">
+<meta property="og:site_name" content="源头活水">
+<meta property="og:description" content="Table of Contents
+
+
+1. &amp;#x9996;&amp;#x5148;&amp;#x7528; C++&amp;#x7F16;&amp;#x5199;&amp;#x4E00;&amp;#x4E2A;&amp;#x6D4B;&amp;#x8BD5;&amp;#x7528;&amp;#x7684; dll
+
+1.1. &amp;#x65B0;&amp;#x5EFA;&amp;#x4E00;&amp;#x4E2A; Win32 &amp;#x63A7;&amp;#x5236;&amp;#x53F0;&amp;#x5DE5;&amp;#x">
+<meta property="og:image" content="http://yoursite.com/Images/dll0.png">
+<meta property="og:image" content="http://yoursite.com/file:///Images/dll1.png">
+<meta property="og:updated_time" content="2016-09-22T08:37:23.026Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="C#调用 C++的 dll 动态链接库">
+<meta name="twitter:description" content="Table of Contents
+
+
+1. &amp;#x9996;&amp;#x5148;&amp;#x7528; C++&amp;#x7F16;&amp;#x5199;&amp;#x4E00;&amp;#x4E2A;&amp;#x6D4B;&amp;#x8BD5;&amp;#x7528;&amp;#x7684; dll
+
+1.1. &amp;#x65B0;&amp;#x5EFA;&amp;#x4E00;&amp;#x4E2A; Win32 &amp;#x63A7;&amp;#x5236;&amp;#x53F0;&amp;#x5DE5;&amp;#x">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2016/09/22/C#调用C++的dll动态链接库/"/>
+
+  <title> C#调用 C++的 dll 动态链接库 | 源头活水 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?6e98da490dd272df8fc5f43f46a3bcbd";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">源头活水</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle">三更灯火五更鸡，正是男儿读书时。黑发不知勤学早，白首方悔读书迟。</p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="st-search-show-outputs">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <form class="site-search-form">
+  <input type="text" id="st-search-input" class="st-search-input st-default-search-input" />
+</form>
+
+<script type="text/javascript">
+  (function(w,d,t,u,n,s,e){w['SwiftypeObject']=n;w[n]=w[n]||function(){
+    (w[n].q=w[n].q||[]).push(arguments);};s=d.createElement(t);
+    e=d.getElementsByTagName(t)[0];s.async=1;s.src=u;e.parentNode.insertBefore(s,e);
+  })(window,document,'script','//s.swiftypecdn.com/install/v2/st.js','_st');
+
+  _st('install', 'iowTs3gJEcKMa5rcYSU3','2.0.0');
+</script>
+
+
+
+    </div>
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                C#调用 C++的 dll 动态链接库
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-09-22T17:30:00+08:00" content="Sep 22 2016">
+              Sep 22 2016
+            </time>
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/09/22/C#调用C++的dll动态链接库/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/09/22/C#调用C++的dll动态链接库/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+             <span id="/2016/09/22/C#调用C++的dll动态链接库/" class="leancloud_visitors" data-flag-title="C#调用 C++的 dll 动态链接库">
+               &nbsp; | &nbsp;
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               <span class="post-meta-item-text">阅读次数 </span>
+               <span class="leancloud-visitors-count"></span>
+              </span>
+          
+
+          
+              &nbsp; | &nbsp;
+              <span class="page-pv"><i class="fa fa-file-o"></i>
+              <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+              </span>
+          
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. &#x9996;&#x5148;&#x7528; C++&#x7F16;&#x5199;&#x4E00;&#x4E2A;&#x6D4B;&#x8BD5;&#x7528;&#x7684; dll</a>
+<ul>
+<li><a href="#sec-1-1">1.1. &#x65B0;&#x5EFA;&#x4E00;&#x4E2A; Win32 &#x63A7;&#x5236;&#x53F0;&#x5DE5;&#x7A0B;</a></li>
+<li><a href="#sec-1-2">1.2. Application settings &#x4E2D;&#x5C06;&#x5E94;&#x7528;&#x7C7B;&#x578B;&#x8BBE;&#x7F6E;&#x4E3A; DLL</a></li>
+<li><a href="#sec-1-3">1.3. &#x5728;.cpp &#x6587;&#x4EF6;&#x4E2D;&#x8F93;&#x5165;&#x5982;&#x4E0B;&#x4EE3;&#x7801;</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. C#&#x4E2D;&#x65B0;&#x5EFA;&#x63A7;&#x5236;&#x53F0;&#x7A0B;&#x5E8F;&#xFF0C;&#x5BF9; dll &#x8FDB;&#x884C;&#x6D4B;&#x8BD5;</a>
+<ul>
+<li><a href="#sec-2-1">2.1. C#&#x4EE3;&#x7801;&#x5982;&#x4E0B;</a></li>
+<li><a href="#sec-2-2">2.2. &#x6CE8;&#x610F;&#x5C06; C++&#x751F;&#x6210;&#x7684; Dll &#x6587;&#x4EF6;&#x62F7;&#x8D1D;&#x53EA; C#&#x5DE5;&#x7A0B;&#x7684;&#x8C03;&#x8BD5;&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x7136;&#x540E;&#x5C31;&#x53EF;&#x4EE5;&#x8FD0;&#x884C;&#x4E86;&#x3002;</a></li>
+<li><a href="#sec-2-3">2.3. &#x8FD0;&#x884C;&#x7ED3;&#x679C;&#x5982;&#x4E0B;&#xFF1A;</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+&#x672C;&#x6587;&#x901A;&#x8FC7;&#x5B9E;&#x4F8B;&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x5728; c#&#x4E2D;&#x8C03;&#x7528; C++&#x7F16;&#x5199;&#x7684; dll&#x3002;
+</p>
+<a id="more"></a>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> &#x9996;&#x5148;&#x7528; C++&#x7F16;&#x5199;&#x4E00;&#x4E2A;&#x6D4B;&#x8BD5;&#x7528;&#x7684; dll</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> &#x65B0;&#x5EFA;&#x4E00;&#x4E2A; Win32 &#x63A7;&#x5236;&#x53F0;&#x5DE5;&#x7A0B;</h3>
+<div class="outline-text-3" id="text-1-1">
+<img src="/Images/dll0.png" alt="Drawing" width="400px">
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Application settings &#x4E2D;&#x5C06;&#x5E94;&#x7528;&#x7C7B;&#x578B;&#x8BBE;&#x7F6E;&#x4E3A; DLL</h3>
+<div class="outline-text-3" id="text-1-2">
+
+<div class="figure">
+<p><img src="file:///Images/dll1.png" alt="dll1.png" width="400">
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> &#x5728;.cpp &#x6587;&#x4EF6;&#x4E2D;&#x8F93;&#x5165;&#x5982;&#x4E0B;&#x4EE3;&#x7801;</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span></span><br><span class="line">{</span><br><span class="line">  <span class="keyword">struct</span> foo{</span><br><span class="line">    <span class="keyword">int</span> var1;</span><br><span class="line">    <span class="keyword">int</span> var2;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> s[<span class="number">32</span>];</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> r[<span class="number">32</span>];</span><br><span class="line">    <span class="keyword">double</span> var3;</span><br><span class="line">    <span class="keyword">char</span> arr[<span class="number">16</span>];</span><br><span class="line">  };</span><br><span class="line"></span><br><span class="line">  __declspec(dllexport)  <span class="keyword">int</span> __<span class="function">stdcall <span class="title">DisplayHelloFromDLL</span><span class="params">()</span></span>{</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Hello from DLL\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">12345</span>;</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  __declspec(dllexport) <span class="keyword">void</span> __<span class="function">stdcall <span class="title">OutputStructValues</span><span class="params">(foo f)</span></span>{</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nEntering OutputStruct\n&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Size of struct is %d\n&quot;</span>, <span class="keyword">sizeof</span>(foo));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var1 = %d\n&quot;</span>, f.var1);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var2 = %d\n&quot;</span>, f.var2);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, f.s);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, f.r);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var2 = %10f\n&quot;</span>, f.var3);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;arr = %s\n&quot;</span>, f.arr[<span class="number">2</span>]);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Exiting OutputStruct\n\n&quot;</span>);</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  __declspec(dllexport) <span class="keyword">void</span> __<span class="function">stdcall <span class="title">TestArrayInOut</span><span class="params">(<span class="keyword">int</span> * in, <span class="keyword">int</span> * out, <span class="keyword">int</span> nSize)</span> </span>{</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nEntering Array In out\n&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nSize; i++)</span><br><span class="line">    {</span><br><span class="line">      <span class="comment">//*(out + i) = *(in + i);//&#x8FD9;&#x6837;&#x5199;&#x7ADF;&#x7136;&#x4E0D;&#x884C;!&#x5728; c#&#x4E2D;&#x8C03;&#x7528;&#x51FA;&#x9519;&#x4E86;</span></span><br><span class="line">      out[i] = in[i] * <span class="number">10</span>;</span><br><span class="line">    }</span><br><span class="line">  }</span><br></pre></td></tr></table></figure>
+</div>
+
+<p>
+&#x5173;&#x952E;&#x7684;&#x8BED;&#x53E5;&#x662F;&#xFF1A;extern &quot;C&quot; __declspec(dllexport) void __stdcall
+</p>
+
+<p>
+&#x5982;&#x679C;&#x6CA1;&#x6709; __stdcall, &#x7A0B;&#x5E8F;&#x4F9D;&#x7136;&#x53EF;&#x4EE5;&#x6267;&#x884C;&#xFF0C;&#x4F46;&#x662F;&#x8C03;&#x8BD5;&#x65F6;&#x4F1A;&#x62A5;&#x9519;&#x3002;
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> C#&#x4E2D;&#x65B0;&#x5EFA;&#x63A7;&#x5236;&#x53F0;&#x7A0B;&#x5E8F;&#xFF0C;&#x5BF9; dll &#x8FDB;&#x884C;&#x6D4B;&#x8BD5;</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> C#&#x4EE3;&#x7801;&#x5982;&#x4E0B;</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Runtime.InteropServices;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> cpp_dll_link</span><br><span class="line">{</span><br><span class="line">    unsafe <span class="keyword">class</span> Program</span><br><span class="line">    {</span><br><span class="line">	[DllImport(<span class="string">&quot;DllTest.dll&quot;</span>)]</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">DisplayHelloFromDLL</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	[DllImport(<span class="string">&quot;DllTest.dll&quot;</span>)]</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">OutputStructValues</span><span class="params">(foo f)</span></span>;</span><br><span class="line"></span><br><span class="line">	[DllImport(<span class="string">&quot;DllTest.dll&quot;</span>)]</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">TestArrayInOut</span><span class="params">(IntPtr pin,IntPtr pout, <span class="keyword">int</span> nSize)</span></span>;</span><br><span class="line"></span><br><span class="line">	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = <span class="number">1</span>)]</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">struct</span> foo</span><br><span class="line">	{</span><br><span class="line">	    <span class="keyword">public</span> <span class="keyword">int</span> inta;</span><br><span class="line">	    <span class="keyword">public</span> <span class="keyword">int</span> intb;</span><br><span class="line">	    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">32</span>)]</span><br><span class="line">	    <span class="keyword">public</span> <span class="built_in">string</span> z;</span><br><span class="line">	    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">32</span>)]</span><br><span class="line">	    <span class="keyword">public</span> <span class="built_in">string</span> x;</span><br><span class="line">	    <span class="keyword">public</span> Double doub;</span><br><span class="line">	    <span class="keyword">public</span> fixed byte arr[<span class="number">16</span>];</span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span><span class="params">(<span class="built_in">string</span>[] args)</span></span><br><span class="line">	</span>{</span><br><span class="line">	    Console.WriteLine(<span class="string">&quot;This is C# program&quot;</span>);</span><br><span class="line">	    foo f;</span><br><span class="line">	    f.inta = <span class="number">10</span>;</span><br><span class="line">	    f.intb = <span class="number">20</span>;</span><br><span class="line">	    f.z = <span class="string">&quot;string1string1string1string1string1string1string1string1string1&quot;</span>;</span><br><span class="line">	    f.x = <span class="string">&quot;string2&quot;</span>;</span><br><span class="line">	    f.doub = <span class="number">5.67</span>;</span><br><span class="line">	    <span class="comment">//f.arr = new byte[16];</span></span><br><span class="line">	    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++)</span><br><span class="line">	    {</span><br><span class="line">		f.arr[i] = (byte)(i + <span class="number">97</span>);</span><br><span class="line">	    }</span><br><span class="line">	    DisplayHelloFromDLL();</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">int</span>[] a = { <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> }; </span><br><span class="line">	    <span class="keyword">int</span>[] b = { <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span> };</span><br><span class="line">	    <span class="keyword">int</span> size = Marshal.SizeOf(a[<span class="number">0</span>]) * a.Length;</span><br><span class="line">	    <span class="comment">//Console.WriteLine(&quot;size: %d&quot;, size);</span></span><br><span class="line">	    IntPtr pa = Marshal.AllocHGlobal(<span class="number">16</span>);</span><br><span class="line">	    IntPtr pb = Marshal.AllocHGlobal(<span class="number">16</span>);</span><br><span class="line">	    Marshal.Copy(a, <span class="number">0</span>, pa, <span class="number">4</span>);</span><br><span class="line">	    Marshal.Copy(b, <span class="number">0</span>, pb, <span class="number">4</span>);</span><br><span class="line">	    TestArrayInOut(pa, pb, <span class="number">4</span>);</span><br><span class="line">	    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++)</span><br><span class="line">		Console.WriteLine(*((<span class="keyword">int</span> *)pb + i));</span><br><span class="line"></span><br><span class="line">	    OutputStructValues(f);</span><br><span class="line">	    Console.WriteLine(<span class="string">&quot;End of app&quot;</span>);</span><br><span class="line">	    Console.ReadKey();</span><br><span class="line">	}</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> &#x6CE8;&#x610F;&#x5C06; C++&#x751F;&#x6210;&#x7684; Dll &#x6587;&#x4EF6;&#x62F7;&#x8D1D;&#x53EA; C#&#x5DE5;&#x7A0B;&#x7684;&#x8C03;&#x8BD5;&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x7136;&#x540E;&#x5C31;&#x53EF;&#x4EE5;&#x8FD0;&#x884C;&#x4E86;&#x3002;</h3>
+</div>
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> &#x8FD0;&#x884C;&#x7ED3;&#x679C;&#x5982;&#x4E0B;&#xFF1A;</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+<i>Images/dll2.png</i>
+</p>
+</div>
+</div>
+</div>
+
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-22 &#x56DB; 17:30&gt;</span></span></p>
+<p class="author">Author: ziyuan</p>
+<p class="date">Created: 2016-09-22 &#x56DB; 16:37</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/" target="_blank" rel="external">Emacs</a> 25.1.50.1 (<a href="http://orgmode.org" target="_blank" rel="external">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer" target="_blank" rel="external">Validate</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag">#C#</a>
+          
+            <a href="/tags/C/" rel="tag">#C++</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/09/20/orgtest/" rel="next" title="Hello world! Orgmode & Hexo">
+                <i class="fa fa-chevron-left"></i> Hello world! Orgmode & Hexo
+              </a>
+            
+          </div>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/09/22/C#调用C++的dll动态链接库/"
+           data-title="C#调用 C++的 dll 动态链接库" data-url="http://yoursite.com/2016/09/22/C#调用C++的dll动态链接库/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/uploads/zyx.png"
+               alt="Zi-Yuan" />
+          <p class="site-author-name" itemprop="name">Zi-Yuan</p>
+          <p class="site-description motion-element" itemprop="description">问渠那得清如许</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">24</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#undefined"><span class="nav-number">1.</span> <span class="nav-text">Table of Contents</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sec-1"><span class="nav-number">2.</span> <span class="nav-text">1 首先用 C++编写一个测试用的 dll</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sec-1-1"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 新建一个 Win32 控制台工程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sec-1-2"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 Application settings 中将应用类型设置为 DLL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sec-1-3"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 在.cpp 文件中输入如下代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#sec-2"><span class="nav-number">3.</span> <span class="nav-text">2 C#中新建控制台程序，对 dll 进行测试</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sec-2-1"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 C#代码如下</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sec-2-2"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 注意将 C++生成的 Dll 文件拷贝只 C#工程的调试目录下，然后就可以运行了。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sec-2-3"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 运行结果如下：</span></a></li></ol></li></ol></div>
+            
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Zi-Yuan</span>
+</div>
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.0.1"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.0.1"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.0.1"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.0.1"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.0.1"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.0.1"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"ziyuanblog"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+    <script src="/vendors/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("xNFHQv7Ey8aMRcW3J8z9oVsJ-gzGzoHsz", "0G1ax54X0qLfVwkLnQYShMwW");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="//cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</body>
+</html>
