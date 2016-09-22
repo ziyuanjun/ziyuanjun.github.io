@@ -1,0 +1,1147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>源头活水</title>
+  <subtitle>三更灯火五更鸡，正是男儿读书时。黑发不知勤学早，白首方悔读书迟。</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://yoursite.com/"/>
+  <updated>2016-09-22T09:13:48.788Z</updated>
+  <id>http://yoursite.com/</id>
+  
+  <author>
+    <name>Zi-Yuan</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>C#调用 C++的 dll 动态链接库</title>
+    <link href="http://yoursite.com/2016/09/22/%E8%B0%83%E7%94%A8dll/"/>
+    <id>http://yoursite.com/2016/09/22/调用dll/</id>
+    <published>2016-09-22T09:30:00.000Z</published>
+    <updated>2016-09-22T09:13:48.788Z</updated>
+    
+    <content type="html"><![CDATA[
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. &#x9996;&#x5148;&#x7528; C++&#x7F16;&#x5199;&#x4E00;&#x4E2A;&#x6D4B;&#x8BD5;&#x7528;&#x7684; dll</a>
+<ul>
+<li><a href="#sec-1-1">1.1. &#x65B0;&#x5EFA;&#x4E00;&#x4E2A; Win32 &#x63A7;&#x5236;&#x53F0;&#x5DE5;&#x7A0B;</a></li>
+<li><a href="#sec-1-2">1.2. Application settings &#x4E2D;&#x5C06;&#x5E94;&#x7528;&#x7C7B;&#x578B;&#x8BBE;&#x7F6E;&#x4E3A; DLL</a></li>
+<li><a href="#sec-1-3">1.3. &#x5728;.cpp &#x6587;&#x4EF6;&#x4E2D;&#x8F93;&#x5165;&#x4EE3;&#x7801;</a></li>
+</ul>
+</li>
+<li><a href="#sec-2">2. C#&#x4E2D;&#x65B0;&#x5EFA;&#x63A7;&#x5236;&#x53F0;&#x7A0B;&#x5E8F;&#xFF0C;&#x5BF9; dll &#x8FDB;&#x884C;&#x6D4B;&#x8BD5;</a>
+<ul>
+<li><a href="#sec-2-1">2.1. C#&#x4EE3;&#x7801;</a></li>
+<li><a href="#sec-2-2">2.2. &#x5C06; C++&#x751F;&#x6210;&#x7684; Dll &#x6587;&#x4EF6;&#x62F7;&#x8D1D;&#x81F3; C#&#x5DE5;&#x7A0B;&#x7684;&#x8C03;&#x8BD5;&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x7136;&#x540E;&#x5C31;&#x53EF;&#x4EE5;&#x8FD0;&#x884C;&#x4E86;</a></li>
+<li><a href="#sec-2-3">2.3. &#x8FD0;&#x884C;&#x7ED3;&#x679C;</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+&#x672C;&#x6587;&#x901A;&#x8FC7;&#x5B9E;&#x4F8B;&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x5728; c#&#x4E2D;&#x8C03;&#x7528; C++&#x7F16;&#x5199;&#x7684; dll&#x3002;
+</p>
+<a id="more"></a>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> &#x9996;&#x5148;&#x7528; C++&#x7F16;&#x5199;&#x4E00;&#x4E2A;&#x6D4B;&#x8BD5;&#x7528;&#x7684; dll</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> &#x65B0;&#x5EFA;&#x4E00;&#x4E2A; Win32 &#x63A7;&#x5236;&#x53F0;&#x5DE5;&#x7A0B;</h3>
+<div class="outline-text-3" id="text-1-1">
+<img src="/Images/dll0.png" alt="Drawing" width="400px">
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Application settings &#x4E2D;&#x5C06;&#x5E94;&#x7528;&#x7C7B;&#x578B;&#x8BBE;&#x7F6E;&#x4E3A; DLL</h3>
+<div class="outline-text-3" id="text-1-2">
+<img src="/Images/dll1.png" alt="Drawing" width="400px">
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> &#x5728;.cpp &#x6587;&#x4EF6;&#x4E2D;&#x8F93;&#x5165;&#x4EE3;&#x7801;</h3>
+<div class="outline-text-3" id="text-1-3">
+<div class="org-src-container">
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&quot;stdafx.h&quot;</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="preprocessor">#<span class="keyword">include</span> <span class="string">&lt;string&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">extern</span> <span class="string">&quot;C&quot;</span></span><br><span class="line">{</span><br><span class="line">  <span class="keyword">struct</span> foo{</span><br><span class="line">    <span class="keyword">int</span> var1;</span><br><span class="line">    <span class="keyword">int</span> var2;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> s[<span class="number">32</span>];</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> r[<span class="number">32</span>];</span><br><span class="line">    <span class="keyword">double</span> var3;</span><br><span class="line">    <span class="keyword">char</span> arr[<span class="number">16</span>];</span><br><span class="line">  };</span><br><span class="line"></span><br><span class="line">  __declspec(dllexport)  <span class="keyword">int</span> __<span class="function">stdcall <span class="title">DisplayHelloFromDLL</span><span class="params">()</span></span>{</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Hello from DLL\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">12345</span>;</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  __declspec(dllexport) <span class="keyword">void</span> __<span class="function">stdcall <span class="title">OutputStructValues</span><span class="params">(foo f)</span></span>{</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nEntering OutputStruct\n&quot;</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Size of struct is %d\n&quot;</span>, <span class="keyword">sizeof</span>(foo));</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var1 = %d\n&quot;</span>, f.var1);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var2 = %d\n&quot;</span>, f.var2);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, f.s);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, f.r);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;var2 = %10f\n&quot;</span>, f.var3);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;arr = %s\n&quot;</span>, f.arr[<span class="number">2</span>]);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;Exiting OutputStruct\n\n&quot;</span>);</span><br><span class="line">  }</span><br><span class="line"></span><br><span class="line">  __declspec(dllexport) <span class="keyword">void</span> __<span class="function">stdcall <span class="title">TestArrayInOut</span><span class="params">(<span class="keyword">int</span> * in, <span class="keyword">int</span> * out, <span class="keyword">int</span> nSize)</span> </span>{</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;\nEntering Array In out\n&quot;</span>);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nSize; i++)</span><br><span class="line">    {</span><br><span class="line">      <span class="comment">//*(out + i) = *(in + i);//&#x8FD9;&#x6837;&#x5199;&#x7ADF;&#x7136;&#x4E0D;&#x884C;!&#x5728; c#&#x4E2D;&#x8C03;&#x7528;&#x51FA;&#x9519;&#x4E86;</span></span><br><span class="line">      out[i] = in[i] * <span class="number">10</span>;</span><br><span class="line">    }</span><br><span class="line">  }</span><br></pre></td></tr></table></figure>
+</div>
+
+<p>
+&#x5173;&#x952E;&#x7684;&#x8BED;&#x53E5;&#x662F;&#xFF1A;extern &quot;C&quot; __declspec(dllexport) void __stdcall
+</p>
+
+<p>
+&#x5982;&#x679C;&#x6CA1;&#x6709; __stdcall, &#x7A0B;&#x5E8F;&#x4F9D;&#x7136;&#x53EF;&#x4EE5;&#x6267;&#x884C;&#xFF0C;&#x4F46;&#x662F;&#x8C03;&#x8BD5;&#x65F6;&#x4F1A;&#x62A5;&#x9519;&#x3002;
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> C#&#x4E2D;&#x65B0;&#x5EFA;&#x63A7;&#x5236;&#x53F0;&#x7A0B;&#x5E8F;&#xFF0C;&#x5BF9; dll &#x8FDB;&#x884C;&#x6D4B;&#x8BD5;</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> C#&#x4EE3;&#x7801;</h3>
+<div class="outline-text-3" id="text-2-1">
+<div class="org-src-container">
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Runtime.InteropServices;</span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> cpp_dll_link</span><br><span class="line">{</span><br><span class="line">    unsafe <span class="keyword">class</span> Program</span><br><span class="line">    {</span><br><span class="line">	[DllImport(<span class="string">&quot;DllTest.dll&quot;</span>)]</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">DisplayHelloFromDLL</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">	[DllImport(<span class="string">&quot;DllTest.dll&quot;</span>)]</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">OutputStructValues</span><span class="params">(foo f)</span></span>;</span><br><span class="line"></span><br><span class="line">	[DllImport(<span class="string">&quot;DllTest.dll&quot;</span>)]</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">extern</span> <span class="keyword">void</span> <span class="title">TestArrayInOut</span><span class="params">(IntPtr pin,IntPtr pout, <span class="keyword">int</span> nSize)</span></span>;</span><br><span class="line"></span><br><span class="line">	[StructLayout(LayoutKind.Sequential, CharSet = CharSet.Ansi, Pack = <span class="number">1</span>)]</span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">struct</span> foo</span><br><span class="line">	{</span><br><span class="line">	    <span class="keyword">public</span> <span class="keyword">int</span> inta;</span><br><span class="line">	    <span class="keyword">public</span> <span class="keyword">int</span> intb;</span><br><span class="line">	    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">32</span>)]</span><br><span class="line">	    <span class="keyword">public</span> <span class="built_in">string</span> z;</span><br><span class="line">	    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">32</span>)]</span><br><span class="line">	    <span class="keyword">public</span> <span class="built_in">string</span> x;</span><br><span class="line">	    <span class="keyword">public</span> Double doub;</span><br><span class="line">	    <span class="keyword">public</span> fixed byte arr[<span class="number">16</span>];</span><br><span class="line">	}</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span><span class="params">(<span class="built_in">string</span>[] args)</span></span><br><span class="line">	</span>{</span><br><span class="line">	    Console.WriteLine(<span class="string">&quot;This is C# program&quot;</span>);</span><br><span class="line">	    foo f;</span><br><span class="line">	    f.inta = <span class="number">10</span>;</span><br><span class="line">	    f.intb = <span class="number">20</span>;</span><br><span class="line">	    f.z = <span class="string">&quot;string1string1string1string1string1string1string1string1string1&quot;</span>;</span><br><span class="line">	    f.x = <span class="string">&quot;string2&quot;</span>;</span><br><span class="line">	    f.doub = <span class="number">5.67</span>;</span><br><span class="line">	    <span class="comment">//f.arr = new byte[16];</span></span><br><span class="line">	    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">16</span>; i++)</span><br><span class="line">	    {</span><br><span class="line">		f.arr[i] = (byte)(i + <span class="number">97</span>);</span><br><span class="line">	    }</span><br><span class="line">	    DisplayHelloFromDLL();</span><br><span class="line"></span><br><span class="line">	    <span class="keyword">int</span>[] a = { <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span> }; </span><br><span class="line">	    <span class="keyword">int</span>[] b = { <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span> };</span><br><span class="line">	    <span class="keyword">int</span> size = Marshal.SizeOf(a[<span class="number">0</span>]) * a.Length;</span><br><span class="line">	    <span class="comment">//Console.WriteLine(&quot;size: %d&quot;, size);</span></span><br><span class="line">	    IntPtr pa = Marshal.AllocHGlobal(<span class="number">16</span>);</span><br><span class="line">	    IntPtr pb = Marshal.AllocHGlobal(<span class="number">16</span>);</span><br><span class="line">	    Marshal.Copy(a, <span class="number">0</span>, pa, <span class="number">4</span>);</span><br><span class="line">	    Marshal.Copy(b, <span class="number">0</span>, pb, <span class="number">4</span>);</span><br><span class="line">	    TestArrayInOut(pa, pb, <span class="number">4</span>);</span><br><span class="line">	    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">4</span>; i++)</span><br><span class="line">		Console.WriteLine(*((<span class="keyword">int</span> *)pb + i));</span><br><span class="line"></span><br><span class="line">	    OutputStructValues(f);</span><br><span class="line">	    Console.WriteLine(<span class="string">&quot;End of app&quot;</span>);</span><br><span class="line">	    Console.ReadKey();</span><br><span class="line">	}</span><br><span class="line">    }</span><br><span class="line">}</span><br></pre></td></tr></table></figure>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> &#x5C06; C++&#x751F;&#x6210;&#x7684; Dll &#x6587;&#x4EF6;&#x62F7;&#x8D1D;&#x81F3; C#&#x5DE5;&#x7A0B;&#x7684;&#x8C03;&#x8BD5;&#x76EE;&#x5F55;&#x4E0B;&#xFF0C;&#x7136;&#x540E;&#x5C31;&#x53EF;&#x4EE5;&#x8FD0;&#x884C;&#x4E86;</h3>
+</div>
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> &#x8FD0;&#x884C;&#x7ED3;&#x679C;</h3>
+<div class="outline-text-3" id="text-2-3">
+<img src="/Images/dll2.png" alt="Drawing" width="400px">
+</div>
+</div>
+</div>
+
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-22 &#x56DB; 17:30&gt;</span></span></p>
+<p class="author">Author: ziyuan</p>
+<p class="date">Created: 2016-09-22 &#x56DB; 17:13</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/" target="_blank" rel="external">Emacs</a> 25.1.50.1 (<a href="http://orgmode.org" target="_blank" rel="external">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer" target="_blank" rel="external">Validate</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;div id=&quot;table-of-contents&quot;&gt;
+&lt;h2&gt;Table of Contents&lt;/h2&gt;
+&lt;div id=&quot;text-table-of-contents&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-1&quot;&gt;1. &amp;#x9996;&amp;#x5148;&amp;#x7528; C++&amp;#x7F16;&amp;#x5199;&amp;#x4E00;&amp;#x4E2A;&amp;#x6D4B;&amp;#x8BD5;&amp;#x7528;&amp;#x7684; dll&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-1-1&quot;&gt;1.1. &amp;#x65B0;&amp;#x5EFA;&amp;#x4E00;&amp;#x4E2A; Win32 &amp;#x63A7;&amp;#x5236;&amp;#x53F0;&amp;#x5DE5;&amp;#x7A0B;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-1-2&quot;&gt;1.2. Application settings &amp;#x4E2D;&amp;#x5C06;&amp;#x5E94;&amp;#x7528;&amp;#x7C7B;&amp;#x578B;&amp;#x8BBE;&amp;#x7F6E;&amp;#x4E3A; DLL&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-1-3&quot;&gt;1.3. &amp;#x5728;.cpp &amp;#x6587;&amp;#x4EF6;&amp;#x4E2D;&amp;#x8F93;&amp;#x5165;&amp;#x4EE3;&amp;#x7801;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-2&quot;&gt;2. C#&amp;#x4E2D;&amp;#x65B0;&amp;#x5EFA;&amp;#x63A7;&amp;#x5236;&amp;#x53F0;&amp;#x7A0B;&amp;#x5E8F;&amp;#xFF0C;&amp;#x5BF9; dll &amp;#x8FDB;&amp;#x884C;&amp;#x6D4B;&amp;#x8BD5;&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-2-1&quot;&gt;2.1. C#&amp;#x4EE3;&amp;#x7801;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-2-2&quot;&gt;2.2. &amp;#x5C06; C++&amp;#x751F;&amp;#x6210;&amp;#x7684; Dll &amp;#x6587;&amp;#x4EF6;&amp;#x62F7;&amp;#x8D1D;&amp;#x81F3; C#&amp;#x5DE5;&amp;#x7A0B;&amp;#x7684;&amp;#x8C03;&amp;#x8BD5;&amp;#x76EE;&amp;#x5F55;&amp;#x4E0B;&amp;#xFF0C;&amp;#x7136;&amp;#x540E;&amp;#x5C31;&amp;#x53EF;&amp;#x4EE5;&amp;#x8FD0;&amp;#x884C;&amp;#x4E86;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-2-3&quot;&gt;2.3. &amp;#x8FD0;&amp;#x884C;&amp;#x7ED3;&amp;#x679C;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&amp;#x672C;&amp;#x6587;&amp;#x901A;&amp;#x8FC7;&amp;#x5B9E;&amp;#x4F8B;&amp;#x4ECB;&amp;#x7ECD;&amp;#x5982;&amp;#x4F55;&amp;#x5728; c#&amp;#x4E2D;&amp;#x8C03;&amp;#x7528; C++&amp;#x7F16;&amp;#x5199;&amp;#x7684; dll&amp;#x3002;
+&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
+    
+      <category term="C++" scheme="http://yoursite.com/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Hello world! Orgmode &amp; Hexo</title>
+    <link href="http://yoursite.com/2016/09/20/orgtest/"/>
+    <id>http://yoursite.com/2016/09/20/orgtest/</id>
+    <published>2016-09-20T14:00:00.000Z</published>
+    <updated>2016-09-20T14:35:00.712Z</updated>
+    
+    <content type="html"><![CDATA[
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. Orgmode</a>
+<ul>
+<li><a href="#sec-1-1">1.1. Why org</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+&#x8FD9;&#x662F;&#x4E00;&#x4E2A;&#x5F00;&#x59CB;&#x4F7F;&#x7528; emacs org mode &#x5199;&#x535A;&#x5BA2;&#x7684;&#x6D4B;&#x8BD5;&#x3002; 
+</p>
+<a id="more"></a>
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Orgmode</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Why org</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">console.log(&apos;hello&apos;);</span><br></pre></td></tr></table></figure>
+</div>
+</div>
+</div>
+</div>
+
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-20 Tur 22:00&gt;</span></span></p>
+<p class="author">Author: ziyuan</p>
+<p class="date">Created: 2016-09-20 &#x4E8C; 22:44</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/" target="_blank" rel="external">Emacs</a> 25.1.50.1 (<a href="http://orgmode.org" target="_blank" rel="external">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer" target="_blank" rel="external">Validate</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;div id=&quot;table-of-contents&quot;&gt;
+&lt;h2&gt;Table of Contents&lt;/h2&gt;
+&lt;div id=&quot;text-table-of-contents&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-1&quot;&gt;1. Orgmode&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-1-1&quot;&gt;1.1. Why org&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&amp;#x8FD9;&amp;#x662F;&amp;#x4E00;&amp;#x4E2A;&amp;#x5F00;&amp;#x59CB;&amp;#x4F7F;&amp;#x7528; emacs org mode &amp;#x5199;&amp;#x535A;&amp;#x5BA2;&amp;#x7684;&amp;#x6D4B;&amp;#x8BD5;&amp;#x3002; 
+&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Hexo" scheme="http://yoursite.com/tags/Hexo/"/>
+    
+      <category term="emacs" scheme="http://yoursite.com/tags/emacs/"/>
+    
+      <category term="orgmode" scheme="http://yoursite.com/tags/orgmode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>python多区间重叠可视化分析</title>
+    <link href="http://yoursite.com/2016/09/13/python%E5%A4%9A%E5%8C%BA%E9%97%B4%E9%87%8D%E5%8F%A0%E5%8F%AF%E8%A7%86%E5%8C%96%E5%88%86%E6%9E%90/"/>
+    <id>http://yoursite.com/2016/09/13/python多区间重叠可视化分析/</id>
+    <published>2016-09-12T23:28:38.000Z</published>
+    <updated>2016-09-20T12:52:28.558Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>实现目标：</strong><br>多个重叠区间段的可视化分析。下面给出了一个用visio绘制的例子。</p>
+<a id="more"></a>
+<p><img src="/Images/example.png" alt="Drawing" width="700px"></p>
+<p>图中用矩形来表示一个区间段，矩形的左边为区间起点，矩形的右边为区间终点。<br>带箭头的线段是特殊的区间，即其区间起点和终点重合。</p>
+<p>visio画出来效果还不错,不过这样绘制速度太慢,很多工作需要手动调整,如果需要绘制的区间较多,或者需要多次绘制,那样是很容易出错的.<br>最好能用程序自动绘制,今天就用python来小试牛刀. </p>
+<h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><p>我们首先分析出要通过程序设计自动绘制出例子中的图形需要遵循的一些原则。</p>
+<ol>
+<li>原则一：通过矩形块的不同高度来避免重合，给出层次化的展示。<br>这要求： </li>
+</ol>
+<ul>
+<li>区间的宽度越大，则其高度越小 </li>
+<li>优先绘制高度高的矩形 </li>
+<li>对于高度一致的矩形，若二者有区间有重合，则应使用更改为不同的高度 </li>
+</ul>
+<ol>
+<li>原则二：区间的名字标注应明确，不位于多个矩形上</li>
+</ol>
+<p>上图写在矩形的左上角。显然当矩形最小高度差大于文字高度时，此条件自然满足，但严格地说，应该是每个矩形的左上角与其他矩形的高度差<br>大于文字高度。 </p>
+<h1 id="Python实现"><a href="#Python实现" class="headerlink" title="Python实现"></a>Python实现</h1><ol>
+<li>区间参数输入<br>采用字典变量来表示区间。字典的key为需求编号，区间参数用list两个值表示，0序号值表示需求的名字(name),<br>1序号值表示区间参数。</li>
+</ol>
+<p>区间参数分以下几种情况： </p>
+<ul>
+<li>单个区间 </li>
+<li>多个区间 </li>
+<li>单个点 </li>
+<li>以上混合</li>
+</ul>
+<p>为适应上述所有可能的组合参数列表按如下方式表示 </p>
+<p>[(区间l xleft,区间1 xright),(区间2 xleft, 区间2 xright),点X,…]</p>
+<p>对于单个点的区间X, 只有xleft。可通过type是否为tuple来判断是否为一个区间。 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Requires=&#123;<span class="number">1</span>:[<span class="string">"猪肉"</span>,[(<span class="number">100</span>,<span class="number">150</span>),(<span class="number">200</span>,<span class="number">400</span>)]],</span><br><span class="line">		  <span class="number">2</span>:[<span class="string">"羊肉"</span>,[(<span class="number">200</span>,<span class="number">400</span>)]], </span><br><span class="line">	   	  <span class="number">3</span>:[<span class="string">"天山雪莲"</span>,[<span class="number">1011</span>]], &#125;</span><br></pre></td></tr></table></figure>
+<p>每个矩形块也有颜色的区别的，这有两种方案，然程序随机选择颜色，另外就是指定颜色了。采用指定颜色的方案，最简单的方法<br>就是把颜色信息加在参数列表中，用一个字符串表示。不过既然我们选择python，就有更加方便的方法：<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Requires=&#123;<span class="number">1</span>:[<span class="string">"猪肉"</span>,[(<span class="number">100</span>,<span class="number">150</span>),(<span class="number">200</span>,<span class="number">400</span>)],&#123;<span class="string">'color'</span>:<span class="string">'r'</span>&#125;],</span><br><span class="line">		<span class="number">2</span>:[<span class="string">"羊肉"</span>,[(<span class="number">200</span>,<span class="number">400</span>)],&#123;<span class="string">'color'</span>:<span class="string">'g'</span>&#125;],</span><br><span class="line">		<span class="number">3</span>:[<span class="string">"天山雪莲"</span>,[<span class="number">1011</span>],&#123;<span class="string">'color'</span>:<span class="string">'b'</span>&#125;], &#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里用的字典的方式，这有方便扩展别的参数，比如线宽、透明度等等都可以指定。</p>
+<ol>
+<li>从需求限制中提取出所有需要绘制的区间参数</li>
+</ol>
+<p>rects=[[区间名称,区间坐标,区间宽度,plotPara],…]</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">rects=[]</span><br><span class="line"><span class="keyword">for</span> key, var <span class="keyword">in</span> Requires.iteritems():</span><br><span class="line">    <span class="keyword">for</span> regionPra <span class="keyword">in</span> var[<span class="number">1</span>]:</span><br><span class="line">        <span class="keyword">if</span> type(regionPra) <span class="keyword">is</span> tuple:</span><br><span class="line">            rects.append([var[<span class="number">0</span>],regionPra,regionPra[<span class="number">1</span>]-regionPra[<span class="number">0</span>]],var[-<span class="number">1</span>])</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            rects.append([var[<span class="number">0</span>],regionPra,<span class="number">0</span>],var[-<span class="number">1</span>])</span><br></pre></td></tr></table></figure>
+<ol>
+<li><p>依据区间参数确定绘制顺序及绘制高度，并进行绘制</p>
+<ul>
+<li>依据width对rects从大到小排序。<br>从设计原则中我们知道,区间宽度越大,高度越小,所以我们首先来做一个排序,按区间宽度从小到大:</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">   rectsSorted=[]</span><br><span class="line">   minWidth=<span class="number">1e9</span></span><br><span class="line">   heightMin=<span class="number">0.1</span></span><br><span class="line">   heightMax=<span class="number">0.9</span></span><br><span class="line">   d=(heightMax-heightMin)/NonZeroNum</span><br><span class="line">   height=heightMax</span><br><span class="line">   <span class="keyword">for</span> sortedIndex <span class="keyword">in</span> range(len(rects)):</span><br><span class="line">minWidth=<span class="number">1e9</span></span><br><span class="line"><span class="keyword">for</span> rect <span class="keyword">in</span> rects:</span><br><span class="line">    <span class="keyword">if</span>(rect[<span class="number">2</span>]&lt;minWidth):</span><br><span class="line">	minWidth=rect[<span class="number">2</span>]</span><br><span class="line">	rectPoping=rect</span><br><span class="line">rects.remove(rectPoping)<span class="comment">#从原序列中去掉矩形宽度最小的</span></span><br><span class="line">rectPoping[-<span class="number">1</span>][<span class="string">'height'</span>]=height</span><br><span class="line"><span class="keyword">if</span> rectPoping[<span class="number">2</span>]!=<span class="number">0</span>:</span><br><span class="line">    height-=d</span><br><span class="line">rectsSorted.append(rectPoping)<span class="comment">#放到排序序列中</span></span><br></pre></td></tr></table></figure>
+<p>这里的思路是:遍历原序列,从中找到宽度最小的,将其放入新序列,并从序列中删除.不断重复此过程,直到原序列为空.</p>
+<ul>
+<li>其实在排序之前,我们可能遗漏了一种情况:多个区间完全重合.</li>
+</ul>
+<p>对于这种情况，我并不绘制多个不同高度的矩形，<br>而是将多个矩形合并为一个,把它们的name拼接在一起(name是字符串),最后绘图时在矩形的文字标注上能看出有多个条目就够了.</p>
+<p><em>预处理—去除完全重合的区间</em> </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">   <span class="comment">###############排除重合####################</span></span><br><span class="line">   <span class="comment">#排除重合-步骤1. 找出相互重合的编号集</span></span><br><span class="line">   IndexSameChecked=[] <span class="comment">#相互重合的序号</span></span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> range(len(rectsSorted)-<span class="number">1</span>):</span><br><span class="line"><span class="keyword">for</span> j <span class="keyword">in</span> range(i+<span class="number">1</span>, len(rectsSorted)):</span><br><span class="line">    <span class="keyword">if</span> (rectsSorted[j][<span class="number">2</span>]&gt;<span class="number">0</span> <span class="keyword">and</span> rectsSorted[i][<span class="number">2</span>]&gt;<span class="number">0</span>):<span class="comment">#都是矩形</span></span><br><span class="line">	xlefti=rectsSorted[i][<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">	xrighti=rectsSorted[i][<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">	xleftj=rectsSorted[j][<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">	xrightj=rectsSorted[j][<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">	<span class="keyword">if</span>(xrightj==xrighti <span class="keyword">and</span> xleftj==xlefti):<span class="comment">#重合</span></span><br><span class="line">	    <span class="keyword">if</span>(len(IndexSameChecked)&gt;<span class="number">0</span>):</span><br><span class="line">		hasApended=<span class="keyword">False</span></span><br><span class="line">		<span class="keyword">for</span> setNum,sameIndSet <span class="keyword">in</span> enumerate(IndexSameChecked):</span><br><span class="line">		    <span class="keyword">if</span> (i <span class="keyword">in</span> sameIndSet) <span class="keyword">or</span> (j <span class="keyword">in</span> sameIndSet):</span><br><span class="line">			IndexSameChecked[setNum]=IndexSameChecked[setNum].union(set((i,j)))</span><br><span class="line">			hasApended=<span class="keyword">True</span></span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> hasApended:                        </span><br><span class="line">		    IndexSameChecked.append(set((i,j)))</span><br><span class="line">	    <span class="keyword">elif</span> (len(IndexSameChecked)==<span class="number">0</span>):                    </span><br><span class="line">		IndexSameChecked.append(set((i,j)))</span><br><span class="line">    <span class="keyword">elif</span> (rectsSorted[j][<span class="number">2</span>]==<span class="number">0</span> <span class="keyword">and</span> rectsSorted[i][<span class="number">2</span>]==<span class="number">0</span>):<span class="comment">#都是线</span></span><br><span class="line">	xi=rectsSorted[i][<span class="number">1</span>]</span><br><span class="line">	xj=rectsSorted[j][<span class="number">1</span>]            </span><br><span class="line">	<span class="keyword">if</span>(xi==xj):                </span><br><span class="line">	    <span class="keyword">if</span>(len(IndexSameChecked)&gt;<span class="number">0</span>):</span><br><span class="line">		hasApended=<span class="keyword">False</span></span><br><span class="line">		<span class="keyword">for</span> setNum,sameIndSet <span class="keyword">in</span> enumerate(IndexSameChecked):</span><br><span class="line">		    <span class="keyword">if</span> (i <span class="keyword">in</span> sameIndSet) <span class="keyword">or</span> (j <span class="keyword">in</span> sameIndSet):</span><br><span class="line">			IndexSameChecked[setNum]=IndexSameChecked[setNum].union(set((i,j)))</span><br><span class="line">			hasApended=<span class="keyword">True</span></span><br><span class="line">		<span class="keyword">if</span> <span class="keyword">not</span> hasApended:  </span><br><span class="line">		    IndexSameChecked.append(set((i,j)))</span><br><span class="line">	    <span class="keyword">else</span>:</span><br><span class="line">		IndexSameChecked.append(set((i,j)))</span><br><span class="line"></span><br><span class="line">   <span class="comment">#排除重合-步骤2. 剔除重合项</span></span><br><span class="line">   <span class="keyword">for</span> seti,sameIndSet <span class="keyword">in</span> enumerate(IndexSameChecked):</span><br><span class="line">name=<span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> ind <span class="keyword">in</span> sameIndSet:</span><br><span class="line">    name=name+rectsSorted[ind][<span class="number">0</span>]+<span class="string">";"</span></span><br><span class="line">rectsSorted[ind][<span class="number">0</span>]=name</span><br><span class="line">IndexSameChecked[seti].remove(ind)</span><br><span class="line"></span><br><span class="line">   readyDel=[]</span><br><span class="line">   <span class="keyword">for</span> sameIndSet <span class="keyword">in</span> IndexSameChecked: </span><br><span class="line"><span class="keyword">for</span> ind <span class="keyword">in</span> sameIndSet:</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"del"</span>,ind,rectsSorted[ind][<span class="number">0</span>]</span><br><span class="line">    readyDel.append(rectsSorted[ind])</span><br><span class="line"></span><br><span class="line">   <span class="keyword">for</span> item2del <span class="keyword">in</span> readyDel:</span><br><span class="line">rectsSorted.remove(item2del)</span><br><span class="line">   <span class="comment">###############排除重合end####################</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>下面要来考虑区间交叠的文字标注问题</li>
+</ul>
+<p>过程应该是这样的，按高度从高到低的顺序考察每个矩形（不含线段），<br>对每个考察对象和比它次高的对象,若二者完全不相交,它们可以使用相同的高度;<br>若二者有区间相交,且较高者位于右方,则应确保较高者高于次高者”文字标注的高度”,以保证文字标注的清晰.<br>代码如下:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> recti <span class="keyword">in</span> range(len(rectsSorted)-<span class="number">1</span>):</span><br><span class="line">    <span class="keyword">if</span> (rectsSorted[recti][<span class="number">2</span>]&gt;<span class="number">0</span>):</span><br><span class="line">	xlefti=rectsSorted[recti][<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">	xrighti=rectsSorted[recti][<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">	xleftj=rectsSorted[recti+<span class="number">1</span>][<span class="number">1</span>][<span class="number">0</span>]</span><br><span class="line">	xrightj=rectsSorted[recti+<span class="number">1</span>][<span class="number">1</span>][<span class="number">1</span>]</span><br><span class="line">	<span class="keyword">if</span> (xrighti&lt;xleftj <span class="keyword">or</span> xrightj&lt;xlefti):<span class="comment">#不相交</span></span><br><span class="line">	    <span class="keyword">print</span> <span class="string">"equal"</span></span><br><span class="line">	    rectsSorted[recti][<span class="number">4</span>]=rectsSorted[recti+<span class="number">1</span>][<span class="number">4</span>]</span><br><span class="line">	<span class="keyword">elif</span>(xrightj==xrighti <span class="keyword">and</span> xleftj==xlefti):<span class="comment">#重合</span></span><br><span class="line">	    <span class="keyword">print</span> <span class="string">"overlap:"</span>,rectsSorted[recti][<span class="number">0</span>]</span><br><span class="line">	    rectsSorted[recti][<span class="number">4</span>]=rectsSorted[recti+<span class="number">1</span>][<span class="number">4</span>]</span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">	    <span class="keyword">if</span> (xlefti&gt;xleftj):</span><br><span class="line">		rectsSorted[recti][<span class="number">4</span>]=rectsSorted[recti+<span class="number">1</span>][<span class="number">4</span>]+<span class="number">0.03</span></span><br></pre></td></tr></table></figure>
+<p>(此段代码尚待改进)</p>
+<ul>
+<li>现在各个矩形的绘制顺序、矩形高度都确定了，只需要逐个绘制出就行了。</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">import</span> matplotlib</span><br><span class="line">myfont=matplotlib.font_manager.FontProperties(fname=<span class="string">r'C:\WINDOWS\Fonts\STSONG.ttf'</span>,size=<span class="number">10</span>)</span><br><span class="line">plt.close(<span class="string">'all'</span>)</span><br><span class="line">fig=plt.figure(figsize=[ <span class="number">17.7</span>*<span class="number">6</span>   ,   <span class="number">3.7125</span>*<span class="number">2</span>])</span><br><span class="line">fig.subplots_adjust(left=<span class="number">0.03</span>,right=<span class="number">0.97</span>,top=<span class="number">0.97</span>,bottom=<span class="number">0.11</span>)</span><br><span class="line"><span class="keyword">for</span> rect <span class="keyword">in</span> rectsSorted:</span><br><span class="line">    <span class="keyword">if</span> type(rect[<span class="number">1</span>]) <span class="keyword">is</span> tuple:</span><br><span class="line">	alpha=(rect[<span class="number">4</span>]-heightMin+<span class="number">0.05</span>)*<span class="number">0.4</span>/(heightMax-heightMin)</span><br><span class="line">    <span class="keyword">if</span> alpha&lt;<span class="number">0.15</span>:</span><br><span class="line">	alpha=<span class="number">0.15</span></span><br><span class="line">	rectDraw=plt.Rectangle((rect[<span class="number">1</span>][<span class="number">0</span>],<span class="number">0</span>),rect[<span class="number">2</span>],rect[-<span class="number">1</span>][<span class="string">'height'</span>],facecolor=rect[-<span class="number">1</span>][<span class="string">'color'</span>],alpha=alpha)</span><br><span class="line">	plt.gca().add_patch(rectDraw)</span><br><span class="line">	plt.text(rect[<span class="number">1</span>][<span class="number">0</span>],rect[-<span class="number">1</span>][<span class="string">'height'</span>],rect[<span class="number">0</span>],fontproperties=myfont,verticalalignment=<span class="string">'top'</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">	plt.plot([rect[<span class="number">1</span>],rect[<span class="number">1</span>]],[<span class="number">0</span>,<span class="number">1.11</span>],color=rect[-<span class="number">1</span>][<span class="string">'color'</span>],alpha=<span class="number">0.4</span>)</span><br><span class="line">	plt.text(rect[<span class="number">1</span>],<span class="number">0.9</span>,rect[<span class="number">0</span>],fontproperties=myfont,rotation=<span class="number">90</span>,ha=<span class="string">'center'</span>,va=<span class="string">'bottom'</span>)</span><br><span class="line">plt.yticks([])</span><br><span class="line">ax=plt.gca()</span><br><span class="line">plt.grid(b=<span class="string">'on'</span>,axis=<span class="string">'x'</span>)</span><br><span class="line">ax.tick_params(axis=<span class="string">'x'</span>,labelsize=<span class="number">8</span>)</span><br><span class="line"><span class="keyword">for</span> tick <span class="keyword">in</span> ax.xaxis.get_major_ticks():</span><br><span class="line">    tick.label.set_rotation(<span class="string">'vertical'</span>)   </span><br><span class="line">plt.axis(<span class="string">'tight'</span>)</span><br></pre></td></tr></table></figure>
+<p>这段代码中,我们设置了中文字体;调整了图片四周的留白;将横坐标改成了竖直显示;设置了x,y轴的ticks.<br>这些都是使用matplotlib较常遇到的.</p>
+</li>
+</ol>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>最终的绘制效果还不错,这里就不展示了.可以看到程序把很多繁杂的工作自动化了.而visio可随时手动的更改也算是一种优势,如果visio也能通过程序设计自动的完成一些绘制那就最好了!如果有读者知道的话,请一定告诉我.</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;实现目标：&lt;/strong&gt;&lt;br&gt;多个重叠区间段的可视化分析。下面给出了一个用visio绘制的例子。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="python" scheme="http://yoursite.com/tags/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>The Weight changing curve of sombody</title>
+    <link href="http://yoursite.com/2016/09/04/The-Weight-changing-curve-of-sombody/"/>
+    <id>http://yoursite.com/2016/09/04/The-Weight-changing-curve-of-sombody/</id>
+    <published>2016-09-04T14:48:13.000Z</published>
+    <updated>2016-09-04T15:09:01.422Z</updated>
+    
+    <content type="html"><![CDATA[<p>某人的体重变化</p>
+<a id="more"></a>
+<p>measureDateTime=[<br>datetime(2016,4,30,22,30), 98.4,<br>datetime(2016,5,4,22,05),98.4,<br>datetime(2016,5,6,22,30),99.2,<br>datetime(2016,5,7,22,30),98.9,<br>datetime(2016,5,9,22,15),97.9,<br>datetime(2016,5,11,22,30),98.4,<br>datetime(2016,5,14,22,30),97.9,<br>datetime(2016,5,16,22,30),98.4,<br>datetime(2016,5,19,22,30),96.8,<br>datetime(2016,5,20,22,30),97.6,<br>datetime(2016,5,26,22,30),97.1,<br>datetime(2016,5,27,22,30),97.6,<br>datetime(2016,5,31,22,30),97.6,<br>datetime(2016,6,8,22,30),98.9,<br>datetime(2016,6,9,22,30),98.3,<br>datetime(2016,6,11,22,30),97.7,<br>datetime(2016,6,12,22,30),97.3,<br>datetime(2016,6,14,22,30),98.1,<br>datetime(2016,6,18,22,30),98.3,<br>datetime(2016,6,20,22,30),98.9,<br>datetime(2016,6,25,22,30),99.4,<br>datetime(2016,6,26,22,30),99.1,<br>datetime(2016,6,28,22,30),99.8,<br>datetime(2016,7,5,22,30),101.0,<br>datetime(2016,7,13,22,30),102.1,<br>datetime(2016,7,15,22,30),103.4,<br>datetime(2016,7,23,22,30),104.7,<br>datetime(2016,7,26,22,30),106,<br>datetime(2016,7,28,22,30),106.3,<br>datetime(2016,8,11,22,30),108.4,<br>datetime(2016,8,18,22,30),111,<br>datetime(2016,8,21,22,30),110.7,<br>datetime(2016,8,22,22,35),110.7,<br>datetime(2016,8,23,23,04),110.7,<br>datetime(2016,8,24,22,45),110.4,<br>datetime(2016,8,26,23,30),110.6,<br>datetime(2016,8,27,22,55),111.3,<br>datetime(2016,8,28,22,45),111.7,<br>datetime(2016,8,29,23,05),112.4,<br>datetime(2016,8,30,23,00),111.4,<br>datetime(2016,9,1,23,15),111.2,<br>datetime(2016,9,2,23,18),112.4,<br>datetime(2016,9,3,23,05),112.9,<br>datetime(2016,9,4,22,46),113.2</p>
+<p>]</p>
+<p><img src="/Images/lifeWeight.png" alt="" title="某人的体重变化"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;某人的体重变化&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="生活" scheme="http://yoursite.com/tags/%E7%94%9F%E6%B4%BB/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>录制Emacs gif</title>
+    <link href="http://yoursite.com/2016/09/03/%E5%BD%95%E5%88%B6Emacs-gif/"/>
+    <id>http://yoursite.com/2016/09/03/录制Emacs-gif/</id>
+    <published>2016-09-03T07:52:08.000Z</published>
+    <updated>2016-09-04T14:56:23.867Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>目的</strong><br>使用Emacs可以录制一些很有(zhuang)用(bi)的gif。本文介绍使用方法。</p>
+<a id="more"></a>
+<h1 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h1><ul>
+<li><p>：ubuntu 14.04</p>
+</li>
+<li><p>Emacs: 25.1.50.1</p>
+</li>
+</ul>
+<h1 id="步骤"><a href="#步骤" class="headerlink" title="步骤"></a>步骤</h1><ol>
+<li>在<a href="https://melpa.org" target="_blank" rel="external">melpa</a>上搜索<code>gif</code>可以找到<code>camcorder</code>这个package。相信它解决问题的关键。</li>
+<li>在Emacs中安装<code>camcorder</code>。</li>
+<li>在ubuntu中安装<code>recordmydesktop</code>，<code>ffmpeg</code>或者<code>mplayer</code>或者<code>imagemagick</code>.</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install recordmydesktop</span><br></pre></td></tr></table></figure>
+<ol>
+<li>进入<code>camcorder</code>的<a href="https://github.com/Malabarba/camcorder.el" target="_blank" rel="external">github</a>页面，可以找到这个package的使用方法。<ul>
+<li><code>M-x camcorder-record</code>开启录制，会要求设定路径</li>
+<li><code>F12</code> 完成录制</li>
+<li><code>F10</code> 暂停录制</li>
+</ul>
+</li>
+</ol>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;目的&lt;/strong&gt;&lt;br&gt;使用Emacs可以录制一些很有(zhuang)用(bi)的gif。本文介绍使用方法。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Emacs" scheme="http://yoursite.com/tags/Emacs/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>给自己的网站增加访问统计</title>
+    <link href="http://yoursite.com/2016/08/28/%E7%BB%99%E8%87%AA%E5%B7%B1%E7%9A%84%E7%BD%91%E7%AB%99%E5%A2%9E%E5%8A%A0%E8%AE%BF%E9%97%AE%E7%BB%9F%E8%AE%A1/"/>
+    <id>http://yoursite.com/2016/08/28/给自己的网站增加访问统计/</id>
+    <published>2016-08-28T07:54:34.000Z</published>
+    <updated>2016-08-28T08:04:42.760Z</updated>
+    
+    <content type="html"><![CDATA[<p>使用最简单的<a href="http://service.ibruce.info/" target="_blank" rel="external">不蒜子</a>来给我的博客增加访客数的统计。</p>
+<a id="more"></a>
+<p>参考链接：<a href="http://ibruce.info/2015/04/04/busuanzi/" target="_blank" rel="external">http://ibruce.info/2015/04/04/busuanzi/</a></p>
+<p>链接里已经写的比较详细了，我只用了最简单的uv方式计算访客数，单个用户连续点击n篇文章，只记录1次访客数。</p>
+<p>将两行配置写入themes/你的主题/layout/_partial/footer.ejs中，</p>
+<p>我的footer.ejs文件如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#60;div class=&#34;alignleft&#34;&#62;&#10;  &#60;% if (config.author)&#123; %&#62;&#10;  &#38;copy; &#60;%= new Date().getFullYear() %&#62; &#60;%= config.author %&#62;&#10;  &#60;% &#125; else &#123; %&#62;&#10;  &#38;copy; &#60;%= new Date().getFullYear() %&#62; &#60;%= config.title %&#62;&#10;  &#60;% &#125; %&#62;&#10;&#10;&#60;script async src=&#34;https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js&#34;&#62;&#10;&#60;/script&#62;&#10;&#60;span id=&#34;busuanzi_container_site_uv&#34;&#62;&#10;  &#26412;&#31449;&#35775;&#23458;&#25968;&#60;span id=&#34;busuanzi_value_site_uv&#34;&#62;&#60;/span&#62;&#20154;&#27425;&#10;&#60;/span&#62;&#10;&#60;/div&#62;&#10;&#60;div class=&#34;clearfix&#34;&#62;&#60;/div&#62;</span><br></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;使用最简单的&lt;a href=&quot;http://service.ibruce.info/&quot;&gt;不蒜子&lt;/a&gt;来给我的博客增加访客数的统计。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Hexo" scheme="http://yoursite.com/tags/Hexo/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>在ubuntu中安装mono</title>
+    <link href="http://yoursite.com/2016/08/28/%E5%9C%A8ubuntu%E4%B8%AD%E5%AE%89%E8%A3%85mono/"/>
+    <id>http://yoursite.com/2016/08/28/在ubuntu中安装mono/</id>
+    <published>2016-08-28T01:27:03.000Z</published>
+    <updated>2016-08-28T01:34:47.601Z</updated>
+    
+    <content type="html"><![CDATA[<p>我想在Ubuntu下玩一玩SDRsharp，通过<a href="http://rtlsdr.org/softwarelinux" target="_blank" rel="external">http://rtlsdr.org/softwarelinux</a> 的介绍，可以知道SDR#主要还是在windows平台上运行，但也可以通过mono在Linux平台上运行。</p>
+<a id="more"></a>
+<p>本以为参考MONO的官网介绍就能搞定的(<a href="http://www.mono-project.com/docs/getting-started/install/linux/#usage)。" target="_blank" rel="external">http://www.mono-project.com/docs/getting-started/install/linux/#usage)。</a> 可是并没有那么容易，<br>遇到了<a href="http://sushihangover.github.io/mono-ubuntu-broken/" target="_blank" rel="external">http://sushihangover.github.io/mono-ubuntu-broken/</a> 这个网站介绍的问题。</p>
+<h1 id="解决方法："><a href="#解决方法：" class="headerlink" title="解决方法："></a>解决方法：</h1><p>简而言之，就是下载libjpeg62-turbo和libjpeg62并安装。<br>但是网页上介绍的两个安装包的链接都失效了</p>
+<ol>
+<li><p>google了一下找到安装包的下载地址是： <a href="http://http.kali.org/kali/pool/main/libj/libjpeg-turbo/" target="_blank" rel="external">http://http.kali.org/kali/pool/main/libj/libjpeg-turbo/</a> 和 <a href="http://http.kali.org/kali/pool/main/libj/libjpeg6b/" target="_blank" rel="external">http://http.kali.org/kali/pool/main/libj/libjpeg6b/</a> 。</p>
+<p> 其中libjpeg6b是可以直接用sudo apt安装的：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install libjpeg62</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>随后下载了安装包libjpeg62-turbo_1.5.0-1_amd64.deb。<br>双击运行安装（ubuntu的软件中心可以使用双击安装.deb包）。</p>
+</li>
+<li><p>安装完成后就是用下面的语句来完成mono的安装了：</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install mono-devel</span><br><span class="line">sudo apt-get mono-complete</span><br><span class="line">sudo apt-get referenceassemblies-pcl</span><br><span class="line">sudo apt-get mono-xsp4</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>这样mono就安装好了，可以运行例子进行测试。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;我想在Ubuntu下玩一玩SDRsharp，通过&lt;a href=&quot;http://rtlsdr.org/softwarelinux&quot;&gt;http://rtlsdr.org/softwarelinux&lt;/a&gt; 的介绍，可以知道SDR#主要还是在windows平台上运行，但也可以通过mono在Linux平台上运行。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="Hexo" scheme="http://yoursite.com/tags/Hexo/"/>
+    
+      <category term="linux" scheme="http://yoursite.com/tags/linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title></title>
+    <link href="http://yoursite.com/2016/08/28/learn%20Git/"/>
+    <id>http://yoursite.com/2016/08/28/learn Git/</id>
+    <published>2016-08-28T01:21:42.757Z</published>
+    <updated>2016-07-05T13:47:24.890Z</updated>
+    
+    <content type="html"><![CDATA[
+
+<p>
+git checkout master  &#x2014;&gt; &#x5230; master &#x5206;&#x652F;
+git clr  &#x2014;&gt; &#x6E05;&#x7A7A;&#x672C;&#x5730;&#x4FEE;&#x6539;
+git fetch upstream &#x2014;&gt;&#x66F4;&#x65B0; master &#x5230;&#x6700;&#x65B0;&#x7248;&#x672C;
+git merge upstream/master 
+</p>
+
+<p class="author">Author: ziyuan</p>
+<p class="date">Created: 2016-09-20 &#x4E8C; 22:07</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/" target="_blank" rel="external">Emacs</a> 25.1.50.1 (<a href="http://orgmode.org" target="_blank" rel="external">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer" target="_blank" rel="external">Validate</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      
+
+&lt;p&gt;
+git checkout master  &amp;#x2014;&amp;gt; &amp;#x5230; master &amp;#x5206;&amp;#x652F;
+git clr  &amp;#x2014;&amp;gt; &amp;#x6E05;&amp;#x7A7A;&amp;#x672C;&amp;#x5730;&amp;#x4FEE;&amp;#x65
+    
+    </summary>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>windows安装portaudio</title>
+    <link href="http://yoursite.com/2016/06/25/windows%E5%AE%89%E8%A3%85portaudio/"/>
+    <id>http://yoursite.com/2016/06/25/windows安装portaudio/</id>
+    <published>2016-06-25T12:43:36.000Z</published>
+    <updated>2016-07-05T10:39:38.962Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>实现目标：</strong><br>portaudio是一个开源的跨平台Audio API。它为多种声音设备提供了统一的编程接口。</p>
+<a id="more"></a>
+<h1 id="安装Pyaudio"><a href="#安装Pyaudio" class="headerlink" title="安装Pyaudio"></a>安装Pyaudio</h1><p>PyAudio provides Python bindings for PortAudio, the cross-platform audio I/O<br>library. With PyAudio, you can easily use Python to play and record audio on a<br>variety of platforms, such as GNU/Linux, Microsoft Windows, and Apple Mac OS X. <a href="http://people.csail.mit.edu/hubert/pyaudio/" target="_blank" rel="external">http://people.csail.mit.edu/hubert/pyaudio/</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;实现目标：&lt;/strong&gt;&lt;br&gt;portaudio是一个开源的跨平台Audio API。它为多种声音设备提供了统一的编程接口。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="portaudio" scheme="http://yoursite.com/tags/portaudio/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>解决Win7网络出现有限的访问权限</title>
+    <link href="http://yoursite.com/2016/06/21/%E8%A7%A3%E5%86%B3Win7%E7%BD%91%E7%BB%9C%E5%87%BA%E7%8E%B0%E6%9C%89%E9%99%90%E7%9A%84%E8%AE%BF%E9%97%AE%E6%9D%83%E9%99%90/"/>
+    <id>http://yoursite.com/2016/06/21/解决Win7网络出现有限的访问权限/</id>
+    <published>2016-06-21T12:43:36.000Z</published>
+    <updated>2016-08-28T01:40:03.129Z</updated>
+    
+    <content type="html"><![CDATA[<p>管理员身份运行CMD，<br>输入netsh winsock reset catalog<br>再输入: netsh int ip reset reset.log</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;管理员身份运行CMD，&lt;br&gt;输入netsh winsock reset catalog&lt;br&gt;再输入: netsh int ip reset reset.log&lt;/p&gt;
+
+    
+    </summary>
+    
+    
+      <category term="Win7" scheme="http://yoursite.com/tags/Win7/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用树莓派制作FM无线发射站</title>
+    <link href="http://yoursite.com/2016/06/16/%E7%94%A8%E6%A0%91%E8%8E%93%E6%B4%BE%E5%88%B6%E4%BD%9CFM%E6%97%A0%E7%BA%BF%E5%8F%91%E5%B0%84%E7%AB%99/"/>
+    <id>http://yoursite.com/2016/06/16/用树莓派制作FM无线发射站/</id>
+    <published>2016-06-16T12:43:36.000Z</published>
+    <updated>2016-06-11T09:31:44.904Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>实现目标：</strong><br>DIY 无线发射站</p>
+<a id="more"></a>
+<h1 id="安装操作系统"><a href="#安装操作系统" class="headerlink" title="安装操作系统"></a>安装操作系统</h1><ol>
+<li>官网下载镜像 <a href="https://www.raspberrypi.org/downloads/raspbian/" target="_blank" rel="external">https://www.raspberrypi.org/downloads/raspbian/</a></li>
+<li>使用 Win32DiskImager 镜像烧录软件，将镜像烧录到 SD 卡<br><a href="https://sourceforge.net/projects/win32diskimager/" target="_blank" rel="external">https://sourceforge.net/projects/win32diskimager/</a></li>
+<li><code>sudo apt-get update</code><br><code>sudo apt-get upgrade</code></li>
+<li><code>sudo raspi-config</code> 配置系统，主要是区域设置，这样键盘才能输入特殊字符</li>
+<li><code>sudo apt-get install xrdp</code> 安装远程桌面支持</li>
+</ol>
+<h1 id="文件迁移"><a href="#文件迁移" class="headerlink" title="文件迁移"></a>文件迁移</h1><ol>
+<li>从 win7 向 pi 传送文件 下载 WinSCP, 参考链接：</li>
+</ol>
+<h1 id="将-pi-作为一个-FM-发射站"><a href="#将-pi-作为一个-FM-发射站" class="headerlink" title="将 pi 作为一个 FM 发射站"></a>将 pi 作为一个 FM 发射站</h1><ol>
+<li>下载 PiFm 工程<br><a href="http://www.icrobotics.co.uk/wiki/index.php/Turning_the_Raspberry_Pi_Into_an_FM_Transmitter" target="_blank" rel="external">http://www.icrobotics.co.uk/wiki/index.php/Turning_the_Raspberry_Pi_Into_an_FM_Transmitter</a>,<br>参照网页进行配置</li>
+<li>安装 ffmpeg</li>
+</ol>
+<p>使用 <code>sudo apt-get install ffmpeg</code> 的方式无法安装，于是只能编译安装。linux<br>中通常 在两种情况下需要编译安装，一是默认的安装方式找不到软件，就像<br>ffmpeg；二是想安装最 新版的软件。 在 linux 下编译安装软件的步骤如下：</p>
+<ul>
+<li>下载源码</li>
+<li>解压文件</li>
+<li>tar.gz 和 tar.bz2 打包软件，大多是通过 ./configure ;make ;make<br>install 来 安装的。进入源码目录依次执行 ./configure; make; make<br>install。</li>
+<li>编译中的配置：安装路径 ./configure –prefix=安装路径</li>
+<li>安装完成后，有的软件需要修改一下 PATH，才能在 shell<br>中调用其可执行文件。修改 PATH 的方法是 vim ~/.bashrc<br>在文件尾加上一行：PATH=\$PATH:路径 1:路径 2</li>
+<li>音频测试</li>
+</ul>
+<h1 id="音频文件"><a href="#音频文件" class="headerlink" title="音频文件"></a>音频文件</h1><ol>
+<li>在树莓派上可以用 <code>aplay xxx.wav</code> 来播放测试音频文件</li>
+</ol>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;实现目标：&lt;/strong&gt;&lt;br&gt;DIY 无线发射站&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="raspberry pi" scheme="http://yoursite.com/tags/raspberry-pi/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Butler矩阵与傅里叶变换</title>
+    <link href="http://yoursite.com/2016/03/17/Butler%E7%9F%A9%E9%98%B5%E4%B8%8E%E5%82%85%E9%87%8C%E5%8F%B6%E5%8F%98%E6%8D%A2/"/>
+    <id>http://yoursite.com/2016/03/17/Butler矩阵与傅里叶变换/</id>
+    <published>2016-03-17T12:43:36.000Z</published>
+    <updated>2016-03-17T15:36:01.752Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>实现目标：</strong></p>
+<ol>
+<li>分析Butler矩阵与傅里叶变换直接的关系</li>
+</ol>
+<a id="more"></a>
+<h2 id="一-输入与输出之间的计算"><a href="#一-输入与输出之间的计算" class="headerlink" title="一. 输入与输出之间的计算"></a>一. 输入与输出之间的计算</h2><p>以8×8的接收阵角度为例，输入用$x_1$,…,$x_8$来表示， 输入用$y_1$,…,$y_8$来表示，如下图。</p>
+<p><img src="/Images/Array/ButlerEightElement.png" alt="Drawing" width="500px"></p>
+<p>下面来分析如何从输入的$x$得出输出$y$。图中的耦合器在其直连通道上信号不产生相移，而在<br>其交叉通道上信号具有90°的相移，90°的相移相当于-4x (x=$\pi/8$)。<br><span>$$\begin{aligned}
+y_8=&amp;x_1+e^{j(3x-4x)}x_2+e^{j(2x-4x)}x_3+e^{j(2x-4x+3x-4x)}x_4+e^{j(-4x)}x_5 \\
+&amp;+e^{j(-4x+3x-4x)}x_6+e^{j(-4x+2x-4x)}x_7+e^{j(-4x+2x-4x+3x-4x)}x_8
+\end{aligned}$$</span><!-- Has MathJax --></p>
+<span>$$\begin{aligned}
+y_7=&amp;e^{j-4x}x_1+e^{j(3x)}x_2+e^{j(2x-4x-4x)}x_3+e^{j(2x-4x+3x)}x_4+e^{j(-4x-4x)}x_5\\
+&amp;+e^{j(-4x+3x)}x_6+e^{j(-4x+2x-4x-4x)}x_7+e^{j(-4x+2x-4x+3x)}x_8
+\end{aligned}$$</span><!-- Has MathJax -->
+<p>…</p>
+<p>$$y_8=x_1+e^{j(-x)}x_2+e^{j(-2x)}x_3+e^{j(-3x)}x_4+e^{j(-4x)}x_5+e^{j(-5x)}x_6+e^{j(-6x)}x_7+e^{j(-7x)}x_8$$<br>$$y_7=e^{j-4x}x_1+e^{j(3x)}x_2+e^{j(-6x)}x_3+e^{j(x)}x_4+e^{j(-8x)}x_5+e^{j(-x)}x_6+e^{j(-10x)}x_7+e^{j(-3x)}x_8$$</p>
+<p>…</p>
+<span>$$\begin{equation}
+\begin{bmatrix} y_1\\ y_2\\y_3\\y_4\\y_5\\y_6\\y_7\\y_8\end{bmatrix}
+=\begin{bmatrix}
+e^{j(-7x)} &amp; e^{j(-6x)} &amp; e^{j(-5x)} &amp; e^{j(-4x)} &amp; e^{j(-3x)} &amp; e^{j(-2x)} &amp; e^{j(-x)} &amp; e^{0} \\ 
+e^{j(-3x)} &amp; e^{j(-10x)} &amp; e^{j(-x)} &amp; e^{j(-8x)} &amp; e^{j(x)} &amp; e^{j(-6x)} &amp; e^{j(3x)} &amp; e^{j(-4x)} \\ 
+e^{j(-6x)} &amp; e^{j(-x)} &amp; e^{j(-12x)} &amp; e^{j(-7x)} &amp; e^{j(-2x)} &amp; e^{j(3x)} &amp; e^{j(-8x)} &amp; e^{j(-3x)} \\ 
+e^{j(-2x)} &amp; e^{j(-5x)} &amp; e^{j(-8x)} &amp; e^{j(-11x)} &amp; e^{j(2x)} &amp; e^{j(-x)} &amp; e^{j(-4x)} &amp; e^{j(-7x)} \\ 
+e^{j(-7x)} &amp; e^{j(-4x)} &amp; e^{j(-x)} &amp; e^{j(2x)} &amp; e^{j(-11x)} &amp; e^{j(-8x)} &amp; e^{j(-5x)} &amp; e^{j(-2x)} \\ 
+e^{j(-3x)} &amp; e^{j(-8x)} &amp; e^{j(3x)} &amp; e^{j(-2x)} &amp; e^{j(-7x)} &amp; e^{j(-12x)} &amp; e^{j(-x)} &amp; e^{j(-6x)} \\ 
+e^{j(-4x)} &amp; e^{j(3x)} &amp; e^{j(-6x)} &amp; e^{j(x)} &amp; e^{j(-8x)} &amp; e^{j(-x)} &amp; e^{j(-10x)} &amp; e^{j(-3x)} \\ 
+e^{0} &amp; e^{j(-x)} &amp; e^{j(-2x)} &amp; e^{j(-3x)} &amp; e^{j(-4x)} &amp; e^{j(-5x)} &amp; e^{j(-6x)} &amp; e^{j(-7x)}
+\end{bmatrix}
+\begin{bmatrix} x_1\\ x_2\\x_3\\x_4\\x_5\\x_6\\x_7\\x_8\end{bmatrix}
+\end{equation}$$</span><!-- Has MathJax -->
+<p>将$x=\pi/8$带入上式可得<br><span>$$\begin{equation}
+\begin{bmatrix} y_1\\ y_2\\y_3\\y_4\\y_5\\y_6\\y_7\\y_8\end{bmatrix}
+=\begin{bmatrix}
+e^{j(-7\pi/8)} &amp; e^{j(-6\pi/8)} &amp; e^{j(-5\pi/8)} &amp; e^{j(-4\pi/8)} &amp; e^{j(-3\pi/8)} &amp; e^{j(-2\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{0} \\ 
+e^{j(-3\pi/8)} &amp; e^{j(-10\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(\pi/8)} &amp; e^{j(-6\pi/8)} &amp; e^{j(3\pi/8)} &amp; e^{j(-4\pi/8)} \\ 
+e^{j(-6\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-12\pi/8)} &amp; e^{j(-7\pi/8)} &amp; e^{j(-2\pi/8)} &amp; e^{j(3\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(-3\pi/8)} \\ 
+e^{j(-2\pi/8)} &amp; e^{j(-5\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(-11\pi/8)} &amp; e^{j(2\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-4\pi/8)} &amp; e^{j(-7\pi/8)} \\ 
+e^{j(-7\pi/8)} &amp; e^{j(-4\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(2\pi/8)} &amp; e^{j(-11\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(-5\pi/8)} &amp; e^{j(-2\pi/8)} \\ 
+e^{j(-3\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(3\pi/8)} &amp; e^{j(-2\pi/8)} &amp; e^{j(-7\pi/8)} &amp; e^{j(-12\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-6\pi/8)} \\ 
+e^{j(-4\pi/8)} &amp; e^{j(3\pi/8)} &amp; e^{j(-6\pi/8)} &amp; e^{j(\pi/8)} &amp; e^{j(-8\pi/8)} &amp; e^{j(-\pi/8)} &amp; e^{j(-10\pi/8)} &amp; e^{j(-3\pi/8)} \\ 
+e^{0} &amp; e^{j(-\pi/8)} &amp; e^{j(-2\pi/8)} &amp; e^{j(-3\pi/8)} &amp; e^{j(-4\pi/8)} &amp; e^{j(-5\pi/8)} &amp; e^{j(-6\pi/8)} &amp; e^{j(-7\pi/8)}
+\end{bmatrix}
+\begin{bmatrix} x_1\\ x_2\\x_3\\x_4\\x_5\\x_6\\x_7\\x_8\end{bmatrix}
+\end{equation}$$</span><!-- Has MathJax --></p>
+<p>对于$y_1$的输出，相邻阵元加权之间的相位差为$\pi/8$，<br>对于$y_2$的输出，相邻阵元加权之间的相位差为$-7\pi/8$，<br>对于$y_3$的输出，相邻阵元加权之间的相位差为$5\pi/8$，<br>对于$y_4$的输出，相邻阵元加权之间的相位差为$-3\pi/8$，<br>对于$y_5$的输出，相邻阵元加权之间的相位差为$3\pi/8$，<br>对于$y_6$的输出，相邻阵元加权之间的相位差为$-5\pi/8$，<br>对于$y_7$的输出，相邻阵元加权之间的相位差为$7\pi/8$，<br>对于$y_8$的输出，相邻阵元加权之间的相位差为$-\pi/8$。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;实现目标：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;分析Butler矩阵与傅里叶变换直接的关系&lt;/li&gt;
+&lt;/ol&gt;
+    
+    </summary>
+    
+    
+      <category term="Antenna" scheme="http://yoursite.com/tags/Antenna/"/>
+    
+      <category term="Array" scheme="http://yoursite.com/tags/Array/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>WPF解决Win7管理员权限</title>
+    <link href="http://yoursite.com/2016/03/08/WPF%E8%A7%A3%E5%86%B3Win7%E7%AE%A1%E7%90%86%E5%91%98%E6%9D%83%E9%99%90/"/>
+    <id>http://yoursite.com/2016/03/08/WPF解决Win7管理员权限/</id>
+    <published>2016-03-08T07:51:55.000Z</published>
+    <updated>2016-03-08T07:58:07.855Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>实现目标：</strong><br>在win7或以上系统运行时，向注册表添加信息，通常会遇到管理员权限问题。有两种解决办法：</p>
+<a id="more"></a>
+<h2 id="一-编译后修改"><a href="#一-编译后修改" class="headerlink" title="一. 编译后修改"></a>一. 编译后修改</h2><h3 id="直接修改“exe”文件"><a href="#直接修改“exe”文件" class="headerlink" title="直接修改“exe”文件"></a>直接修改“exe”文件</h3><h3 id="安装结束后修改开始菜单"><a href="#安装结束后修改开始菜单" class="headerlink" title="安装结束后修改开始菜单"></a>安装结束后修改开始菜单</h3><h2 id="二-编译前修改"><a href="#二-编译前修改" class="headerlink" title="二. 编译前修改"></a>二. 编译前修改</h2><p>在程序中加入Manifest  资源</p>
+<p> 在打开的工程中，看下Properties 下面是否有app.manifest 这个文件，如果没有，右击工程在菜单中选择“属性”，</p>
+<p>选中”Security”，在界面中勾选”Enable ClickOnce Security Settings”后，在Properties下就有自动生成app.manifest文件。</p>
+<p>打开app.manifest文件，将</p>
+<p><code>&lt;requestedExecutionLevel level=&quot;asInvoker&quot; uiAccess=&quot;false&quot; /&gt;</code></p>
+<p>改为</p>
+<p><code>&lt;requestedExecutionLevel level=&quot;requireAdministrator&quot; uiAccess=&quot;false&quot; /&gt;</code></p>
+<p>然后在”Security”中再勾去”Enable ClickOnce Security Settings”后，重新编译即可。</p>
+<p>参考链接：<a href="http://zouqinghua11111.blog.163.com/blog/static/67997654201242334620628/" target="_blank" rel="external">http://zouqinghua11111.blog.163.com/blog/static/67997654201242334620628/</a> </p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;实现目标：&lt;/strong&gt;&lt;br&gt;在win7或以上系统运行时，向注册表添加信息，通常会遇到管理员权限问题。有两种解决办法：&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
+    
+      <category term="WPF" scheme="http://yoursite.com/tags/WPF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>WPF如何使用相对路径创建鼠标光标</title>
+    <link href="http://yoursite.com/2016/03/08/WPF%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8%E7%9B%B8%E5%AF%B9%E8%B7%AF%E5%BE%84%E5%88%9B%E5%BB%BA%E9%BC%A0%E6%A0%87%E5%85%89%E6%A0%87/"/>
+    <id>http://yoursite.com/2016/03/08/WPF如何使用相对路径创建鼠标光标/</id>
+    <published>2016-03-08T03:22:30.000Z</published>
+    <updated>2016-03-08T03:26:12.218Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>目的：</strong><br>如果在代码中使用需要 this.Cursor = new Cursor(“鼠标资源路径”); 此处的[鼠标资源路径]需要使用绝对路径，这样不便于程序移植。</p>
+<a id="more"></a>
+<p><strong>解决方法</strong><br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">StreamResourceInfo sri=Application.GetResourceStream(<span class="keyword">new</span> Uri(<span class="string">"Cur\\xx.cur"</span>,UriKind.Relative));</span><br><span class="line">Cursor customCursor=<span class="keyword">new</span> Cursor(sri.Stream);</span><br><span class="line"><span class="keyword">this</span>.Cursor=customCursor;</span><br></pre></td></tr></table></figure></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;目的：&lt;/strong&gt;&lt;br&gt;如果在代码中使用需要 this.Cursor = new Cursor(“鼠标资源路径”); 此处的[鼠标资源路径]需要使用绝对路径，这样不便于程序移植。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="WPF" scheme="http://yoursite.com/tags/WPF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C#中使用NAudio做自定义播放器</title>
+    <link href="http://yoursite.com/2016/03/02/C-%E4%B8%AD%E4%BD%BF%E7%94%A8NAudio%E5%81%9A%E8%87%AA%E5%AE%9A%E4%B9%89%E6%92%AD%E6%94%BE%E5%99%A8/"/>
+    <id>http://yoursite.com/2016/03/02/C-中使用NAudio做自定义播放器/</id>
+    <published>2016-03-02T10:52:03.000Z</published>
+    <updated>2016-03-02T13:34:56.878Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>目的：</strong><br>利用<a href="http://naudio.codeplex.com/" target="_blank" rel="external">NAudio</a>中提供的WaveProvider编写出自定义的声音播放器，能够播放自己想要的声音数据。</p>
+<a id="more"></a>
+<h2 id="一、自定义的WaveProvider"><a href="#一、自定义的WaveProvider" class="headerlink" title="一、自定义的WaveProvider"></a>一、自定义的WaveProvider</h2><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title">SelfPlayer</span>: <span class="title">WaveProvider16</span> <span class="comment">//继承自WaveProvider16</span></span><br><span class="line">&#123;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">SelfPlayer</span>(<span class="params"></span>): <span class="title">base</span>(<span class="params"></span>) </span>&#123; &#125;</span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="title">SelfPlayer</span>(<span class="params"><span class="keyword">int</span> sampleRate</span>): <span class="title">base</span>(<span class="params">sampleRate, <span class="number">1</span></span>) </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">int</span> audioRate = <span class="number">1000</span>; <span class="comment">//测试音频的频率</span></span><br><span class="line"> <span class="keyword">double</span> Amplitude = <span class="number">0.5</span>; <span class="comment">//测试音频的振幅</span></span><br><span class="line"> </span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">short</span>[] waveData = <span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">2000</span>]; <span class="comment">//模拟的音频数据点数</span></span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">int</span> playPos = <span class="number">0</span>; <span class="comment">//播放点的位置</span></span><br><span class="line"> <span class="keyword">double</span> t = <span class="number">0</span>; <span class="comment">//起始时刻</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span> WaveOut selfWaveout = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> <span class="title">Read</span>(<span class="params"><span class="keyword">short</span>[] buffer, <span class="keyword">int</span> offset, <span class="keyword">int</span> sampleCount</span>)</span><br><span class="line"> </span>&#123;<span class="comment">//通过该函数给播放数据 buffer 提供数据</span></span><br><span class="line">    <span class="keyword">short</span> dataTemp = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; sampleCount; index++)</span><br><span class="line">    &#123;</span><br><span class="line">	t += <span class="number">1</span>/(<span class="keyword">double</span>)<span class="keyword">base</span>.WaveFormat.SampleRate;</span><br><span class="line">	dataTemp = (<span class="keyword">short</span>)(<span class="keyword">short</span>.MaxValue * Amplitude * Math.Sin(<span class="number">2</span> * Math.PI * audioRate * t));</span><br><span class="line">	buffer[offset + index] = dataTemp;</span><br><span class="line">	waveData[playPos] = dataTemp;</span><br><span class="line">	playPos++;</span><br><span class="line">	<span class="keyword">if</span> (playPos == <span class="number">2000</span>)</span><br><span class="line">	    playPos = <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> sampleCount;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在主函数中使用如下方式播放测试音频：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        player.selfWaveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        player.selfWaveout.Init(player);</span><br><span class="line">        player.selfWaveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="二、独立线程的播放"><a href="#二、独立线程的播放" class="headerlink" title="二、独立线程的播放"></a>二、独立线程的播放</h2><p>通常声音数据的获取和播放会使用独立的线程，这是如果采用下面的方式，则不能获得连续的声音：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        Thread th = <span class="keyword">new</span> Thread(threadPlay); <span class="comment">//在新线程中播放声音</span></span><br><span class="line">        th.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">threadPlay</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        player.selfWaveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        player.selfWaveout.Init(player);</span><br><span class="line">        player.selfWaveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>只听到首次较短时间的声音，之后就没有声音播出了。暂时还不清楚原因，可能的原因之一是不能用Player自身的Waveout来播放自身，于是编写如下测试：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    WaveOut waveout = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        Thread th = <span class="keyword">new</span> Thread(threadPlay);</span><br><span class="line">        th.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">threadPlay</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        waveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        waveout.Init(player);</span><br><span class="line">        waveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>结果发现依然只能播出短暂的声音。可能的原因：Waveout在Init之后需要一定的延迟，但经测试仍然不对。最后将初始化的语句放到线程之外，就可以了：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    WaveOut waveout = <span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        waveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        waveout.Init(player);</span><br><span class="line">        Thread th = <span class="keyword">new</span> Thread(threadPlay);</span><br><span class="line">        th.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">threadPlay</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        waveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>类似地，下面的代码也是可行的：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        player.selfWaveout = <span class="keyword">new</span> NAudio.Wave.WaveOut();</span><br><span class="line">        player.selfWaveout.Init(player);</span><br><span class="line">        Thread th = <span class="keyword">new</span> Thread(threadPlay);</span><br><span class="line">        th.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">threadPlay</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        player.selfWaveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">```    </span><br><span class="line">事实上，可以把许多播放的细节都隐藏到自定义的Player中：</span><br><span class="line">``` csharp</span><br><span class="line"><span class="keyword">class</span> <span class="title">SelfPlayer</span>: <span class="title">WaveProvider16</span></span><br><span class="line">&#123;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">SelfPlayer</span>(<span class="params"></span>): <span class="title">base</span>(<span class="params"></span>) </span>&#123; &#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">SelfPlayer</span>(<span class="params"><span class="keyword">int</span> sampleRate</span>): <span class="title">base</span>(<span class="params">sampleRate, <span class="number">1</span></span>) </span>&#123; &#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">int</span> audioRate = <span class="number">1000</span>;</span><br><span class="line">     <span class="keyword">double</span> Amplitude = <span class="number">0.5</span>;</span><br><span class="line">     </span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">short</span>[] waveData = <span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">2000</span>];        </span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">int</span> playPos = <span class="number">0</span>;</span><br><span class="line">     <span class="keyword">double</span> t = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> WaveOut selfWaveout = <span class="keyword">null</span>;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Init</span>(<span class="params"></span>)<span class="comment">//自初始化</span></span><br><span class="line">     </span>&#123;</span><br><span class="line">         <span class="keyword">this</span>.selfWaveout = <span class="keyword">new</span> WaveOut();</span><br><span class="line">         <span class="keyword">this</span>.selfWaveout.Init(<span class="keyword">this</span>);</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ThPlay</span>(<span class="params"></span>)<span class="comment">//线程自播放</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        Thread thplay = <span class="keyword">new</span> Thread(ThPlaying);</span><br><span class="line">        thplay.Start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">ThPlaying</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.Play();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Play</span>(<span class="params"></span>)<span class="comment">//自播放</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.selfWaveout.Play();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> <span class="title">Read</span>(<span class="params"><span class="keyword">short</span>[] buffer, <span class="keyword">int</span> offset, <span class="keyword">int</span> sampleCount</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">short</span> dataTemp = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; sampleCount; index++)</span><br><span class="line">        &#123;</span><br><span class="line">            t += <span class="number">1</span>/(<span class="keyword">double</span>)<span class="keyword">base</span>.WaveFormat.SampleRate;</span><br><span class="line">            dataTemp = (<span class="keyword">short</span>)(<span class="keyword">short</span>.MaxValue * Amplitude * Math.Sin(<span class="number">2</span> * Math.PI * audioRate * t));</span><br><span class="line">            buffer[offset + index] = dataTemp;</span><br><span class="line">            waveData[playPos] = dataTemp;</span><br><span class="line">            playPos++;</span><br><span class="line">            <span class="keyword">if</span> (playPos == <span class="number">2000</span>)</span><br><span class="line">                playPos = <span class="number">0</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sampleCount;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样在调用函数中就可以比较简洁：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">&#123;</span><br><span class="line">    SelfPlayer player=<span class="keyword">null</span>;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        InitializeComponent();</span><br><span class="line">        player = <span class="keyword">new</span> SelfPlayer();</span><br><span class="line">        player.Init();</span><br><span class="line">        player.ThPlay();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>使用NAudio时应注意，Waveout的初始化（<code>Init</code>)和播放（<code>Play</code>）不能在同一个进程中。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;目的：&lt;/strong&gt;&lt;br&gt;利用&lt;a href=&quot;http://naudio.codeplex.com/&quot;&gt;NAudio&lt;/a&gt;中提供的WaveProvider编写出自定义的声音播放器，能够播放自己想要的声音数据。&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C#的InteropServices类实现特殊的内存操作</title>
+    <link href="http://yoursite.com/2016/01/30/C-%E7%9A%84InteropServices%E7%B1%BB%E5%AE%9E%E7%8E%B0%E7%89%B9%E6%AE%8A%E7%9A%84%E5%86%85%E5%AD%98%E6%93%8D%E4%BD%9C/"/>
+    <id>http://yoursite.com/2016/01/30/C-的InteropServices类实现特殊的内存操作/</id>
+    <published>2016-01-30T07:02:55.000Z</published>
+    <updated>2016-01-31T15:17:46.877Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>目的：</strong><br>使用C#语言，<br>如何将一段buffer方便地转换为一个结构体？反过来转换呢？<br>如何实现一段字节数组与其他类型数组（如short型）的方便转换？</p>
+<a id="more"></a>
+<h2 id="一、-结构体和字节数组互换"><a href="#一、-结构体和字节数组互换" class="headerlink" title="一、 结构体和字节数组互换"></a>一、 结构体和字节数组互换</h2><p>参考：</p>
+<h3 id="1-1-结构体转换为字节数组"><a href="#1-1-结构体转换为字节数组" class="headerlink" title="1.1 结构体转换为字节数组"></a>1.1 结构体转换为字节数组</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] StructToBytes(<span class="keyword">object</span> structObj)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">int</span> size = Marshal.SizeOf(structObj);</span><br><span class="line">    IntPtr buffer = Marshal.AllocHGlobal(size);</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">	Marshal.StructureToPtr(structObj, buffer, <span class="keyword">false</span>);</span><br><span class="line">	<span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[size];</span><br><span class="line">	Marshal.Copy(buffer, bytes, <span class="number">0</span>, size);</span><br><span class="line">	<span class="keyword">return</span> bytes;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">finally</span></span><br><span class="line">    &#123;</span><br><span class="line">	Marshal.FreeHGlobal(buffer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="1-2-字节数组转换为结构体"><a href="#1-2-字节数组转换为结构体" class="headerlink" title="1.2 字节数组转换为结构体"></a>1.2 字节数组转换为结构体</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">object</span> <span class="title">BytesToStruct</span>(<span class="params"><span class="keyword">byte</span>[] bytes, <span class="keyword">int</span> startIndex, Type strcutType</span>)</span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> size = Marshal.SizeOf(strcutType);</span><br><span class="line">    IntPtr buffer = Marshal.AllocHGlobal(size);</span><br><span class="line">    <span class="keyword">try</span></span><br><span class="line">    &#123;</span><br><span class="line">	Marshal.Copy(bytes, startIndex, buffer, size);</span><br><span class="line">	<span class="keyword">return</span> Marshal.PtrToStructure(buffer, strcutType);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">finally</span></span><br><span class="line">    &#123;</span><br><span class="line">	Marshal.FreeHGlobal(buffer);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="二、相同buffer，不同数据类型"><a href="#二、相同buffer，不同数据类型" class="headerlink" title="二、相同buffer，不同数据类型"></a>二、相同buffer，不同数据类型</h2><p>定义一个可按字节数组或short数组存取数据的结构体：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">[StructLayout(LayoutKind.Explicit, Pack = <span class="number">2</span>)]<span class="comment">//Pack表示最小移动为2字节</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">struct</span> AudioDataBuffer</span><br><span class="line">&#123;</span><br><span class="line">    [FieldOffset(<span class="number">0</span>)]</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">byte</span>[] ByteData;</span><br><span class="line">    [FieldOffset(<span class="number">0</span>)]</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">short</span>[] ShortData;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>调用：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span>  <span class="keyword">class</span> <span class="title">Program</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">Main</span>(<span class="params"><span class="keyword">string</span>[] args</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        AudioDataBuffer Data=<span class="keyword">new</span> AudioDataBuffer();</span><br><span class="line">        Data.ByteData=<span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1000</span>];</span><br><span class="line">        Data.ByteData[<span class="number">0</span>]=<span class="number">1</span>;</span><br><span class="line">        Data.ByteData[<span class="number">1</span>]=<span class="number">1</span>;</span><br><span class="line">        Console.Write(Data.ShortData[<span class="number">0</span>]);</span><br><span class="line">        Console.ReadKey();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>输出结果为：257，即1 0000 0001。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;目的：&lt;/strong&gt;&lt;br&gt;使用C#语言，&lt;br&gt;如何将一段buffer方便地转换为一个结构体？反过来转换呢？&lt;br&gt;如何实现一段字节数组与其他类型数组（如short型）的方便转换？&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>C#实现的基于TCP传输的数据组包程序</title>
+    <link href="http://yoursite.com/2016/01/30/C-%E5%AE%9E%E7%8E%B0%E7%9A%84%E5%9F%BA%E4%BA%8ETCP%E4%BC%A0%E8%BE%93%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%84%E5%8C%85%E7%A8%8B%E5%BA%8F/"/>
+    <id>http://yoursite.com/2016/01/30/C-实现的基于TCP传输的数据组包程序/</id>
+    <published>2016-01-30T04:12:43.000Z</published>
+    <updated>2016-01-30T06:59:46.636Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>目的：</strong><br>很多时候我们会使用TCP协议来发送数据，发送数据时使用自拟的协议头来区分不同类型的数据。不同于UDP，TCP在传输过程中会自动将数据拆分为多个TCP包进行传输，这会使得我们自拟的数据包被拆成两个甚至更多个TCP包。在接收端如何将这些TCP包重新组合成完整的数据包呢？本文将解决这个问题。</p>
+<p><strong>关键词：</strong><br>TCP，数据组包，自定义协议<br><a id="more"></a></p>
+<h2 id="一-C-代码"><a href="#一-C-代码" class="headerlink" title="一. C#代码"></a>一. C#代码</h2><p>识别头可以是给定的任意长度的字节数组，也可以是给定的任意长度字符串，默认为五字节的 55 55 7e 7e 02。<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//包结构： 识别头+内容长度+内容。其中, 长度的代表内容的长度，等于 整包长度-识别头长度-4</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">GetTcpPatchHandler</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">byte</span>[] temp = <span class="keyword">null</span>; </span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">byte</span>[] header = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">5</span>]&#123; <span class="number">0x55</span>, <span class="number">0x55</span>, <span class="number">0x7e</span>, <span class="number">0x7e</span>, <span class="number">0x02</span> &#125;;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> lengthWithLenbit = <span class="number">9</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> BufferSize = <span class="number">16000</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">GetTcpPatchHandler</span>(<span class="params"><span class="keyword">byte</span>[] Header</span>)</span><br><span class="line">    </span>&#123;<span class="comment">//给定分段头(字节数组)</span></span><br><span class="line">        header = (<span class="keyword">byte</span>[])Header.Clone();</span><br><span class="line">        lengthWithLenbit = header.Length + <span class="number">4</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">GetTcpPatchHandler</span>(<span class="params"><span class="keyword">string</span> HeaderStr</span>)</span><br><span class="line">    </span>&#123;<span class="comment">//给定分段头(字符串)</span></span><br><span class="line">        <span class="keyword">byte</span>[] HeaderBytes = (<span class="keyword">byte</span>[])Encoding.ASCII.GetBytes(HeaderStr);</span><br><span class="line">        header = (<span class="keyword">byte</span>[])HeaderBytes.Clone();</span><br><span class="line">        lengthWithLenbit = header.Length + <span class="number">4</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">GetTcpPatchHandler</span>(<span class="params"></span>) </span>&#123; &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> List&lt;<span class="keyword">byte</span>[]&gt; GetActualBuffer(<span class="keyword">byte</span>[] input)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> GetActualBuffer(input, <span class="keyword">null</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> List&lt;<span class="keyword">byte</span>[]&gt; GetActualBuffer(<span class="keyword">byte</span>[] input, List&lt;<span class="keyword">byte</span>[]&gt; outputList)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (outputList == <span class="keyword">null</span>)</span><br><span class="line">    	outputList = <span class="keyword">new</span> List&lt;<span class="keyword">byte</span>[]&gt;();</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">if</span> (temp != <span class="keyword">null</span>)</span><br><span class="line">        &#123;<span class="comment">//把已存的临时量和输入拼在一起</span></span><br><span class="line">		<span class="keyword">byte</span>[] inputLongered = <span class="keyword">new</span> <span class="keyword">byte</span>[input.Length + temp.Length];</span><br><span class="line">		Array.Copy(temp, inputLongered, temp.Length);</span><br><span class="line">		Array.Copy(input, <span class="number">0</span>, inputLongered, temp.Length, input.Length);</span><br><span class="line">		input = inputLongered;</span><br><span class="line">		temp = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//input = temp + input;</span></span><br><span class="line">        <span class="keyword">int</span> MaxBufferSize = Math.Max(BufferSize, input.Length);</span><br><span class="line">        <span class="keyword">byte</span>[] output = <span class="keyword">new</span> <span class="keyword">byte</span>[MaxBufferSize];<span class="comment">//开辟一个较大的空间来存储一个完整的包</span></span><br><span class="line">        <span class="keyword">int</span> lengthData;</span><br><span class="line">        <span class="keyword">int</span> lengthInput = input.Length;</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">if</span> (lengthInput &lt; lengthWithLenbit)<span class="comment">//头都不完整，存起来下次一起</span></span><br><span class="line">        &#123;</span><br><span class="line">		temp = input;</span><br><span class="line">		<span class="keyword">return</span> outputList;</span><br><span class="line">        &#125;</span><br><span class="line">    </span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = lengthWithLenbit - <span class="number">1</span>; i &lt; lengthInput; i++)</span><br><span class="line">        &#123;<span class="comment">//逐字节查找识别头</span></span><br><span class="line">		<span class="keyword">bool</span> IsHeaderFound = <span class="keyword">false</span>;</span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> j = <span class="number">0</span>; j &lt; header.Length; j++)</span><br><span class="line">		&#123;<span class="comment">//有lengthWithLenbit个字节的头用于识别包的长度</span></span><br><span class="line">		    <span class="keyword">if</span> (input[i - lengthWithLenbit + j + <span class="number">1</span>] != header[j])</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		    <span class="function"><span class="keyword">else</span> <span class="title">if</span> (<span class="params">j == header.Length - <span class="number">1</span></span>)<span class="comment">//已比到最后一字节识别头，且匹配</span></span><br><span class="line">			IsHeaderFound </span>= <span class="keyword">true</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">if</span>(<span class="keyword">true</span>==IsHeaderFound)</span><br><span class="line">		&#123;<span class="comment">//找到了识别头</span></span><br><span class="line">		    lengthData = BitConverter.ToInt32(input, i - <span class="number">3</span>);<span class="comment">//第[i-3,i-2,i-1,i]四个字节为一个int整数，代表了去除识别头后的长度</span></span><br><span class="line">		    <span class="comment">// 获取需要进行截取的位置和长度(把用于识别的头截掉)</span></span><br><span class="line">		    <span class="keyword">int</span> startIndex = i + <span class="number">1</span>;</span><br><span class="line">		    <span class="keyword">int</span> lengthDataReceived = lengthInput - startIndex;<span class="comment">//去掉头后剩下的数据长度</span></span><br><span class="line">	    </span><br><span class="line">		    <span class="comment">// 获取从此位置开始后所有数据</span></span><br><span class="line">		    Array.Copy(input, startIndex, output, <span class="number">0</span>, lengthDataReceived);</span><br><span class="line">		    <span class="keyword">if</span> (lengthDataReceived == lengthData)</span><br><span class="line">		    &#123;</span><br><span class="line">			<span class="comment">// 如果output的长度与数据的应有长度相等</span></span><br><span class="line">			<span class="comment">// 说明刚好是完整的包</span></span><br><span class="line">			<span class="keyword">byte</span>[] package = <span class="keyword">new</span> <span class="keyword">byte</span>[lengthData];</span><br><span class="line">			Array.Copy(output, package, lengthData);</span><br><span class="line">			outputList.Add(package);</span><br><span class="line">			temp = <span class="keyword">null</span>;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		    &#125;</span><br><span class="line">		    <span class="function"><span class="keyword">else</span> <span class="title">if</span> (<span class="params">lengthDataReceived &lt; lengthData</span>)</span><br><span class="line">		    </span>&#123;</span><br><span class="line">			<span class="comment">// 如果之后的长度小于应有的长度，</span></span><br><span class="line">			<span class="comment">// 说明没有发完整，则应将整段数据，包括识别头，全部缓存</span></span><br><span class="line">			<span class="comment">// 与下一段数据合并起来再进行处理</span></span><br><span class="line">			temp = input;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">			<span class="comment">// 此时程序应该退出，因为需要等待下一条数据到来才能继续处理</span></span><br><span class="line">	    </span><br><span class="line">		    &#125;</span><br><span class="line">		    <span class="function"><span class="keyword">else</span> <span class="title">if</span> (<span class="params">lengthDataReceived &gt; lengthData</span>)</span><br><span class="line">		    </span>&#123;</span><br><span class="line">			<span class="comment">// 如果之后的长度大于应有的长度，</span></span><br><span class="line">			<span class="comment">// 说明数据完整了，但是有多余的数据</span></span><br><span class="line">			<span class="comment">// 多余的数据可能是截断消息，也可能是多条完整消息</span></span><br><span class="line">			<span class="comment">// 截取数据</span></span><br><span class="line">			<span class="keyword">byte</span>[] package = <span class="keyword">new</span> <span class="keyword">byte</span>[lengthData];</span><br><span class="line">			Array.Copy(output, package, lengthData);<span class="comment">//把完整的部分取下来</span></span><br><span class="line">			outputList.Add(package);</span><br><span class="line">			temp = <span class="keyword">null</span>;</span><br><span class="line">	    </span><br><span class="line">			<span class="comment">// 缩短input的长度                       </span></span><br><span class="line">			<span class="keyword">int</span> lengthRemainder = lengthInput - lengthData - startIndex;</span><br><span class="line">			<span class="keyword">byte</span>[] inputSub = <span class="keyword">new</span> <span class="keyword">byte</span>[lengthRemainder];</span><br><span class="line">			Array.Copy(input, startIndex + lengthData, inputSub, <span class="number">0</span>, lengthRemainder);</span><br><span class="line">	    </span><br><span class="line">			<span class="comment">// 递归调用</span></span><br><span class="line">			GetActualBuffer(inputSub, outputList);</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		    &#125;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">else</span></span><br><span class="line">		&#123;    <span class="comment">// 说明用于识别的头并不完整</span></span><br><span class="line">		    temp = input;</span><br><span class="line">		&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//temp = input;</span></span><br><span class="line">        <span class="keyword">return</span> outputList;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个类所能处理的数据包结构为：<br><code>包结构： 数据包的识别头+内容长度+内容</code><br>其中, 内容长度代表内容的长度，等于 <code>整个数据包的长度-识别头长度-4</code>，4字节是一个<code>int</code>型变量的存储空间大小。<br>稍作修改就能适用于其他的包结构。</p>
+<p>程序采用递归的方式，对于输入的字节数组<code>input</code>，分割出所有满足协议的数据包，并将最后一个不完整的包（如果存在的话）保留，与下一次的输入拼接。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;目的：&lt;/strong&gt;&lt;br&gt;很多时候我们会使用TCP协议来发送数据，发送数据时使用自拟的协议头来区分不同类型的数据。不同于UDP，TCP在传输过程中会自动将数据拆分为多个TCP包进行传输，这会使得我们自拟的数据包被拆成两个甚至更多个TCP包。在接收端如何将这些TCP包重新组合成完整的数据包呢？本文将解决这个问题。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键词：&lt;/strong&gt;&lt;br&gt;TCP，数据组包，自定义协议&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Logistic回归的梯度下降法推导</title>
+    <link href="http://yoursite.com/2016/01/21/Logistic%E5%9B%9E%E5%BD%92%E7%9A%84%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95%E6%8E%A8%E5%AF%BC/"/>
+    <id>http://yoursite.com/2016/01/21/Logistic回归的梯度下降法推导/</id>
+    <published>2016-01-21T14:52:29.000Z</published>
+    <updated>2016-01-31T15:15:57.407Z</updated>
+    
+    <content type="html"><![CDATA[<p><em>Marchine Learning in Action</em> 一书第五章介绍了逻辑回归(Logistic regression)，但是书中没有给出目标函数，也没有给出梯度下降法的推导。在解释代码处文中指出：<br><blockquote><p>A little math is needed to derive the equations used here, and I’ll leave you to look into that further if desired.</p>
+</blockquote></p>
+<p>So, 本文的目的就是展示所谓的<code>A little math</code>。<br><a id="more"></a></p>
+<h2 id="Logistic-regression"><a href="#Logistic-regression" class="headerlink" title="Logistic regression"></a>Logistic regression</h2><h3 id="sigmoid-function"><a href="#sigmoid-function" class="headerlink" title="sigmoid function"></a>sigmoid function</h3><p>$$<br>\sigma(z)=\frac{1}{1+e^{-z}}<br>$$</p>
+<p>结合线性分类器，分类方法写为：</p>
+<p>\begin{equation}<br>h_{\theta}(x)=\frac{1}{1+e^{-\theta^Tx}}<br>\end{equation}</p>
+<p>其中，$\theta$和$x$都是矢量，如果$h_{\theta}(x)&gt;0.5$则$y=1$, 否则$y=0$。根据$y$的取值，样本$x$就被分成两类。<br>下面的问题是如何求出最优的$\theta$？</p>
+<h2 id="目标函数"><a href="#目标函数" class="headerlink" title="目标函数"></a>目标函数</h2><p>一般而言目标函数会写成所有训练样本的误差项求和的形式<br><span>$$\begin{equation}
+J(\theta)=\frac{1}{N}\sum_{i=1}^N \frac{1}{2}[y^{(i)}-h_{\theta}(x^{(i)})]^2
+\end{equation}$$</span><!-- Has MathJax --></p>
+<p>但是对于Logstic回归来说，这个目标函数并不好，相对于自变量是一个非凸函数，<br>因此使用另外的目标函数，这个目标函数是</p>
+<span>$$\begin{equation}
+J^{(i)}(\theta)=
+\begin{cases}
+ -\log(1-h_{\theta}(x^{(i)})) &amp; \text{if } y^{(i)}=0\\
+-\log(h_{\theta}(x^{(i)}) &amp;\text{if } y^{(i)}=1
+\end{cases}
+\end{equation}$$</span><!-- Has MathJax -->
+<p>定义如下函数<br><span>$$\begin{equation}
+\text{Cost}(h_{\theta}(x),y)=
+-y\log(h_{\theta}(x))-(1-y)\log(1-h_{\theta}(x))
+\end{equation}$$</span><!-- Has MathJax --><br>并将目标函数写为<br><span>$$\begin{equation}
+J^{(i)}(\theta)=
+\frac{1}{N}\sum_{i=1}^N\text{Cost}(h_{\theta}(x^{(i)}),y^{(i)})=
+-\frac{1}{N}[y^{(i)}\log(h_{\theta}(x^{(i)}))+(1-y^{(i)})\log(1-h_{\theta}(x^{(i)}))]
+\end{equation}$$</span><!-- Has MathJax --></p>
+<h2 id="梯度下降法求解-frac-partial-partial-theta-j-J-theta"><a href="#梯度下降法求解-frac-partial-partial-theta-j-J-theta" class="headerlink" title="梯度下降法求解$\frac{\partial}{\partial\theta_j}J(\theta)$"></a>梯度下降法求解$\frac{\partial}{\partial\theta_j}J(\theta)$</h2><h3 id="括号-内第一求和项的导数"><a href="#括号-内第一求和项的导数" class="headerlink" title="括号[]内第一求和项的导数"></a>括号[]内第一求和项的导数</h3><span>$$\begin{align}
+\frac{\partial y^{(i)}\log(h_{\theta}(x^{(i)})}{\partial \theta_j}
+=&amp;y^{(i)}(1+e^{-\theta^T x})\frac{e^{-\theta^T x}x^{(j)}}{(1+e^{-\theta^T x})^2}\\
+=&amp;y^{(i)}\frac{e^{-\theta^T x}x^{(j)}}{1+e^{-\theta^T x}}\\
+\end{align}$$</span><!-- Has MathJax -->
+<h3 id="括号-内第二求和项的导数"><a href="#括号-内第二求和项的导数" class="headerlink" title="括号[]内第二求和项的导数"></a>括号[]内第二求和项的导数</h3><span>$$\begin{align}
+\frac{\partial (1-y^{(i)})\log(1-h_{\theta}(x^{(i)})}{\partial \theta_j}
+=&amp;(1-y^{(i)}) \frac{(1+e^{-\theta^T x})}{e^{-\theta^T x}} \times \frac{-e^{-\theta^T x}}{(1+e^{-\theta^T x})^2}x^{(j)}\\
+=&amp;(y^{(i)}-1)\frac{x^{(j)}}{1+e^{-\theta^T x}}\\
+\end{align}$$</span><!-- Has MathJax -->
+<p>以上两式求和得<br><span>$$\begin{equation}
+ (y^{(i)}-h_{\theta}(x^{(i)}))x^{(j)}
+ \end{equation}$$</span><!-- Has MathJax --><br> 因此<br><span>$$\begin{equation}
+\frac{\partial}{\partial\theta_j}J(\theta)=\frac{1}{N}(h_{\theta}(x^{(i)})-y^{(i)})x^{(j)}
+ \end{equation}$$</span><!-- Has MathJax --></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;em&gt;Marchine Learning in Action&lt;/em&gt; 一书第五章介绍了逻辑回归(Logistic regression)，但是书中没有给出目标函数，也没有给出梯度下降法的推导。在解释代码处文中指出：&lt;br&gt;&lt;blockquote&gt;&lt;p&gt;A little math is needed to derive the equations used here, and I’ll leave you to look into that further if desired.&lt;/p&gt;
+&lt;/blockquote&gt;&lt;/p&gt;
+&lt;p&gt;So, 本文的目的就是展示所谓的&lt;code&gt;A little math&lt;/code&gt;。&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="Marchine Learning" scheme="http://yoursite.com/tags/Marchine-Learning/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>WPF音频播放与波形显示(三)</title>
+    <link href="http://yoursite.com/2016/01/21/WPF%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE%E4%B8%8E%E6%B3%A2%E5%BD%A2%E6%98%BE%E7%A4%BA-%E4%B8%89/"/>
+    <id>http://yoursite.com/2016/01/21/WPF音频播放与波形显示-三/</id>
+    <published>2016-01-21T11:10:03.000Z</published>
+    <updated>2016-01-30T04:34:22.286Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>目标：</strong><br>添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。</p>
+<p><strong>关键词：</strong>：RadioButton；WAV文件；绑定<br><a id="more"></a></p>
+<h2 id="一-控件外观修改"><a href="#一-控件外观修改" class="headerlink" title="一. 控件外观修改"></a>一. 控件外观修改</h2><p>添加一个RadioButton，被选中时为默认的单频声音，否则为文件播放。相当于控件具有两<br>种工作模式。处于文件播放模式时，频率的输入被禁用，这是用WPF的绑定实现的，将<br>TextBox的IsEnable属性绑定到RadioButton的IsCheck属性。<br><img src="Images/WPF/Tutorial3_1.jpg" alt=""></p>
+<h3 id="1-1-Xaml代码"><a href="#1-1-Xaml代码" class="headerlink" title="1.1 Xaml代码"></a>1.1 Xaml代码</h3><pre><code class="csharp">&lt;UserControl x:Class=<span class="string">"libUserC.User1"</span>
+             xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
+             xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
+             xmlns:mc=<span class="string">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span> 
+             xmlns:d=<span class="string">"http://schemas.microsoft.com/expression/blend/2008"</span> 
+             mc:Ignorable=<span class="string">"d"</span> Height=<span class="string">"80"</span> d:Width=<span class="string">"485"</span> SizeChanged=<span class="string">"UserControl_SizeChanged"</span>&gt;
+    &lt;Grid Background=<span class="string">"#FFECF3F5"</span>&gt;
+        &lt;Grid.ColumnDefinitions&gt;
+            &lt;ColumnDefinition Width=<span class="string">"44"</span>/&gt;
+            &lt;ColumnDefinition Width=<span class="string">"73"</span>/&gt;
+            &lt;ColumnDefinition/&gt;
+        &lt;/Grid.ColumnDefinitions&gt;
+        &lt;Grid Grid.Column=<span class="string">"1"</span> Margin=<span class="string">"4"</span>&gt;
+            &lt;Grid.RowDefinitions&gt;
+                &lt;RowDefinition Height=<span class="string">"3*"</span>/&gt;
+                &lt;RowDefinition Height=<span class="string">"3*"</span>/&gt;
+            &lt;/Grid.RowDefinitions&gt;
+            &lt;StackPanel Orientation=<span class="string">"Horizontal"</span> HorizontalAlignment=<span class="string">"Center"</span>&gt;
+                &lt;Button x:Name=<span class="string">"btn_Open"</span> HorizontalAlignment=<span class="string">"Center"</span> VerticalAlignment=<span class="string">"Center"</span> Click=<span class="string">"btn_Open_Click"</span> &gt;
+                    &lt;Image Source=<span class="string">"Images/open.ico"</span>/&gt;
+                &lt;/Button&gt;
+                &lt;RadioButton Name=<span class="string">"rbtn_ToneOnOff"</span> Margin=<span class="string">"2,0,2,0"</span> IsChecked=<span class="string">"True"</span> VerticalAlignment=<span class="string">"Center"</span> Checked=<span class="string">"rbtn_ToneOnOff_Checked"</span>&gt;&lt;/RadioButton&gt;
+            &lt;/StackPanel&gt;
+            &lt;StackPanel Orientation=<span class="string">"Horizontal"</span> HorizontalAlignment=<span class="string">"Center"</span> Grid.Row=<span class="string">"1"</span>&gt;
+                &lt;Button x:Name=<span class="string">"btnPlay"</span>  Height=<span class="string">"25"</span> Click=<span class="string">"btnPlay_Click"</span> &gt;
+                    &lt;Image Source=<span class="string">"Images/play.ico"</span>/&gt;
+                &lt;/Button&gt;
+                &lt;Button x:Name=<span class="string">"btnStop"</span>  Height=<span class="string">"25"</span> Click=<span class="string">"btnStop_Click"</span> &gt;
+                    &lt;Image Source=<span class="string">"Images/stop.ico"</span>/&gt;
+                &lt;/Button&gt;
+            &lt;/StackPanel&gt;
+        &lt;/Grid&gt;
+        &lt;StackPanel Margin=<span class="string">"4"</span> Orientation=<span class="string">"Vertical"</span>&gt;
+            &lt;Label x:Name=<span class="string">"label"</span> Background=<span class="string">"#FFEAC0C0"</span> HorizontalContentAlignment=<span class="string">"Center"</span> VerticalContentAlignment=<span class="string">"Center"</span>  Padding=<span class="string">"0"</span> Height=<span class="string">"20"</span>/&gt;
+            &lt;TextBox Name=<span class="string">"txtFreq"</span> Text=<span class="string">"1000"</span> IsEnabled=<span class="string">"{Binding ElementName=rbtn_ToneOnOff, Path=IsChecked}"</span>/&gt;
+        &lt;/StackPanel&gt;
+        &lt;Canvas x:Name=<span class="string">"canvas"</span> Grid.Column=<span class="string">"2"</span> HorizontalAlignment=<span class="string">"Stretch"</span> Height=<span class="string">"60"</span> Margin=<span class="string">"10,10,10,0"</span> VerticalAlignment=<span class="string">"Top"</span> Background=<span class="string">"#FFEAE4E4"</span> /&gt;
+    &lt;/Grid&gt;
+&lt;/UserControl&gt;
+</code></pre>
+<p>最大的按钮功能改变为文件选择。</p>
+<h3 id="1-2-C-代码"><a href="#1-2-C-代码" class="headerlink" title="1.2 C#代码"></a>1.2 C#代码</h3><p>(与之前相重复的部分代码已略去)</p>
+<pre><code class="csharp"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">User1</span> : <span class="title">UserControl</span>
+{
+    <span class="keyword">public</span> WaveOut waveOut = <span class="literal">null</span>;
+    <span class="keyword">public</span> MyWave wave = <span class="keyword">new</span> MyWave(<span class="number">16000</span>);
+    WaveStream wavFileStream = <span class="literal">null</span>; 
+    <span class="keyword">public</span> <span class="keyword">int</span> ChoiceId = <span class="number">0</span>; 
+    <span class="function"><span class="keyword">public</span> <span class="title">User1</span>(<span class="params"></span>)
+    </span>{
+        InitializeComponent();
+    }
+    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RefreshWave</span>(<span class="params"></span>) </span>{<span class="comment">//略}</span>
+
+    <span class="keyword">string</span> _NameStr = <span class="string">"0"</span>;
+    <span class="keyword">public</span> <span class="keyword">string</span> NameStr
+    {
+        <span class="keyword">set</span> { <span class="keyword">if</span> (_NameStr != <span class="keyword">value</span>) _NameStr = <span class="keyword">value</span>; <span class="keyword">this</span>.label.Content = <span class="keyword">value</span>; }
+        <span class="keyword">get</span> { <span class="keyword">return</span> _NameStr; }
+    }
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btnPlay_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
+    </span>{
+        <span class="keyword">if</span> (waveOut != <span class="literal">null</span>)
+        {
+            waveOut.Stop();
+            waveOut.Dispose();
+        }
+        waveOut = <span class="keyword">new</span> WaveOut();
+        <span class="keyword">if</span> (rbtn_ToneOnOff.IsChecked==<span class="literal">true</span>)
+        {
+            wave.audioRate = <span class="keyword">int</span>.Parse(txtFreq.Text);
+            waveOut.Init(wave);
+        }
+        <span class="keyword">else</span>
+        {
+            <span class="keyword">if</span> (wavFileStream != <span class="literal">null</span>)
+                waveOut.Init(wavFileStream);
+            <span class="keyword">else</span>
+                <span class="keyword">return</span>;
+        }
+        waveOut.Play();
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btnStop_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
+    </span>{
+        <span class="keyword">if</span> (waveOut != <span class="literal">null</span>)
+        {
+            waveOut.Stop();
+            waveOut.Dispose();
+            waveOut = <span class="literal">null</span>;
+        }
+        wavFileStream = <span class="literal">null</span>;
+        <span class="keyword">this</span>.data = <span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">2000</span>];
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btn_Open_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
+    </span>{
+        Microsoft.Win32.OpenFileDialog openDialog = <span class="keyword">new</span> Microsoft.Win32.OpenFileDialog();
+        openDialog.Filter = <span class="string">"Wave File (*.wav)|*.wav;"</span>;
+        <span class="keyword">if</span> (openDialog.ShowDialog() != <span class="literal">true</span>)
+        {
+            rbtn_ToneOnOff.IsChecked = <span class="literal">true</span>;
+            <span class="keyword">this</span>.ChoiceId = <span class="number">0</span>;
+            <span class="keyword">return</span>;
+        }
+        rbtn_ToneOnOff.IsChecked = <span class="literal">false</span>;
+        <span class="keyword">this</span>.ChoiceId = <span class="number">1</span>;
+        wavFileStream = <span class="keyword">new</span> WaveFileReader(openDialog.FileName);
+        <span class="comment">//读出波形数据，绘制波形</span>
+        FileStream fstream = <span class="keyword">new</span> FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read);
+        <span class="keyword">byte</span>[] FileHead = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">44</span>];
+        <span class="keyword">int</span> lengthData = fstream.Read(FileHead, <span class="number">0</span>, <span class="number">44</span>);<span class="comment">//</span>
+        <span class="keyword">object</span> TempParaObj = ByteStructTrans.BytesToStruct(FileHead, <span class="number">0</span>, <span class="keyword">typeof</span>(HeaderWAV44Byte));
+        HeaderWAV44Byte WavFileInfo = (HeaderWAV44Byte)TempParaObj;<span class="comment">//前44字节转为标准的WAV文件头</span>
+        <span class="keyword">int</span> sampleNum = WavFileInfo.ByteData / WavFileInfo.BytePerSample;
+        <span class="keyword">this</span>.data = <span class="keyword">new</span> <span class="keyword">short</span>[sampleNum];
+        <span class="keyword">byte</span>[] temp=<span class="keyword">new</span> <span class="keyword">byte</span>[WavFileInfo.BytePerSample];
+        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sampleNum;i++)
+        {
+            fstream.Read(temp,<span class="number">0</span>,WavFileInfo.BytePerSample);
+            <span class="keyword">this</span>.data[i] = BitConverter.ToInt16(temp, <span class="number">0</span>);
+        }
+        <span class="keyword">this</span>.RefreshWave();
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">rbtn_ToneOnOff_Checked</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
+    </span>{
+        <span class="keyword">this</span>.ChoiceId = <span class="number">0</span>;
+    }
+
+    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">UserControl_SizeChanged</span>(<span class="params"><span class="keyword">object</span> sender, SizeChangedEventArgs e</span>)
+    </span>{
+        <span class="keyword">if</span>(e.WidthChanged==<span class="literal">true</span>)
+            <span class="keyword">this</span>.RefreshWave();
+    }
+}
+</code></pre>
+<h2 id="二-WAV文件读取"><a href="#二-WAV文件读取" class="headerlink" title="二. WAV文件读取"></a>二. WAV文件读取</h2><p>WAV文件有44字节的文件头，结合这44字节的定义，可以读出文件的基本信息。本文使用了<br>    划分内存的方式直接对44字节进行赋值，这并不是最简单的方案，不过该方法在较大的<br>    工程中会方便一些。<br>定义一个名为协议的名空间，工程的许多自定义的协议都可以放在这里：</p>
+<pre><code class="csharp"><span class="keyword">namespace</span> <span class="title">Protocol</span>
+{
+    [StructLayout(LayoutKind.Explicit, Pack = <span class="number">2</span>)]<span class="comment">//Pack表示最小移动为2字节</span>
+    <span class="keyword">public</span> <span class="keyword">struct</span> HeaderWAV44Byte
+    {<span class="comment">//44字节的文件头</span>
+        [FieldOffset(<span class="number">0</span>)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">5</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> riff_id;<span class="comment">//"RIFF"</span>
+        [FieldOffset(<span class="number">4</span>)]
+        <span class="keyword">public</span> <span class="keyword">int</span> FileLength;<span class="comment">//去除8字节后的文件长度</span>
+        [FieldOffset(<span class="number">8</span>)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">9</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> wave_fmt;<span class="comment">//"WAVEfmt "</span>
+        [FieldOffset(<span class="number">16</span>)]
+        <span class="keyword">public</span> <span class="keyword">int</span> PCM;<span class="comment">//0x10, PCM方式</span>
+        [FieldOffset(<span class="number">20</span>)]
+        <span class="keyword">public</span> <span class="keyword">short</span> fmttag;<span class="comment">//0x01</span>
+        [FieldOffset(<span class="number">22</span>)]
+        <span class="keyword">public</span> <span class="keyword">short</span> channel;<span class="comment">//通道数</span>
+        [FieldOffset(<span class="number">24</span>)]
+        <span class="keyword">public</span> <span class="keyword">int</span> FreqSample;<span class="comment">//采样率</span>
+        [FieldOffset(<span class="number">28</span>)]
+        <span class="keyword">public</span> <span class="keyword">int</span> BitPerSec;<span class="comment">//每秒播放的字节数</span>
+        [FieldOffset(<span class="number">32</span>)]
+        <span class="keyword">public</span> <span class="keyword">short</span> BytePerSample;<span class="comment">//采样一次占的字节数, blockalign, =声道数*量化位数/8</span>
+        [FieldOffset(<span class="number">34</span>)]
+        <span class="keyword">public</span> <span class="keyword">short</span> BitPerSample;<span class="comment">//采样一次占的Bit数</span>
+        [FieldOffset(<span class="number">36</span>)]
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">5</span>)]
+        <span class="keyword">public</span> <span class="keyword">string</span> data;<span class="comment">//"data"</span>
+        [FieldOffset(<span class="number">40</span>)]
+        <span class="keyword">public</span> <span class="keyword">int</span> ByteData;<span class="comment">//数据区的字节数,  文件长度-44</span>
+    }
+    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ByteStructTrans</span>
+    {
+        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] <span class="title">StructToBytes</span>(<span class="params"><span class="keyword">object</span> structObj</span>)
+        </span>{
+            <span class="keyword">int</span> size = Marshal.SizeOf(structObj);
+            IntPtr buffer = Marshal.AllocHGlobal(size);
+            <span class="keyword">try</span>
+            {
+                Marshal.StructureToPtr(structObj, buffer, <span class="literal">false</span>);
+                <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[size];
+                Marshal.Copy(buffer, bytes, <span class="number">0</span>, size);
+                <span class="keyword">return</span> bytes;
+            }
+            <span class="keyword">finally</span>
+            {
+                Marshal.FreeHGlobal(buffer);
+            }
+        }
+        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">object</span> <span class="title">BytesToStruct</span>(<span class="params"><span class="keyword">byte</span>[] bytes, <span class="keyword">int</span> startIndex, Type strcutType</span>)
+        </span>{
+            <span class="keyword">int</span> size = Marshal.SizeOf(strcutType);
+            IntPtr buffer = Marshal.AllocHGlobal(size);
+            <span class="keyword">try</span>
+            {
+                Marshal.Copy(bytes, startIndex, buffer, size);
+                <span class="keyword">return</span> Marshal.PtrToStructure(buffer, strcutType);
+            }
+            <span class="keyword">finally</span>
+            {
+                Marshal.FreeHGlobal(buffer);
+            }
+        }
+    }
+}
+</code></pre>
+<p>需要引用<code>System.Runtime.InteropServices</code>。 WAV文件的44字节头的含义可以通过观察HeaderWAV44Byte得到，不再赘述了。 该名空间中也给出了字节数组和非托管内存的转换方法。</p>
+<h2 id="三-调用控件"><a href="#三-调用控件" class="headerlink" title="三. 调用控件"></a>三. 调用控件</h2><p>在控件后台代码中，我们把原来int 型的Num修改成string 型的NameStr，相应的在调用控<br>件部分的xaml代码中将Num改为NameStr即可，其他没有任何变化。</p>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="Images/WPF/Tutorial3_2.jpg" alt=""><br>不同文件可以同时播放，原有的单频播放功能也保留下来了。</p>
+<h2 id="四-总结"><a href="#四-总结" class="headerlink" title="四. 总结"></a>四. 总结</h2><ol>
+<li>调用代码几乎不需做任何修改，进一步说明了自定义控件的好处。</li>
+<li>本文增加了文件播放的模式，下一篇将增加网络数据流的播放模式。</li>
+</ol>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;目标：&lt;/strong&gt;&lt;br&gt;添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;关键词：&lt;/strong&gt;：RadioButton；WAV文件；绑定&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
+    
+      <category term="WPF" scheme="http://yoursite.com/tags/WPF/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>WPF音频播放与波形显示(二)</title>
+    <link href="http://yoursite.com/2016/01/20/WPF%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE%E4%B8%8E%E6%B3%A2%E5%BD%A2%E6%98%BE%E7%A4%BA-%E4%BA%8C/"/>
+    <id>http://yoursite.com/2016/01/20/WPF音频播放与波形显示-二/</id>
+    <published>2016-01-20T13:40:47.000Z</published>
+    <updated>2016-01-30T04:33:06.755Z</updated>
+    
+    <content type="html"><![CDATA[<p><strong>实现目标：</strong></p>
+<ol>
+<li>修改绘图时机，提高效率<br> 方案: 将控件中的绘图事件变成其data改变时才触发。</li>
+<li>绘图的同时播放声音<br> 方案：模拟的不同频率声音<br> 编写自定义的音频数据生成类，播音时同时把数据写入buffer（short数组），并记录写的位置。在定时器中将buffer赋值给控件中的data（根据写位置重新排序）。<br> Ps: 排序的目的是使控件刷新波形时能始终保证最新写入的数据在窗口的最右端显示，模拟实时播放的效果。</li>
+</ol>
+<p><strong>关键词：</strong> Naudio<br><a id="more"></a></p>
+<ol>
+<li>本例拟将发音、绘图，以及一些开关控制等功能全部都集成到控件中。<br><em>方案的合理性分析:</em></li>
+</ol>
+<ul>
+<li>如果播放在控件类之外，那么点击控件内的按钮如何能关闭播放？也许可以给控件的按钮注册一个控件外的事件，但还是麻烦。</li>
+<li>如果播放在控件类之内，那么播放的诸多控制都是容易实现的。结合面向对象的思维方式，一个控件就是一个可以<strong>自主</strong>发声的实例。</li>
+</ul>
+<h2 id="一-WaveProvider"><a href="#一-WaveProvider" class="headerlink" title="一. WaveProvider"></a>一. WaveProvider</h2><p>在lib solution中添加波形生成的类：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">MyWave</span>:<span class="title">WaveProvider16</span></span><br><span class="line">&#123;</span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">readonly</span> <span class="keyword">object</span> lockPos = <span class="keyword">new</span> <span class="keyword">object</span>();</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">MyWave</span>(<span class="params"></span>): <span class="title">base</span>(<span class="params"></span>)</span>&#123;&#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">MyWave</span>(<span class="params"><span class="keyword">int</span> sampleRate</span>): <span class="title">base</span>(<span class="params">sampleRate, <span class="number">1</span></span>)</span>&#123;&#125;</span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="title">MyWave</span>(<span class="params"><span class="keyword">int</span> sampleRate, <span class="keyword">int</span> AudioRate</span>): <span class="title">base</span>(<span class="params">sampleRate, <span class="number">1</span></span>)</span>&#123;audioRate = AudioRate;&#125;</span><br><span class="line"></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">int</span> audioRate = <span class="number">1000</span>;<span class="comment">//声音的频率</span></span><br><span class="line">     <span class="keyword">double</span> Amplitude = <span class="number">0.5</span>;<span class="comment">//波形幅度</span></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">short</span>[] waveData = <span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">2000</span>];<span class="comment">//2000个采样点</span></span><br><span class="line">     <span class="keyword">public</span> <span class="keyword">int</span> playPos = <span class="number">0</span>;<span class="comment">//即将产生的最新采样点的索引</span></span><br><span class="line">     <span class="keyword">double</span> t = <span class="number">0</span>;<span class="comment">//时间</span></span><br><span class="line">     <span class="function"><span class="keyword">public</span> <span class="keyword">override</span> <span class="keyword">int</span> <span class="title">Read</span>(<span class="params"><span class="keyword">short</span>[] buffer, <span class="keyword">int</span> offset, <span class="keyword">int</span> sampleCount</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">short</span> dataTemp = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">lock</span> (lockPos)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> index = <span class="number">0</span>; index &lt; sampleCount; index++)</span><br><span class="line">            &#123;</span><br><span class="line">                t += <span class="number">1</span>/(<span class="keyword">double</span>)<span class="keyword">base</span>.WaveFormat.SampleRate;</span><br><span class="line">                dataTemp = (<span class="keyword">short</span>)(<span class="keyword">short</span>.MaxValue * Amplitude * Math.Sin(<span class="number">2</span> * Math.PI * audioRate * t));</span><br><span class="line">                buffer[offset + index] = dataTemp;</span><br><span class="line">                waveData[playPos] = dataTemp;</span><br><span class="line">                playPos++;</span><br><span class="line">                <span class="keyword">if</span> (playPos == <span class="number">2000</span>)</span><br><span class="line">                    playPos = <span class="number">0</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sampleCount;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>需要在工程中添加Naudio.dll的引用。目前只能编译x86程序。 </p>
+<h2 id="二-控件外观设计"><a href="#二-控件外观设计" class="headerlink" title="二. 控件外观设计"></a>二. 控件外观设计</h2><p>加入播放按钮和停止按钮，并允许用户输入声音的频率。外观如下：<br><img src="Images/WPF/Tutorial2_1.jpg" alt=""></p>
+<h3 id="2-1-Xaml代码"><a href="#2-1-Xaml代码" class="headerlink" title="2.1 Xaml代码"></a>2.1 Xaml代码</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">&lt;UserControl x:Class=<span class="string">"libUserC.User1"</span></span><br><span class="line">             xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span></span><br><span class="line">             xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span></span><br><span class="line">             xmlns:mc=<span class="string">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span> </span><br><span class="line">             xmlns:d=<span class="string">"http://schemas.microsoft.com/expression/blend/2008"</span> </span><br><span class="line">             mc:Ignorable=<span class="string">"d"</span> Height=<span class="string">"80"</span> d:Width=<span class="string">"485"</span>&gt;</span><br><span class="line">    &lt;Grid Background=<span class="string">"#FFECF3F5"</span>&gt;</span><br><span class="line">        &lt;Grid.ColumnDefinitions&gt;</span><br><span class="line">            &lt;ColumnDefinition Width=<span class="string">"49"</span>/&gt;</span><br><span class="line">            &lt;ColumnDefinition Width=<span class="string">"60"</span>/&gt;</span><br><span class="line">            &lt;ColumnDefinition/&gt;</span><br><span class="line">        &lt;/Grid.ColumnDefinitions&gt;</span><br><span class="line">        &lt;Grid Grid.Column=<span class="string">"1"</span> Margin=<span class="string">"4"</span>&gt;</span><br><span class="line">            &lt;Grid.RowDefinitions&gt;</span><br><span class="line">                &lt;RowDefinition Height=<span class="string">"3*"</span>/&gt;</span><br><span class="line">                &lt;RowDefinition Height=<span class="string">"3*"</span>/&gt;</span><br><span class="line">            &lt;/Grid.RowDefinitions&gt;</span><br><span class="line">            &lt;Button x:Name=<span class="string">"btn"</span> Click=<span class="string">"btn_Click"</span> /&gt;</span><br><span class="line">            &lt;StackPanel Orientation=<span class="string">"Horizontal"</span> HorizontalAlignment=<span class="string">"Center"</span> Grid.Row=<span class="string">"1"</span>&gt;</span><br><span class="line">                &lt;Button x:Name=<span class="string">"btnPlay"</span>  Height=<span class="string">"25"</span> Click=<span class="string">"btnPlay_Click"</span> &gt;</span><br><span class="line">                    &lt;Image Source=<span class="string">"Images/play.ico"</span>/&gt;</span><br><span class="line">                &lt;/Button&gt;</span><br><span class="line">                &lt;Button x:Name=<span class="string">"btnStop"</span>  Height=<span class="string">"25"</span> Click=<span class="string">"btnStop_Click"</span> &gt;</span><br><span class="line">                    &lt;Image Source=<span class="string">"Images/stop.ico"</span>/&gt;</span><br><span class="line">                &lt;/Button&gt;</span><br><span class="line">            &lt;/StackPanel&gt;</span><br><span class="line">        &lt;/Grid&gt;</span><br><span class="line">        &lt;StackPanel Margin=<span class="string">"4"</span> Orientation=<span class="string">"Vertical"</span>&gt;</span><br><span class="line">            &lt;Label x:Name=<span class="string">"label"</span> Background=<span class="string">"#FFEAC0C0"</span> HorizontalContentAlignment=<span class="string">"Center"</span> VerticalContentAlignment=<span class="string">"Center"</span>  Padding=<span class="string">"0"</span> Height=<span class="string">"20"</span>/&gt;</span><br><span class="line">            &lt;TextBox Name=<span class="string">"txtFreq"</span> Text=<span class="string">"1000"</span>/&gt;</span><br><span class="line">        &lt;/StackPanel&gt;</span><br><span class="line">        &lt;Canvas x:Name=<span class="string">"canvas"</span> Grid.Column=<span class="string">"2"</span> HorizontalAlignment=<span class="string">"Stretch"</span> Height=<span class="string">"60"</span> Margin=<span class="string">"10,10,10,0"</span> VerticalAlignment=<span class="string">"Top"</span> Background=<span class="string">"#FFEAE4E4"</span> /&gt;</span><br><span class="line">    &lt;/Grid&gt;</span><br><span class="line">&lt;/UserControl&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="2-2-c-代码"><a href="#2-2-c-代码" class="headerlink" title="2.2 c#代码"></a>2.2 c#代码</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">User1</span> : <span class="title">UserControl</span></span><br><span class="line">&#123;</span><br><span class="line">    WaveOut waveOut = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">public</span> MyWave wave = <span class="keyword">new</span> MyWave(<span class="number">16000</span>); </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">User1</span>(<span class="params"></span>) </span>&#123;InitializeComponent();&#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">RefreshWave</span>(<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">double</span> cvsHeightHalf = canvas.RenderSize.Height / <span class="number">2</span>;</span><br><span class="line">        <span class="keyword">int</span> cvsWidth = (<span class="keyword">int</span>)canvas.RenderSize.Width;</span><br><span class="line">        PathGeometry Geometry = <span class="keyword">new</span> PathGeometry();</span><br><span class="line">        PathFigure PathFigure = <span class="keyword">new</span> PathFigure();</span><br><span class="line">        PolyLineSegment PolyLine = <span class="keyword">new</span> PolyLineSegment();</span><br><span class="line">        PathFigure.StartPoint = <span class="keyword">new</span> Point(<span class="number">0</span>, cvsHeightHalf);</span><br><span class="line">        <span class="keyword">int</span>[] maxIndexPlot = <span class="keyword">new</span> <span class="keyword">int</span>[cvsWidth + <span class="number">1</span>];</span><br><span class="line">        <span class="keyword">int</span> SampleCount = data.Length;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt;= cvsWidth; i++)</span><br><span class="line">        &#123;<span class="comment">//将像素点的位置与数据在数组中的索引位置相对应</span></span><br><span class="line">            maxIndexPlot[i] = (<span class="keyword">int</span>)((<span class="keyword">double</span>)i / cvsWidth * SampleCount);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">float</span> maxVaulePlot = <span class="keyword">float</span>.MinValue;</span><br><span class="line">        <span class="keyword">float</span> minVaulePlot = <span class="keyword">float</span>.MaxValue;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; cvsWidth; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            maxVaulePlot = <span class="keyword">float</span>.MinValue;</span><br><span class="line">            minVaulePlot = <span class="keyword">float</span>.MaxValue;</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> j = maxIndexPlot[i]; j &lt; maxIndexPlot[i + <span class="number">1</span>]; j++)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span> (maxVaulePlot &lt; data[j])</span><br><span class="line">                    maxVaulePlot = (<span class="keyword">float</span>)data[j];</span><br><span class="line">                <span class="keyword">if</span> (minVaulePlot &gt; data[j])</span><br><span class="line">                    minVaulePlot = (<span class="keyword">float</span>)data[j];</span><br><span class="line">            &#125;</span><br><span class="line">            maxVaulePlot /= <span class="number">32767</span>f;</span><br><span class="line">            <span class="keyword">if</span> (maxVaulePlot &gt; <span class="number">1</span>) maxVaulePlot = <span class="number">1</span>;</span><br><span class="line">            minVaulePlot /= <span class="number">32767</span>f;</span><br><span class="line">            <span class="keyword">if</span> (minVaulePlot &lt; -<span class="number">1</span>) minVaulePlot = -<span class="number">1</span>;</span><br><span class="line">            PolyLine.Points.Add(<span class="keyword">new</span> Point(i, -maxVaulePlot * cvsHeightHalf * <span class="number">1</span> + cvsHeightHalf));</span><br><span class="line">            PolyLine.Points.Add(<span class="keyword">new</span> Point(i, -minVaulePlot * cvsHeightHalf * <span class="number">1</span> + cvsHeightHalf));</span><br><span class="line">        &#125;</span><br><span class="line">        PathFigure.Segments.Add(PolyLine);</span><br><span class="line">        Geometry.Figures.Add(PathFigure);</span><br><span class="line">        WavePath.Data = Geometry;</span><br><span class="line">        WavePath.Stroke = <span class="keyword">new</span> SolidColorBrush(Colors.Blue);</span><br><span class="line">        WavePath.StrokeThickness = <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">if</span> (!canvas.Children.Contains(WavePath))</span><br><span class="line">            canvas.Children.Add(WavePath);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">int</span> _Freq = <span class="number">1000</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> Freq</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123; <span class="keyword">return</span> _Freq; &#125;</span><br><span class="line">        <span class="keyword">set</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(<span class="keyword">this</span>._Freq!=<span class="keyword">value</span>)</span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">this</span>._Freq = <span class="keyword">value</span>;</span><br><span class="line">                <span class="keyword">this</span>.txtFreq.Text = <span class="keyword">this</span>._Freq.ToString();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">short</span>[] _data = <span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">1000</span>];</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">short</span>[] data</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">get</span> &#123; <span class="keyword">return</span> _data; &#125;</span><br><span class="line">        <span class="keyword">set</span></span><br><span class="line">        &#123;</span><br><span class="line">            _data = <span class="keyword">value</span>;</span><br><span class="line">            RefreshWave();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">readonly</span> DispatcherTimer PlotTimer = <span class="keyword">new</span> DispatcherTimer(DispatcherPriority.ApplicationIdle);</span><br><span class="line">    <span class="keyword">public</span> System.Windows.Shapes.Path WavePath = <span class="keyword">new</span> System.Windows.Shapes.Path();</span><br><span class="line">    <span class="keyword">int</span> _Num = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">int</span> Num</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">set</span> &#123; <span class="keyword">if</span> (_Num != <span class="keyword">value</span>) _Num = <span class="keyword">value</span>; &#125;</span><br><span class="line">        <span class="keyword">get</span> &#123; <span class="keyword">return</span> _Num; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btn_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        btn.Content = _Num;</span><br><span class="line">        label.Content = _Num;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btnPlay_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (waveOut != <span class="keyword">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            waveOut.Stop();</span><br><span class="line">            waveOut.Dispose();</span><br><span class="line">        &#125;</span><br><span class="line">        wave.audioRate = <span class="keyword">int</span>.Parse(txtFreq.Text);</span><br><span class="line">        waveOut = <span class="keyword">new</span> WaveOut();</span><br><span class="line">        waveOut.Init(wave);</span><br><span class="line">        waveOut.Play();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btnStop_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (waveOut != <span class="keyword">null</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            waveOut.Stop();</span><br><span class="line">            waveOut.Dispose();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>主要的改动</strong></p>
+<ol>
+<li>图像刷新的时机改到了用户对data赋以不同值的时候，利用的c#中属性的set方法。</li>
+<li>控件包含了Wavout和Mywave，通过按钮click事件可以开启或关闭播放；</li>
+<li>控件的Mywave公开了audioRate，可以通过其在后台修改声音频率。当然也可以在TextBox中输入频率值。</li>
+</ol>
+<h2 id="三-调用控件"><a href="#三-调用控件" class="headerlink" title="三. 调用控件"></a>三. 调用控件</h2><h3 id="3-1-Xaml代码"><a href="#3-1-Xaml代码" class="headerlink" title="3.1 Xaml代码"></a>3.1 Xaml代码</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&lt;Window xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span></span><br><span class="line">        xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span></span><br><span class="line">        xmlns:libUserC=<span class="string">"clr-namespace:libUserC;assembly=libUserC"</span> x:Class=<span class="string">"wpfTest.MainWindow"</span></span><br><span class="line">        Title=<span class="string">"MainWindow"</span> Height=<span class="string">"546.522"</span> Width=<span class="string">"841.418"</span> SizeChanged=<span class="string">"Window_SizeChanged"</span> ScrollViewer.HorizontalScrollBarVisibility=<span class="string">"Auto"</span> ScrollViewer.VerticalScrollBarVisibility=<span class="string">"Auto"</span>&gt;</span><br><span class="line">    &lt;Window.Resources&gt;</span><br><span class="line">        &lt;ItemsPanelTemplate x:Key=<span class="string">"ItemsPanelTemplate1"</span>&gt;</span><br><span class="line">            &lt;WrapPanel IsItemsHost=<span class="string">"True"</span> MaxWidth=<span class="string">"&#123;Binding ElementName=MyMainUI,Path=ActualWidth&#125;"</span> ScrollViewer.HorizontalScrollBarVisibility=<span class="string">"Auto"</span> ScrollViewer.VerticalScrollBarVisibility=<span class="string">"Auto"</span>/&gt;</span><br><span class="line">        &lt;/ItemsPanelTemplate&gt;</span><br><span class="line">    &lt;/Window.Resources&gt;</span><br><span class="line">    &lt;Grid&gt;</span><br><span class="line">        &lt;Grid.RowDefinitions&gt;</span><br><span class="line">            &lt;RowDefinition Height=<span class="string">"227*"</span>/&gt;</span><br><span class="line">        &lt;/Grid.RowDefinitions&gt;</span><br><span class="line">        &lt;ListBox Name=<span class="string">"listShower"</span> Grid.Row=<span class="string">"1"</span> ItemsPanel=<span class="string">"&#123;DynamicResource ItemsPanelTemplate1&#125;"</span> ScrollViewer.HorizontalScrollBarVisibility=<span class="string">"Disabled"</span> ScrollViewer.VerticalScrollBarVisibility=<span class="string">"Visible"</span>&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U0"</span> Num=<span class="string">"0"</span> Margin=<span class="string">"4"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1  Name=<span class="string">"U1"</span> Num=<span class="string">"1"</span> Margin=<span class="string">"4"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U2"</span>  Num=<span class="string">"2"</span> Margin=<span class="string">"4"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U3"</span>  Num=<span class="string">"3"</span> Margin=<span class="string">"4"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U4"</span>  Num=<span class="string">"4"</span> Margin=<span class="string">"4"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U5"</span>  Num=<span class="string">"5"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U6"</span>  Num=<span class="string">"6"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U7"</span>  Num=<span class="string">"7"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U8"</span>  Num=<span class="string">"8"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U9"</span>  Num=<span class="string">"9"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U10"</span>  Num=<span class="string">"10"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U11"</span>  Num=<span class="string">"11"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U12"</span>  Num=<span class="string">"12"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U13"</span>  Num=<span class="string">"13"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U14"</span>  Num=<span class="string">"14"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">            &lt;libUserC:User1 Name=<span class="string">"U15"</span>  Num=<span class="string">"15"</span> Margin=<span class="string">"4"</span> BorderBrush=<span class="string">"#FF5F5A5A"</span> BorderThickness=<span class="string">"1"</span>/&gt;</span><br><span class="line">        &lt;/ListBox&gt;</span><br><span class="line">    &lt;/Grid&gt;</span><br><span class="line">&lt;/Window&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-后台代码"><a href="#3-2-后台代码" class="headerlink" title="3.2 后台代码"></a>3.2 后台代码</h3><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">using</span> System.Collections.Generic;</span><br><span class="line"><span class="keyword">using</span> System.Windows;</span><br><span class="line"><span class="keyword">using</span> System.Windows.Threading;</span><br><span class="line"><span class="keyword">using</span> NAudio.Wave; </span><br><span class="line"><span class="keyword">namespace</span> <span class="title">wpfTest</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">MainWindow</span> : <span class="title">Window</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">MainWindow</span>(<span class="params"></span>)</span><br><span class="line">        </span>&#123;</span><br><span class="line">            InitializeComponent();</span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; listShower.Items.Count;i++ )</span><br><span class="line">            &#123;</span><br><span class="line">                libUserC.User1 temp =(libUserC.User1) listShower.Items[i];</span><br><span class="line">                temp.Freq= <span class="number">100</span> * i + <span class="number">101</span>;</span><br><span class="line">            &#125;</span><br><span class="line">                PlotTimer.IsEnabled = <span class="keyword">true</span>;</span><br><span class="line">            PlotTimer.Interval = TimeSpan.FromMilliseconds(<span class="number">150</span>);</span><br><span class="line">            PlotTimer.Tick += PlotTimer_Tick;</span><br><span class="line">        &#125; </span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">PlotTimer_Tick</span>(<span class="params"><span class="keyword">object</span> sender, EventArgs e</span>)</span><br><span class="line">        </span>&#123; </span><br><span class="line">            <span class="keyword">int</span> i=<span class="number">0</span>;</span><br><span class="line">            <span class="keyword">foreach</span> (libUserC.User1 temp <span class="keyword">in</span> listShower.Items)</span><br><span class="line">            &#123;</span><br><span class="line">                libUserC.MyWave wavePro = temp.wave;</span><br><span class="line">                <span class="keyword">short</span>[] sortData=<span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">2000</span>];</span><br><span class="line">                Console.WriteLine(wavePro.audioRate.ToString()+<span class="string">"Hz  "</span> + wavePro.playPos.ToString());</span><br><span class="line">                <span class="keyword">lock</span> (wavePro.lockPos)</span><br><span class="line">                &#123;</span><br><span class="line">                    Array.Copy(wavePro.waveData, wavePro.playPos, sortData, <span class="number">0</span>, <span class="number">2000</span> - wavePro.playPos);</span><br><span class="line">                    <span class="keyword">if</span> (wavePro.playPos &gt; <span class="number">0</span>)</span><br><span class="line">                        Array.Copy(wavePro.waveData, <span class="number">0</span>, sortData, <span class="number">2000</span> - wavePro.playPos, wavePro.playPos);</span><br><span class="line">                &#125;</span><br><span class="line">                temp.data = sortData;</span><br><span class="line">                i++;</span><br><span class="line">            &#125; </span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">private</span> <span class="keyword">readonly</span> DispatcherTimer PlotTimer = <span class="keyword">new</span> DispatcherTimer(DispatcherPriority.ApplicationIdle);</span><br><span class="line">        <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">Window_SizeChanged</span>(<span class="params"><span class="keyword">object</span> sender, SizeChangedEventArgs e</span>)</span><br><span class="line">        </span>&#123;</span><br><span class="line">            listShower.Width = <span class="keyword">this</span>.RenderSize.Width;</span><br><span class="line">            <span class="keyword">foreach</span>(libUserC.User1 item <span class="keyword">in</span> listShower.Items)</span><br><span class="line">            &#123;</span><br><span class="line">                item.Width = <span class="keyword">this</span>.RenderSize.Width*<span class="number">0.48</span>;</span><br><span class="line">                <span class="keyword">double</span> newHeight = <span class="keyword">this</span>.RenderSize.Height * <span class="number">0.10</span>;</span><br><span class="line">                <span class="keyword">if</span> (<span class="keyword">this</span>.RenderSize.Height * <span class="number">0.10</span> &lt; <span class="number">80</span>)</span><br><span class="line">                    item.Height = <span class="number">80</span>;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                    item.Height = newHeight; </span><br><span class="line">            &#125;</span><br><span class="line">        &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-3-运行效果"><a href="#3-3-运行效果" class="headerlink" title="3.3 运行效果"></a>3.3 运行效果</h3><p><img src="Images/WPF/Tutorial2_2.jpg" alt=""><br>点击播放按钮可以打开任意一个单频点播放器，多个频点的声音可以同时播放。<br>波形从右到左地移动，体现了实时播放的效果，当前播放的声音波形显示在最右边。<br>图中，频点数多设置为质数，因为如果有公约数的话，刷新时可能会看不出波形在动。</p>
+<h2 id="四-总结"><a href="#四-总结" class="headerlink" title="四. 总结"></a>四. 总结</h2><ol>
+<li>自定义的控件目前已经变身为一个<strong>单频点播放器</strong>。</li>
+<li>合理的使用自定义控件可以在最终的工程中极大地降低代码量，使逻辑更加清晰。</li>
+<li>结合音乐中1(duo)、2(ruai)、3…7的频率，可以进一步开发一个乐器。</li>
+<li>后续将单频点播放器进一步完善为一个可播放常见音乐格式的播放控件。</li>
+</ol>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;&lt;strong&gt;实现目标：&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;修改绘图时机，提高效率&lt;br&gt; 方案: 将控件中的绘图事件变成其data改变时才触发。&lt;/li&gt;
+&lt;li&gt;绘图的同时播放声音&lt;br&gt; 方案：模拟的不同频率声音&lt;br&gt; 编写自定义的音频数据生成类，播音时同时把数据写入buffer（short数组），并记录写的位置。在定时器中将buffer赋值给控件中的data（根据写位置重新排序）。&lt;br&gt; Ps: 排序的目的是使控件刷新波形时能始终保证最新写入的数据在窗口的最右端显示，模拟实时播放的效果。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;关键词：&lt;/strong&gt; Naudio&lt;br&gt;
+    
+    </summary>
+    
+    
+      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
+    
+      <category term="WPF" scheme="http://yoursite.com/tags/WPF/"/>
+    
+  </entry>
+  
+</feed>

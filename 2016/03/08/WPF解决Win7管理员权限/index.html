@@ -74,6 +74,8 @@
 
 
 
+  <link rel="alternate" href="/atom.xml" title="源头活水" type="application/atom+xml" />
+
 
 
 
@@ -339,7 +341,7 @@
       
         <p><strong>实现目标：</strong><br>在win7或以上系统运行时，向注册表添加信息，通常会遇到管理员权限问题。有两种解决办法：</p>
 <a id="more"></a>
-<h2 id="u4E00-__u7F16_u8BD1_u540E_u4FEE_u6539"><a href="#u4E00-__u7F16_u8BD1_u540E_u4FEE_u6539" class="headerlink" title="一. 编译后修改"></a>一. 编译后修改</h2><h3 id="u76F4_u63A5_u4FEE_u6539_u201Cexe_u201D_u6587_u4EF6"><a href="#u76F4_u63A5_u4FEE_u6539_u201Cexe_u201D_u6587_u4EF6" class="headerlink" title="直接修改“exe”文件"></a>直接修改“exe”文件</h3><h3 id="u5B89_u88C5_u7ED3_u675F_u540E_u4FEE_u6539_u5F00_u59CB_u83DC_u5355"><a href="#u5B89_u88C5_u7ED3_u675F_u540E_u4FEE_u6539_u5F00_u59CB_u83DC_u5355" class="headerlink" title="安装结束后修改开始菜单"></a>安装结束后修改开始菜单</h3><h2 id="u4E8C-__u7F16_u8BD1_u524D_u4FEE_u6539"><a href="#u4E8C-__u7F16_u8BD1_u524D_u4FEE_u6539" class="headerlink" title="二. 编译前修改"></a>二. 编译前修改</h2><p>在程序中加入Manifest  资源</p>
+<h2 id="一-编译后修改"><a href="#一-编译后修改" class="headerlink" title="一. 编译后修改"></a>一. 编译后修改</h2><h3 id="直接修改“exe”文件"><a href="#直接修改“exe”文件" class="headerlink" title="直接修改“exe”文件"></a>直接修改“exe”文件</h3><h3 id="安装结束后修改开始菜单"><a href="#安装结束后修改开始菜单" class="headerlink" title="安装结束后修改开始菜单"></a>安装结束后修改开始菜单</h3><h2 id="二-编译前修改"><a href="#二-编译前修改" class="headerlink" title="二. 编译前修改"></a>二. 编译前修改</h2><p>在程序中加入Manifest  资源</p>
 <p> 在打开的工程中，看下Properties 下面是否有app.manifest 这个文件，如果没有，右击工程在菜单中选择“属性”，</p>
 <p>选中”Security”，在界面中勾选”Enable ClickOnce Security Settings”后，在Properties下就有自动生成app.manifest文件。</p>
 <p>打开app.manifest文件，将</p>
@@ -508,6 +510,13 @@
         </nav>
 
         
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
 
         <div class="links-of-author motion-element">
           
@@ -528,7 +537,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#u4E00-__u7F16_u8BD1_u540E_u4FEE_u6539"><span class="nav-number">1.</span> <span class="nav-text">一. 编译后修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#u76F4_u63A5_u4FEE_u6539_u201Cexe_u201D_u6587_u4EF6"><span class="nav-number">1.1.</span> <span class="nav-text">直接修改“exe”文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#u5B89_u88C5_u7ED3_u675F_u540E_u4FEE_u6539_u5F00_u59CB_u83DC_u5355"><span class="nav-number">1.2.</span> <span class="nav-text">安装结束后修改开始菜单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#u4E8C-__u7F16_u8BD1_u524D_u4FEE_u6539"><span class="nav-number">2.</span> <span class="nav-text">二. 编译前修改</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-编译后修改"><span class="nav-number">1.</span> <span class="nav-text">一. 编译后修改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#直接修改“exe”文件"><span class="nav-number">1.1.</span> <span class="nav-text">直接修改“exe”文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装结束后修改开始菜单"><span class="nav-number">1.2.</span> <span class="nav-text">安装结束后修改开始菜单</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-编译前修改"><span class="nav-number">2.</span> <span class="nav-text">二. 编译前修改</span></a></li></ol></div>
             
           </div>
         </section>

@@ -74,6 +74,8 @@
 
 
 
+  <link rel="alternate" href="/atom.xml" title="源头活水" type="application/atom+xml" />
+
 
 
 
@@ -343,7 +345,7 @@
 <p><img src="/Images/example.png" alt="Drawing" width="700px"></p>
 <p>图中用矩形来表示一个区间段，矩形的左边为区间起点，矩形的右边为区间终点。<br>带箭头的线段是特殊的区间，即其区间起点和终点重合。</p>
 <p>visio画出来效果还不错,不过这样绘制速度太慢,很多工作需要手动调整,如果需要绘制的区间较多,或者需要多次绘制,那样是很容易出错的.<br>最好能用程序自动绘制,今天就用python来小试牛刀. </p>
-<h1 id="u8BBE_u8BA1"><a href="#u8BBE_u8BA1" class="headerlink" title="设计"></a>设计</h1><p>我们首先分析出要通过程序设计自动绘制出例子中的图形需要遵循的一些原则。</p>
+<h1 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h1><p>我们首先分析出要通过程序设计自动绘制出例子中的图形需要遵循的一些原则。</p>
 <ol>
 <li>原则一：通过矩形块的不同高度来避免重合，给出层次化的展示。<br>这要求： </li>
 </ol>
@@ -356,7 +358,7 @@
 <li>原则二：区间的名字标注应明确，不位于多个矩形上</li>
 </ol>
 <p>上图写在矩形的左上角。显然当矩形最小高度差大于文字高度时，此条件自然满足，但严格地说，应该是每个矩形的左上角与其他矩形的高度差<br>大于文字高度。 </p>
-<h1 id="Python_u5B9E_u73B0"><a href="#Python_u5B9E_u73B0" class="headerlink" title="Python实现"></a>Python实现</h1><ol>
+<h1 id="Python实现"><a href="#Python实现" class="headerlink" title="Python实现"></a>Python实现</h1><ol>
 <li>区间参数输入<br>采用字典变量来表示区间。字典的key为需求编号，区间参数用list两个值表示，0序号值表示需求的名字(name),<br>1序号值表示区间参数。</li>
 </ol>
 <p>区间参数分以下几种情况： </p>
@@ -403,7 +405,7 @@
 <p>这段代码中,我们设置了中文字体;调整了图片四周的留白;将横坐标改成了竖直显示;设置了x,y轴的ticks.<br>这些都是使用matplotlib较常遇到的.</p>
 </li>
 </ol>
-<h1 id="u603B_u7ED3"><a href="#u603B_u7ED3" class="headerlink" title="总结"></a>总结</h1><p>最终的绘制效果还不错,这里就不展示了.可以看到程序把很多繁杂的工作自动化了.而visio可随时手动的更改也算是一种优势,如果visio也能通过程序设计自动的完成一些绘制那就最好了!如果有读者知道的话,请一定告诉我.</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>最终的绘制效果还不错,这里就不展示了.可以看到程序把很多繁杂的工作自动化了.而visio可随时手动的更改也算是一种优势,如果visio也能通过程序设计自动的完成一些绘制那就最好了!如果有读者知道的话,请一定告诉我.</p>
 
       
     </div>
@@ -562,6 +564,13 @@
         </nav>
 
         
+          <div class="feed-link motion-element">
+            <a href="/atom.xml" rel="alternate">
+              <i class="fa fa-rss"></i>
+              RSS
+            </a>
+          </div>
+        
 
         <div class="links-of-author motion-element">
           
@@ -582,7 +591,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#u8BBE_u8BA1"><span class="nav-number">1.</span> <span class="nav-text">设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python_u5B9E_u73B0"><span class="nav-number">2.</span> <span class="nav-text">Python实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#u603B_u7ED3"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#设计"><span class="nav-number">1.</span> <span class="nav-text">设计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python实现"><span class="nav-number">2.</span> <span class="nav-text">Python实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
             
           </div>
         </section>
