@@ -92,7 +92,7 @@
 <meta property="og:url" content="http://yoursite.com/2016/08/28/在ubuntu中安装mono/index.html">
 <meta property="og:site_name" content="源头活水">
 <meta property="og:description" content="我想在Ubuntu下玩一玩SDRsharp，通过http://rtlsdr.org/softwarelinux 的介绍，可以知道SDR#主要还是在windows平台上运行，但也可以通过mono在Linux平台上运行。">
-<meta property="og:updated_time" content="2016-08-28T01:34:47.601Z">
+<meta property="og:updated_time" content="2016-10-20T15:04:00.396Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="在ubuntu中安装mono">
 <meta name="twitter:description" content="我想在Ubuntu下玩一玩SDRsharp，通过http://rtlsdr.org/softwarelinux 的介绍，可以知道SDR#主要还是在windows平台上运行，但也可以通过mono在Linux平台上运行。">
@@ -355,6 +355,11 @@
 </li>
 </ol>
 <p>这样mono就安装好了，可以运行例子进行测试。</p>
+<h1 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h1><h2 id="例1-控制台程序"><a href="#例1-控制台程序" class="headerlink" title="例1 控制台程序"></a>例1 控制台程序</h2><p>新建文件Hello.cs, 内容如下：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">HelloWorld</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Main</span> (<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        Console.WriteLine (<span class="string">"Hello Mono World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后在shell中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mcs Hello.cs</span><br></pre></td></tr></table></figure></p>
+<p>就能编译出Hello.exe文件<br>再通过：<code>mono Hello.exe</code>来运行。</p>
+<h2 id="例2-WinForm程序"><a href="#例2-WinForm程序" class="headerlink" title="例2 WinForm程序"></a>例2 WinForm程序</h2><p>详细说明请参考<a href="http://www.mono-project.com/docs/getting-started/mono-basics/" target="_blank" rel="external">Mono 官网</a>。<br>WinFrom例子的实际运行结果就是一个白色的窗口。</p>
+<p>Mono目前并没有实现WPF的跨平台。对个人而言，Mono主要作用就是方便在linux系统中写一些简单的C# demo，进行测试，大型的开发还是用vs有保障。</p>
 
       
     </div>
@@ -542,7 +547,7 @@
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#解决方法："><span class="nav-number">1.</span> <span class="nav-text">解决方法：</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#解决方法："><span class="nav-number">1.</span> <span class="nav-text">解决方法：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#例子："><span class="nav-number">2.</span> <span class="nav-text">例子：</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#例1-控制台程序"><span class="nav-number">2.1.</span> <span class="nav-text">例1 控制台程序</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#例2-WinForm程序"><span class="nav-number">2.2.</span> <span class="nav-text">例2 WinForm程序</span></a></li></ol></li></ol></div>
             
           </div>
         </section>

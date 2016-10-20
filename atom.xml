@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2016-09-26T08:34:59.779Z</updated>
+  <updated>2016-10-08T23:12:25.612Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://yoursite.com/2016/09/26/csharp%E4%B8%AD%E4%BD%BF%E7%94%A8%E6%8C%87%E9%92%88/"/>
     <id>http://yoursite.com/2016/09/26/csharp中使用指针/</id>
     <published>2016-09-26T08:20:00.000Z</published>
-    <updated>2016-09-26T08:34:59.779Z</updated>
+    <updated>2016-10-08T23:12:25.612Z</updated>
     
     <content type="html"><![CDATA[
 
@@ -271,7 +271,7 @@ StructLayout &#x66F4;&#x4E3A;&#x6709;&#x7528;&#x7684;&#x5730;&#x65B9;&#x662F;&#x
 </p>
 
 <p>
-&#x5176;&#x4E2D;&#xFF0C;&#x524D;&#x4E24;&#x6761;&#x662F;&#x9700;&#x8981;&#x7F16;&#x5199;&#x7C7B;&#x7684;&#x6790;&#x6784;&#x51FD;&#x6570;&#x548C; Dispose &#x51FD;&#x6570;&#x6765;&#x5B9E;&#x73B0;&#x7684;&#xFF0C;&#x7B2C;&#x4E09;&#x6761;&#x5219;&#x662F;&#x6240;&#x6709;&#x5B9E;&#x73B0;&#x4E86; IDispose &#x63A5;&#x53E3;&#x7684;&#x7C7B;&#x90FD;&#x5177;&#x6709;&#x7684;&#x7279;&#x6027;&#x3002;
+&#x5176;&#x4E2D;&#xFF0C;&#x524D;&#x4E24;&#x6761;&#x662F;&#x9700;&#x8981;&#x7F16;&#x5199;&#x7C7B;&#x7684;&#x6790;&#x6784;&#x51FD;&#x6570;&#x548C; Dispose &#x51FD;&#x6570;&#x6765;&#x5B9E;&#x73B0;&#x7684;&#xFF0C;&#x7B2C;&#x4E09;&#x6761;&#x5219;&#x662F;&#x6240;&#x6709;&#x5B9E;&#x73B0;&#x4E86; IDispose &#x63A5;&#x53E3;&#x7684;&#x7C7B;&#x90FD;&#x5177;&#x6709;&#x7684;&#x7279;&#x6027;&#x3002;(&#x5373;&#x4F7F;&#x4E0D;&#x7EE7;&#x627F; IDisposable &#x7C7B;&#xFF0C;&#x4E5F;&#x53EF;&#x4EE5;&#x7528;&#x524D;&#x4E24;&#x6761;)&#x3002;
 </p>
 <div class="org-src-container">
 
@@ -304,7 +304,7 @@ StructLayout &#x66F4;&#x4E3A;&#x6709;&#x7528;&#x7684;&#x5730;&#x65B9;&#x662F;&#x
 
 <p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-09-26 &#x4E00; 16:20&gt;</span></span></p>
 <p class="author">Author: ziyuan</p>
-<p class="date">Created: 2016-09-26 &#x4E00; 16:35</p>
+<p class="date">Created: 2016-10-20 &#x56DB; 23:04</p>
 <p class="creator"><a href="http://www.gnu.org/software/emacs/" target="_blank" rel="external">Emacs</a> 25.1.50.1 (<a href="http://orgmode.org" target="_blank" rel="external">Org</a> mode 8.2.10)</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer" target="_blank" rel="external">Validate</a></p>
 ]]></content>
@@ -741,7 +741,7 @@ StructLayout &#x66F4;&#x4E3A;&#x6709;&#x7528;&#x7684;&#x5730;&#x65B9;&#x662F;&#x
     <link href="http://yoursite.com/2016/08/28/%E5%9C%A8ubuntu%E4%B8%AD%E5%AE%89%E8%A3%85mono/"/>
     <id>http://yoursite.com/2016/08/28/在ubuntu中安装mono/</id>
     <published>2016-08-28T01:27:03.000Z</published>
-    <updated>2016-08-28T01:34:47.601Z</updated>
+    <updated>2016-10-20T15:04:00.396Z</updated>
     
     <content type="html"><![CDATA[<p>我想在Ubuntu下玩一玩SDRsharp，通过<a href="http://rtlsdr.org/softwarelinux" target="_blank" rel="external">http://rtlsdr.org/softwarelinux</a> 的介绍，可以知道SDR#主要还是在windows平台上运行，但也可以通过mono在Linux平台上运行。</p>
 <a id="more"></a>
@@ -759,6 +759,11 @@ StructLayout &#x66F4;&#x4E3A;&#x6709;&#x7528;&#x7684;&#x5730;&#x65B9;&#x662F;&#x
 </li>
 </ol>
 <p>这样mono就安装好了，可以运行例子进行测试。</p>
+<h1 id="例子："><a href="#例子：" class="headerlink" title="例子："></a>例子：</h1><h2 id="例1-控制台程序"><a href="#例1-控制台程序" class="headerlink" title="例1 控制台程序"></a>例1 控制台程序</h2><p>新建文件Hello.cs, 内容如下：<br><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> System;</span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title">HelloWorld</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">Main</span> (<span class="params"></span>)</span><br><span class="line">    </span>&#123;</span><br><span class="line">        Console.WriteLine (<span class="string">"Hello Mono World"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>然后在shell中运行<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mcs Hello.cs</span><br></pre></td></tr></table></figure></p>
+<p>就能编译出Hello.exe文件<br>再通过：<code>mono Hello.exe</code>来运行。</p>
+<h2 id="例2-WinForm程序"><a href="#例2-WinForm程序" class="headerlink" title="例2 WinForm程序"></a>例2 WinForm程序</h2><p>详细说明请参考<a href="http://www.mono-project.com/docs/getting-started/mono-basics/" target="_blank" rel="external">Mono 官网</a>。<br>WinFrom例子的实际运行结果就是一个白色的窗口。</p>
+<p>Mono目前并没有实现WPF的跨平台。对个人而言，Mono主要作用就是方便在linux系统中写一些简单的C# demo，进行测试，大型的开发还是用vs有保障。</p>
 ]]></content>
     
     <summary type="html">
