@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2016-10-08T23:12:25.612Z</updated>
+  <updated>2016-10-22T06:22:36.567Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -14,6 +14,192 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>如何设计一个 FIFO Stream</title>
+    <link href="http://yoursite.com/2016/10/21/Csharp%E5%AE%9E%E7%8E%B0FIFO/"/>
+    <id>http://yoursite.com/2016/10/21/Csharp实现FIFO/</id>
+    <published>2016-10-21T00:28:00.000Z</published>
+    <updated>2016-10-22T06:22:36.567Z</updated>
+    
+    <content type="html"><![CDATA[
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1. &#x80CC;&#x666F;</a></li>
+<li><a href="#sec-2">2. &#x5B9E;&#x73B0;</a>
+<ul>
+<li><a href="#sec-2-1">2.1. &#x5FAA;&#x73AF;&#x8BFB;&#x5199;</a></li>
+<li><a href="#sec-2-2">2.2. Block &#x6D41;</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<p>
+&#x672C;&#x6587;&#x4ECB;&#x7ECD;&#x5982;&#x4F55;&#x8BBE;&#x8BA1;&#x4E00;&#x4E2A;&#x5148;&#x5165;&#x5148;&#x51FA;&#x7684; Stream&#x3002;
+</p>
+<a id="more"></a>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> &#x80CC;&#x666F;</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+&#x5F88;&#x591A;&#x65F6;&#x5019;&#x6211;&#x4EEC;&#x65E2;&#x8981;&#x7528;&#x7A0B;&#x5E8F;&#x83B7;&#x53D6;&#x6570;&#x636E;&#xFF0C;&#x540C;&#x65F6;&#x53C8;&#x8981;&#x5BF9;&#x6570;&#x636E;&#x8FDB;&#x884C;&#x53CA;&#x65F6;&#x5730;&#x5904;&#x7406;&#xFF0C;FIFO &#x5C31;&#x662F;&#x5904;&#x7406;&#x8FD9;&#x79CD;&#x5E94;&#x7528;&#x7684;&#x6700;&#x4F73;&#x5185;&#x5B58;&#x7BA1;&#x7406;&#x65B9;&#x5F0F;&#x3002;
+</p>
+
+<p>
+&#x4F8B;&#x5982;&#x4ECE;&#x7F51;&#x5361;&#x83B7;&#x53D6;&#x6570;&#x636E;&#xFF0C;&#x540C;&#x65F6;&#x5C06;&#x8FD9;&#x4E9B;&#x6570;&#x636E;&#x901A;&#x8FC7;&#x58F0;&#x5361;&#x64AD;&#x653E;/&#x901A;&#x8FC7;&#x663E;&#x793A;&#x5C4F;&#x663E;&#x793A;&#x3002;&#x83B7;&#x53D6;&#x6570;&#x636E;&#x7684;&#x65F6;&#x5019;&#x5C06;&#x6570;&#x636E;&#x5199;&#x5165;&#x5185;&#x5B58;&#xFF0C;&#x64AD;&#x653E;&#x6216;&#x663E;&#x793A;&#x8FC7;&#x540E;&#x5C06;&#x5185;&#x5B58;&#x91CA;&#x653E;&#x3002;
+&#x6BD4;&#x8F83;&#x901A;&#x7528;&#x7684;&#x65B9;&#x6CD5;&#x662F;&#x4F7F;&#x7528;&#x4E24;&#x4E2A;&#x4E0D;&#x540C;&#x7684;&#x7EBF;&#x7A0B;&#xFF0C;&#x4E00;&#x4E2A;&#x7528;&#x4E8E;&#x63A5;&#x6536;&#x6570;&#x636E;&#xFF0C;&#x4E00;&#x4E2A;&#x7528;&#x4E8E;&#x5904;&#x7406;&#x6570;&#x636E;&#x3002;
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> &#x5B9E;&#x73B0;</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+&#x96BE;&#x70B9;&#x4E3B;&#x8981;&#x662F;&#x591A;&#x7EBF;&#x7A0B;&#x7F16;&#x7A0B;&#x3002;&#x5982;&#x4E0A;&#x6587;&#x6240;&#x8FF0;&#xFF0C;&#x4E24;&#x4E2A;&#x7EBF;&#x7A0B;&#x4E2D;&#x9700;&#x8981;&#x5171;&#x4EAB;&#x4E00;&#x4E9B;&#x8D44;&#x6E90;&#xFF0C;&#x6700;&#x57FA;&#x672C;&#x7684;&#x5171;&#x4EAB;&#x5305;&#x62EC;:
+</p>
+<ol class="org-ol">
+<li>&#x5B58;&#x50A8;&#x6570;&#x636E;&#x7684;&#x5185;&#x5B58;
+</li>
+<li>&#x6570;&#x636E;&#x7684;&#x6700;&#x65B0;&#x5199;&#x5165;&#x4F4D;&#x7F6E;
+</li>
+<li>&#x6570;&#x636E;&#x7684;&#x6700;&#x65B0;&#x8BFB;&#x53D6;&#x4F4D;&#x7F6E;
+</li>
+</ol>
+
+<p>
+&#x8BFB;&#x5199;&#x4F4D;&#x7F6E;&#x7684;&#x8BB0;&#x5F55;&#x662F;&#x4E3A;&#x4E86;&#x534F;&#x8C03;&#x597D;&#x8BFB;&#x5199;&#x7684;&#x987A;&#x5E8F;&#xFF0C;&#x907F;&#x514D;&#x51FA;&#x73B0;&#x201C;&#x8BFB;&#x201D;&#x8D85;&#x8D8A;&#x4E86;&#x201C;&#x5199;&#x201D;&#xFF0C;&#x5982;&#x679C;&#x59CB;&#x7EC8;&#x4F7F;&#x7528;&#x7684;&#x662F;&#x4E00;&#x5757;&#x56FA;&#x5B9A;&#x7684;&#x5185;&#x5B58;&#x533A;&#x57DF;&#xFF08;&#x5373;&#x5FAA;&#x73AF;&#x8BFB;&#x5199;&#xFF09;&#xFF0C;&#x90A3;&#x4E48;&#x4E5F;&#x53EF;&#x80FD;&#x51FA;&#x73B0;&#x201C;&#x5199;&#x201D;&#x8D85;&#x8D8A;&#x201C;&#x8BFB;&#x201D;&#x7684;&#x60C5;&#x51B5;&#x3002;&#x4E0B;&#x9762;&#x8BA8;&#x8BBA;&#x5B9E;&#x73B0; FIFO &#x7684;&#x4E24;&#x79CD;&#x5178;&#x578B;&#x7684;&#x5185;&#x5B58;&#x5206;&#x914D;&#x65B9;&#x5F0F;&#x3002;
+</p>
+</div>
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> &#x5FAA;&#x73AF;&#x8BFB;&#x5199;</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+&#x4E4B;&#x6240;&#x4EE5;&#x5FAA;&#x73AF;&#x5C31;&#x662F;&#x56E0;&#x4E3A;&#x8BFB;&#x5199;&#x64CD;&#x4F5C;&#x59CB;&#x7EC8;&#x5728;&#x4E00;&#x5757;&#x56FA;&#x5B9A;&#x7684;&#x5185;&#x5B58;&#x533A;&#x57DF;&#x4E0A;&#x8FDB;&#x884C;&#x3002;&#x7A0B;&#x5E8F;&#x5728;&#x4E00;&#x5F00;&#x59CB;&#x5C31;&#x7533;&#x8BF7;&#x8FD9;&#x6837;&#x4E00;&#x5757;&#x533A;&#x57DF;&#xFF08;C#&#x4E2D;&#x53EF;&#x7528;&#x5B57;&#x8282;&#x6570;&#x7EC4; byte[]&#xFF09;&#xFF0C;&#x4E13;&#x95E8;&#x7528;&#x4E8E;&#x8BFB;&#x5199;&#x64CD;&#x4F5C;&#x3002;&#x5F53;&#x533A;&#x57DF;&#x5199;&#x6EE1;&#x540E;&#xFF0C;&#x5C31;&#x8FD4;&#x56DE;&#x5F00;&#x5934;&#xFF0C;&#x4ECE;&#x5934;&#x5F00;&#x59CB;&#x5199;&#xFF1B;&#x5F53;&#x8BFB;&#x5230;&#x7ED3;&#x5C3E;&#x5904;&#xFF0C;&#x5C31;&#x8FD4;&#x56DE;&#x5F00;&#x5934;&#xFF0C;&#x4ECE;&#x5934;&#x5F00;&#x59CB;&#x8BFB;&#x3002;&#x5206;&#x522B;&#x7528;&#x8BFB;&#x4E0B;&#x6807; Rpos&#x3001;&#x5199;&#x4E0B;&#x6807; Wpos &#x6765;&#x8BB0;&#x5F55;&#x8BFB;&#x548C;&#x5199;&#x7684;&#x4F4D;&#x7F6E;&#x3002;
+</p>
+
+<ol class="org-ol">
+<li>&#x56FE;&#x4E2D;&#x7ED9;&#x51FA;&#x4E86;&#x8FD9;&#x5757;&#x5185;&#x5B58;&#x533A;&#x57DF;&#x548C;&#x8BFB;&#x5199;&#x4E0B;&#x6807;&#x7684;&#x521D;&#x59CB;&#x72B6;&#x6001;&#xFF1A;
+</li>
+</ol>
+
+<img src="/Images/WposRpos0.png" alt="Drawing" width="400px">
+<p>
+&#x53EF;&#x4EE5;&#x770B;&#x51FA;&#x521D;&#x59CB;&#x5316;&#x8981;&#x5B8C;&#x6210;&#x4E09;&#x4EF6;&#x4E8B;&#xFF1A;
+</p>
+<ul class="org-ul">
+<li>New &#x4E00;&#x5757; BufferSize &#x5927;&#x5C0F;&#x7684;&#x5185;&#x5B58;&#x533A;&#x57DF;&#xFF1B;
+</li>
+<li>&#x521D;&#x59CB;&#x5316;&#x8BFB;&#x4E0B;&#x6807;&#x4F4D;&#x7F6E; Rpos=0&#xFF1B;
+</li>
+<li>&#x521D;&#x59CB;&#x5316;&#x5199;&#x4E0B;&#x6807;&#x4F4D;&#x7F6E; Wpos=0&#xFF1B;
+</li>
+<li>&#x5199;&#x7EBF;&#x7A0B;&#x5F00;&#x59CB;&#x63A5;&#x6536;&#x6570;&#x636E;&#x5E76;&#x5199;&#x5165;&#x5185;&#x5B58;&#x533A;&#x57DF;&#xFF1A;
+</li>
+</ul>
+<!--
+    [[file:~/Program/Hexo/source/Images/WposRpos1.png]]
+-->
+
+<img src="/Images/WposRpos1.png" alt="Drawing" width="400px">
+<p>
+&#x6B64;&#x65F6;&#x8BFB;&#x7EBF;&#x7A0B;&#x5C1A;&#x672A;&#x542F;&#x52A8;&#x3002;&#x5F88;&#x591A;&#x65F6;&#x5019;&#x8BFB;&#x7684;&#x901F;&#x5EA6;&#x662F;&#x5300;&#x901F;&#x7684;&#xFF08;&#x5982;&#x64AD;&#x653E;&#x8BED;&#x97F3;&#x3001;&#x52A8;&#x6001;&#x7ED8;&#x56FE;&#xFF09;&#xFF0C;&#x800C;&#x5199;&#x7EBF;&#x7A0B;&#x7531;&#x4E8E;&#x6570;&#x636E;&#x662F;&#x4ECE;&#x7F51;&#x7EDC;&#x7B49;&#x5904;&#x83B7;&#x5F97;&#xFF0C;&#x901F;&#x5EA6;&#x4F1A;&#x6536;&#x5230;&#x7F51;&#x7EDC;&#x7B49;&#x8D44;&#x6E90;&#x6027;&#x80FD;&#x5F71;&#x54CD;&#x3002;&#x8BFB;&#x7EBF;&#x7A0B;&#x6EDE;&#x540E;&#x542F;&#x52A8;&#x4E5F;&#x662F;&#x4E00;&#x79CD;&#x9632;&#x6B62;&#x201C;&#x8BFB;&#x201D;&#x5728;&#x67D0;&#x4E9B;&#x65F6;&#x523B;&#x8D85;&#x8FC7;&#x201C;&#x5199;&#x201D;&#x7684;&#x65B9;&#x5F0F;&#x3002;
+</p>
+<ol class="org-ol">
+<li>&#x8BFB;&#x7EBF;&#x7A0B;&#x542F;&#x52A8;&#x3002;&#x8BFB;&#x201C;&#x5C3E;&#x968F;&#x201D; &#x5199;&#x5728;&#x5185;&#x5B58;&#x533A;&#x57DF;&#x4E2D;&#x79FB;&#x52A8;&#xFF1A;
+</li>
+</ol>
+
+
+<img src="/Images/WposRpos2.png" alt="Drawing" width="400px">
+
+<p>
+&#x8BFB;&#x4F4D;&#x7F6E;&#x6307;&#x793A;&#x7684;&#x662F;&#x4E0B;&#x4E00;&#x523B;&#x5C06;&#x8981;&#x8BFB;&#x5230;&#x7684;&#x5185;&#x5B58;&#x4F4D;&#x7F6E;&#xFF1B;&#x5199;&#x4F4D;&#x7F6E;&#x6307;&#x793A;&#x7684;&#x662F;&#x4E0B;&#x4E00;&#x523B;&#x5C06;&#x8981;&#x5199;&#x5165;&#x7684;&#x5185;&#x5B58;&#x4F4D;&#x7F6E;&#x3002;
+&#x8BFB;&#x548C;&#x5199;&#x4E4B;&#x95F4;&#x5185;&#x5B58;&#x533A;&#x57DF;&#x7684;&#x5927;&#x5C0F;&#x662F;&#x4E0D;&#x786E;&#x5B9A;&#x7684;&#xFF0C;&#x56E0;&#x4E3A;&#x8BFB;&#x548C;&#x5199;&#x5176;&#x5B9E;&#x90FD;&#x4E0D;&#x662F;&#x4E25;&#x683C;&#x5300;&#x901F;&#xFF08;&#x7406;&#x7531;&#x540C;&#x4E0A;&#xFF09;&#x3002;
+</p>
+<ol class="org-ol">
+<li>&#x5FAA;&#x73AF;
+</li>
+</ol>
+
+<img src="/Images/WposRpos3.png" alt="Drawing" width="400px">
+
+<p>
+&#x56FE;&#x4E2D;&#x7ED9;&#x51FA;&#x4E86;&#x5199;&#x4F4D;&#x7F6E;&#x5FAA;&#x73AF;&#x800C;&#x8BFB;&#x4F4D;&#x7F6E;&#x672A;&#x5FAA;&#x73AF;&#x7684;&#x60C5;&#x51B5;&#x3002;&#x5199;&#x64CD;&#x4F5C;&#x5C06;&#x5DF2;&#x7ECF;&#x8BFB;&#x8FC7;&#x7684;&#x5185;&#x5B58;&#x533A;&#x57DF;&#x8986;&#x76D6;&#x4E86;&#x3002;&#x4F46;&#x662F;&#x5982;&#x679C;&#x63A7;&#x5236;&#x4E0D;&#x597D;&#xFF0C;&#x4E5F;&#x4F1A;&#x51FA;&#x73B0;&#x201C;&#x5199;&#x201D;&#x8D85;&#x8D8A;&#x201C;&#x8BFB;&#x201D;&#x7684;&#x60C5;&#x51B5;&#xFF0C;&#x7533;&#x8BF7;&#x4E00;&#x4E2A;&#x8F83;&#x5927;&#x5185;&#x5B58;&#x533A;&#x57DF;&#x53EF;&#x4EE5;&#x5728;&#x4E00;&#x5B9A;&#x7A0B;&#x5EA6;&#x4E0A;&#x907F;&#x514D;&#x8FD9;&#x79CD;&#x73B0;&#x8C61;&#x7684;&#x51FA;&#x73B0;&#x3002;
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Block &#x6D41;</h3>
+<div class="outline-text-3" id="text-2-2">
+<ul class="org-ul">
+<li>&#x5199;
+&#x9700;&#x8981;&#x5185;&#x5B58;&#x65F6;&#x5C31;&#x7533;&#x8BF7;&#x4E00;&#x5757;(Block)&#x5185;&#x5B58;&#xFF08;&#x4E00;&#x5757;&#x5C31;&#x662F;&#x4E00;&#x4E2A; byte[]&#xFF0C;&#x7528; List &#x7ED3;&#x6784;&#x5C06;&#x8FD9;&#x4E9B; Block &#x4E32;&#x5728;&#x4E00;&#x8D77;&#xFF09;&#xFF0C;
+&#x5F53;&#x5199;&#x8D85;&#x8FC7;&#x4E00;&#x4E2A; Block &#x5927;&#x5C0F;&#xFF08;&#x6216;&#x8005;&#x7B2C;&#x4E00;&#x6B21;&#x5199;&#x65F6;&#xFF09;&#xFF0C;&#x5C31;&#x65B0;&#x7533;&#x8BF7;&#x4E00;&#x4E2A; Block&#x3002;
+</li>
+<li>&#x8BFB;
+&#x5F53;&#x8BFB;&#xFF08;&#x5047;&#x8BBE;&#x53EA;&#x5411;&#x524D;&#x8BFB;&#xFF0C;&#x800C;&#x4E0D;&#x4F1A;&#x5411;&#x540E;&#x8BFB;&#xFF09;&#x5B8C;&#x4E00;&#x4E2A; Block &#x65F6;&#xFF0C;&#x5C31;&#x5C06;&#x6574;&#x4E2A; Block &#x4ECE; List &#x4E2D;&#x53BB;&#x6389;&#xFF1B;
+&#x4E3A;&#x4E86;&#x63D0;&#x9AD8;&#x6548;&#x7387;&#xFF0C;Block &#x4ECE; List &#x4E2D;&#x53BB;&#x6389;&#x5E76;&#x4E0D;&#x662F;&#x5C06;&#x5176;&#x5220;&#x9664;&#xFF0C;&#x800C;&#x662F;&#x5148;&#x653E;&#x5230;&#x4E00;&#x4E2A; Stack &#x4E2D;&#x3002;&#x4E0B;&#x6B21;&#x8981;&#x7533;&#x8BF7;&#x65B0; Block &#x662F;&#x5C31;&#x4ECE; Stack &#x4E2D; Pop &#x51FA;&#x6765;&#xFF0C;&#x8FD9;&#x6837;&#x505A;&#x51CF;&#x5C11;&#x4E86;&#x5BF9;&#x5185;&#x5B58;&#x7684;&#x9891;&#x7E41;&#x7533;&#x8BF7;&#x548C;&#x91CA;&#x653E;&#x3002;
+</li>
+<li>&#x4F7F;&#x7528;&#x9501;&#x673A;&#x5236;&#x9632;&#x6B62;&#x8BFB;&#x5199;&#x540C;&#x65F6;&#x64CD;&#x4F5C;&#x5185;&#x5B58;
+&#x4E3A;&#x4E86;&#x9632;&#x6B62;&#x8BFB;&#x5199;&#x76F8;&#x4E92;&#x5F71;&#x54CD;&#xFF0C;&#x5FC5;&#x987B;&#x4F7F;&#x7528;&#x9501;&#xFF0C;&#x8FD9;&#x662F;&#x56E0;&#x4E3A;&#xFF1A;
+<ol class="org-ol">
+<li>&#x5728;&#x8BFB;&#x9636;&#x6BB5;&#xFF0C;&#x5224;&#x65AD;&#x8BFB;&#x662F;&#x5426;&#x5C06;&#x4F1A;&#x8D85;&#x8FC7;&#x5199;&#x65F6;&#xFF0C;&#x9700;&#x8981;&#x77E5;&#x9053;&#x5199;&#x7684;&#x4F4D;&#x7F6E;&#xFF0C;&#x5982;&#x679C;&#x5199;&#x4E00;&#x76F4;&#x5728;&#x7EE7;&#x7EED;&#xFF0C;&#x90A3;&#x4E48;&#x8BFB;&#x7EBF;&#x7A0B;&#x5C31;&#x5F97;&#x4E0D;&#x5230;&#x6B63;&#x786E;&#x7684;&#x5199;&#x4F4D;&#x7F6E;&#x3002;
+</li>
+<li>&#x540C;&#x7406;&#x5728;&#x5199;&#x89E3;&#x8BFB;&#xFF0C;&#x5224;&#x8BFB;&#x662F;&#x5426;&#x5C06;&#x8986;&#x76D6;&#x8BFB;&#x65F6;&#xFF0C;&#x4E5F;&#x4F1A;&#x7528;&#x7684;&#x8BFB;&#x7684;&#x4F4D;&#x7F6E;&#x3002;
+</li>
+</ol>
+</li>
+<li>&#x5982;&#x679C;&#x5199;&#x6682;&#x505C;&#x4E86;&#xFF0C;&#x6570;&#x636E;&#x6682;&#x505C;&#x5230;&#x8FBE;
+&#x53EA;&#x8981;&#x63A5;&#x6536;&#x6D41;&#x6CA1;&#x6709;&#x505C;&#x6B62;&#xFF0C;&#x5C31;&#x4F1A;&#x4E00;&#x76F4;&#x7B49;&#x5F85;&#x7EE7;&#x7EED;&#x5199;&#x3002;&#x8BFB;&#x4E5F;&#x4F1A;&#x4E00;&#x76F4;&#x7EE7;&#x7EED;&#x3002;
+</li>
+<li>&#x5199;&#x4E0D;&#x4F1A;&#x8D85;&#x8FC7;&#x8BFB;
+&#x56E0;&#x4E3A;&#x5982;&#x679C;&#x8BFB;&#x7684;&#x8FC7;&#x5FEB;&#xFF0C;&#x5C31;&#x4F1A;&#x7533;&#x8BF7;&#x65B0;&#x7684; Block&#x3002;&#x4F46;&#x662F;&#x5982;&#x679C;&#x4E00;&#x76F4;&#x4E0D;&#x8BFB;&#xFF0C;&#x5C82;&#x4E0D;&#x662F;&#x4E00;&#x76F4;&#x65B0;&#x7533;&#x8BF7;&#xFF1F;&#x5728; sdrsharp &#x7684;&#x6700;&#x521D;&#x7248;&#x4EE3;&#x7801;&#x4E2D;&#x786E;&#x5B9E;&#x662F;&#x8FD9;&#x6837;&#x7684;&#x3002;&#x8981;&#x770B; FiFoStream &#x7528;&#x5728;&#x4EC0;&#x4E48;&#x5730;&#x65B9;&#xFF0C;&#x6709;&#x6CA1;&#x6709;&#x53EF;&#x80FD;&#x53EA;&#x5199;&#x4E0D;&#x8BFB;&#x5462;&#xFF1F;
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<p class="date">Date: <span class="timestamp-wrapper"><span class="timestamp">&lt;2016-10-21 &#x4E94; 08:28&gt;</span></span></p>
+<p class="author">Author: ziyuan</p>
+<p class="date">Created: 2016-10-22 &#x516D; 14:29</p>
+<p class="creator"><a href="http://www.gnu.org/software/emacs/" target="_blank" rel="external">Emacs</a> 25.1.50.1 (<a href="http://orgmode.org" target="_blank" rel="external">Org</a> mode 8.2.10)</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer" target="_blank" rel="external">Validate</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;div id=&quot;table-of-contents&quot;&gt;
+&lt;h2&gt;Table of Contents&lt;/h2&gt;
+&lt;div id=&quot;text-table-of-contents&quot;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-1&quot;&gt;1. &amp;#x80CC;&amp;#x666F;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-2&quot;&gt;2. &amp;#x5B9E;&amp;#x73B0;&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-2-1&quot;&gt;2.1. &amp;#x5FAA;&amp;#x73AF;&amp;#x8BFB;&amp;#x5199;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;#sec-2-2&quot;&gt;2.2. Block &amp;#x6D41;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;
+&amp;#x672C;&amp;#x6587;&amp;#x4ECB;&amp;#x7ECD;&amp;#x5982;&amp;#x4F55;&amp;#x8BBE;&amp;#x8BA1;&amp;#x4E00;&amp;#x4E2A;&amp;#x5148;&amp;#x5165;&amp;#x5148;&amp;#x51FA;&amp;#x7684; Stream&amp;#x3002;
+&lt;/p&gt;
+    
+    </summary>
+    
+    
+      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
+    
+  </entry>
   
   <entry>
     <title>C#中指针使用的相关问题</title>
@@ -1179,245 +1365,6 @@ J^{(i)}(\theta)=
     
     
       <category term="Marchine Learning" scheme="http://yoursite.com/tags/Marchine-Learning/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>WPF音频播放与波形显示(三)</title>
-    <link href="http://yoursite.com/2016/01/21/WPF%E9%9F%B3%E9%A2%91%E6%92%AD%E6%94%BE%E4%B8%8E%E6%B3%A2%E5%BD%A2%E6%98%BE%E7%A4%BA-%E4%B8%89/"/>
-    <id>http://yoursite.com/2016/01/21/WPF音频播放与波形显示-三/</id>
-    <published>2016-01-21T11:10:03.000Z</published>
-    <updated>2016-01-30T04:34:22.286Z</updated>
-    
-    <content type="html"><![CDATA[<p><strong>目标：</strong><br>添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。</p>
-<p><strong>关键词：</strong>：RadioButton；WAV文件；绑定<br><a id="more"></a></p>
-<h2 id="一-控件外观修改"><a href="#一-控件外观修改" class="headerlink" title="一. 控件外观修改"></a>一. 控件外观修改</h2><p>添加一个RadioButton，被选中时为默认的单频声音，否则为文件播放。相当于控件具有两<br>种工作模式。处于文件播放模式时，频率的输入被禁用，这是用WPF的绑定实现的，将<br>TextBox的IsEnable属性绑定到RadioButton的IsCheck属性。<br><img src="Images/WPF/Tutorial3_1.jpg" alt=""></p>
-<h3 id="1-1-Xaml代码"><a href="#1-1-Xaml代码" class="headerlink" title="1.1 Xaml代码"></a>1.1 Xaml代码</h3><pre><code class="csharp">&lt;UserControl x:Class=<span class="string">"libUserC.User1"</span>
-             xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
-             xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
-             xmlns:mc=<span class="string">"http://schemas.openxmlformats.org/markup-compatibility/2006"</span> 
-             xmlns:d=<span class="string">"http://schemas.microsoft.com/expression/blend/2008"</span> 
-             mc:Ignorable=<span class="string">"d"</span> Height=<span class="string">"80"</span> d:Width=<span class="string">"485"</span> SizeChanged=<span class="string">"UserControl_SizeChanged"</span>&gt;
-    &lt;Grid Background=<span class="string">"#FFECF3F5"</span>&gt;
-        &lt;Grid.ColumnDefinitions&gt;
-            &lt;ColumnDefinition Width=<span class="string">"44"</span>/&gt;
-            &lt;ColumnDefinition Width=<span class="string">"73"</span>/&gt;
-            &lt;ColumnDefinition/&gt;
-        &lt;/Grid.ColumnDefinitions&gt;
-        &lt;Grid Grid.Column=<span class="string">"1"</span> Margin=<span class="string">"4"</span>&gt;
-            &lt;Grid.RowDefinitions&gt;
-                &lt;RowDefinition Height=<span class="string">"3*"</span>/&gt;
-                &lt;RowDefinition Height=<span class="string">"3*"</span>/&gt;
-            &lt;/Grid.RowDefinitions&gt;
-            &lt;StackPanel Orientation=<span class="string">"Horizontal"</span> HorizontalAlignment=<span class="string">"Center"</span>&gt;
-                &lt;Button x:Name=<span class="string">"btn_Open"</span> HorizontalAlignment=<span class="string">"Center"</span> VerticalAlignment=<span class="string">"Center"</span> Click=<span class="string">"btn_Open_Click"</span> &gt;
-                    &lt;Image Source=<span class="string">"Images/open.ico"</span>/&gt;
-                &lt;/Button&gt;
-                &lt;RadioButton Name=<span class="string">"rbtn_ToneOnOff"</span> Margin=<span class="string">"2,0,2,0"</span> IsChecked=<span class="string">"True"</span> VerticalAlignment=<span class="string">"Center"</span> Checked=<span class="string">"rbtn_ToneOnOff_Checked"</span>&gt;&lt;/RadioButton&gt;
-            &lt;/StackPanel&gt;
-            &lt;StackPanel Orientation=<span class="string">"Horizontal"</span> HorizontalAlignment=<span class="string">"Center"</span> Grid.Row=<span class="string">"1"</span>&gt;
-                &lt;Button x:Name=<span class="string">"btnPlay"</span>  Height=<span class="string">"25"</span> Click=<span class="string">"btnPlay_Click"</span> &gt;
-                    &lt;Image Source=<span class="string">"Images/play.ico"</span>/&gt;
-                &lt;/Button&gt;
-                &lt;Button x:Name=<span class="string">"btnStop"</span>  Height=<span class="string">"25"</span> Click=<span class="string">"btnStop_Click"</span> &gt;
-                    &lt;Image Source=<span class="string">"Images/stop.ico"</span>/&gt;
-                &lt;/Button&gt;
-            &lt;/StackPanel&gt;
-        &lt;/Grid&gt;
-        &lt;StackPanel Margin=<span class="string">"4"</span> Orientation=<span class="string">"Vertical"</span>&gt;
-            &lt;Label x:Name=<span class="string">"label"</span> Background=<span class="string">"#FFEAC0C0"</span> HorizontalContentAlignment=<span class="string">"Center"</span> VerticalContentAlignment=<span class="string">"Center"</span>  Padding=<span class="string">"0"</span> Height=<span class="string">"20"</span>/&gt;
-            &lt;TextBox Name=<span class="string">"txtFreq"</span> Text=<span class="string">"1000"</span> IsEnabled=<span class="string">"{Binding ElementName=rbtn_ToneOnOff, Path=IsChecked}"</span>/&gt;
-        &lt;/StackPanel&gt;
-        &lt;Canvas x:Name=<span class="string">"canvas"</span> Grid.Column=<span class="string">"2"</span> HorizontalAlignment=<span class="string">"Stretch"</span> Height=<span class="string">"60"</span> Margin=<span class="string">"10,10,10,0"</span> VerticalAlignment=<span class="string">"Top"</span> Background=<span class="string">"#FFEAE4E4"</span> /&gt;
-    &lt;/Grid&gt;
-&lt;/UserControl&gt;
-</code></pre>
-<p>最大的按钮功能改变为文件选择。</p>
-<h3 id="1-2-C-代码"><a href="#1-2-C-代码" class="headerlink" title="1.2 C#代码"></a>1.2 C#代码</h3><p>(与之前相重复的部分代码已略去)</p>
-<pre><code class="csharp"><span class="keyword">public</span> <span class="keyword">partial</span> <span class="keyword">class</span> <span class="title">User1</span> : <span class="title">UserControl</span>
-{
-    <span class="keyword">public</span> WaveOut waveOut = <span class="literal">null</span>;
-    <span class="keyword">public</span> MyWave wave = <span class="keyword">new</span> MyWave(<span class="number">16000</span>);
-    WaveStream wavFileStream = <span class="literal">null</span>; 
-    <span class="keyword">public</span> <span class="keyword">int</span> ChoiceId = <span class="number">0</span>; 
-    <span class="function"><span class="keyword">public</span> <span class="title">User1</span>(<span class="params"></span>)
-    </span>{
-        InitializeComponent();
-    }
-    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">RefreshWave</span>(<span class="params"></span>) </span>{<span class="comment">//略}</span>
-
-    <span class="keyword">string</span> _NameStr = <span class="string">"0"</span>;
-    <span class="keyword">public</span> <span class="keyword">string</span> NameStr
-    {
-        <span class="keyword">set</span> { <span class="keyword">if</span> (_NameStr != <span class="keyword">value</span>) _NameStr = <span class="keyword">value</span>; <span class="keyword">this</span>.label.Content = <span class="keyword">value</span>; }
-        <span class="keyword">get</span> { <span class="keyword">return</span> _NameStr; }
-    }
-    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btnPlay_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
-    </span>{
-        <span class="keyword">if</span> (waveOut != <span class="literal">null</span>)
-        {
-            waveOut.Stop();
-            waveOut.Dispose();
-        }
-        waveOut = <span class="keyword">new</span> WaveOut();
-        <span class="keyword">if</span> (rbtn_ToneOnOff.IsChecked==<span class="literal">true</span>)
-        {
-            wave.audioRate = <span class="keyword">int</span>.Parse(txtFreq.Text);
-            waveOut.Init(wave);
-        }
-        <span class="keyword">else</span>
-        {
-            <span class="keyword">if</span> (wavFileStream != <span class="literal">null</span>)
-                waveOut.Init(wavFileStream);
-            <span class="keyword">else</span>
-                <span class="keyword">return</span>;
-        }
-        waveOut.Play();
-    }
-
-    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btnStop_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
-    </span>{
-        <span class="keyword">if</span> (waveOut != <span class="literal">null</span>)
-        {
-            waveOut.Stop();
-            waveOut.Dispose();
-            waveOut = <span class="literal">null</span>;
-        }
-        wavFileStream = <span class="literal">null</span>;
-        <span class="keyword">this</span>.data = <span class="keyword">new</span> <span class="keyword">short</span>[<span class="number">2000</span>];
-    }
-
-    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">btn_Open_Click</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
-    </span>{
-        Microsoft.Win32.OpenFileDialog openDialog = <span class="keyword">new</span> Microsoft.Win32.OpenFileDialog();
-        openDialog.Filter = <span class="string">"Wave File (*.wav)|*.wav;"</span>;
-        <span class="keyword">if</span> (openDialog.ShowDialog() != <span class="literal">true</span>)
-        {
-            rbtn_ToneOnOff.IsChecked = <span class="literal">true</span>;
-            <span class="keyword">this</span>.ChoiceId = <span class="number">0</span>;
-            <span class="keyword">return</span>;
-        }
-        rbtn_ToneOnOff.IsChecked = <span class="literal">false</span>;
-        <span class="keyword">this</span>.ChoiceId = <span class="number">1</span>;
-        wavFileStream = <span class="keyword">new</span> WaveFileReader(openDialog.FileName);
-        <span class="comment">//读出波形数据，绘制波形</span>
-        FileStream fstream = <span class="keyword">new</span> FileStream(openDialog.FileName, FileMode.Open, FileAccess.Read);
-        <span class="keyword">byte</span>[] FileHead = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">44</span>];
-        <span class="keyword">int</span> lengthData = fstream.Read(FileHead, <span class="number">0</span>, <span class="number">44</span>);<span class="comment">//</span>
-        <span class="keyword">object</span> TempParaObj = ByteStructTrans.BytesToStruct(FileHead, <span class="number">0</span>, <span class="keyword">typeof</span>(HeaderWAV44Byte));
-        HeaderWAV44Byte WavFileInfo = (HeaderWAV44Byte)TempParaObj;<span class="comment">//前44字节转为标准的WAV文件头</span>
-        <span class="keyword">int</span> sampleNum = WavFileInfo.ByteData / WavFileInfo.BytePerSample;
-        <span class="keyword">this</span>.data = <span class="keyword">new</span> <span class="keyword">short</span>[sampleNum];
-        <span class="keyword">byte</span>[] temp=<span class="keyword">new</span> <span class="keyword">byte</span>[WavFileInfo.BytePerSample];
-        <span class="keyword">for</span>(<span class="keyword">int</span> i=<span class="number">0</span>;i&lt;sampleNum;i++)
-        {
-            fstream.Read(temp,<span class="number">0</span>,WavFileInfo.BytePerSample);
-            <span class="keyword">this</span>.data[i] = BitConverter.ToInt16(temp, <span class="number">0</span>);
-        }
-        <span class="keyword">this</span>.RefreshWave();
-    }
-
-    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">rbtn_ToneOnOff_Checked</span>(<span class="params"><span class="keyword">object</span> sender, RoutedEventArgs e</span>)
-    </span>{
-        <span class="keyword">this</span>.ChoiceId = <span class="number">0</span>;
-    }
-
-    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">UserControl_SizeChanged</span>(<span class="params"><span class="keyword">object</span> sender, SizeChangedEventArgs e</span>)
-    </span>{
-        <span class="keyword">if</span>(e.WidthChanged==<span class="literal">true</span>)
-            <span class="keyword">this</span>.RefreshWave();
-    }
-}
-</code></pre>
-<h2 id="二-WAV文件读取"><a href="#二-WAV文件读取" class="headerlink" title="二. WAV文件读取"></a>二. WAV文件读取</h2><p>WAV文件有44字节的文件头，结合这44字节的定义，可以读出文件的基本信息。本文使用了<br>    划分内存的方式直接对44字节进行赋值，这并不是最简单的方案，不过该方法在较大的<br>    工程中会方便一些。<br>定义一个名为协议的名空间，工程的许多自定义的协议都可以放在这里：</p>
-<pre><code class="csharp"><span class="keyword">namespace</span> <span class="title">Protocol</span>
-{
-    [StructLayout(LayoutKind.Explicit, Pack = <span class="number">2</span>)]<span class="comment">//Pack表示最小移动为2字节</span>
-    <span class="keyword">public</span> <span class="keyword">struct</span> HeaderWAV44Byte
-    {<span class="comment">//44字节的文件头</span>
-        [FieldOffset(<span class="number">0</span>)]
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">5</span>)]
-        <span class="keyword">public</span> <span class="keyword">string</span> riff_id;<span class="comment">//"RIFF"</span>
-        [FieldOffset(<span class="number">4</span>)]
-        <span class="keyword">public</span> <span class="keyword">int</span> FileLength;<span class="comment">//去除8字节后的文件长度</span>
-        [FieldOffset(<span class="number">8</span>)]
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">9</span>)]
-        <span class="keyword">public</span> <span class="keyword">string</span> wave_fmt;<span class="comment">//"WAVEfmt "</span>
-        [FieldOffset(<span class="number">16</span>)]
-        <span class="keyword">public</span> <span class="keyword">int</span> PCM;<span class="comment">//0x10, PCM方式</span>
-        [FieldOffset(<span class="number">20</span>)]
-        <span class="keyword">public</span> <span class="keyword">short</span> fmttag;<span class="comment">//0x01</span>
-        [FieldOffset(<span class="number">22</span>)]
-        <span class="keyword">public</span> <span class="keyword">short</span> channel;<span class="comment">//通道数</span>
-        [FieldOffset(<span class="number">24</span>)]
-        <span class="keyword">public</span> <span class="keyword">int</span> FreqSample;<span class="comment">//采样率</span>
-        [FieldOffset(<span class="number">28</span>)]
-        <span class="keyword">public</span> <span class="keyword">int</span> BitPerSec;<span class="comment">//每秒播放的字节数</span>
-        [FieldOffset(<span class="number">32</span>)]
-        <span class="keyword">public</span> <span class="keyword">short</span> BytePerSample;<span class="comment">//采样一次占的字节数, blockalign, =声道数*量化位数/8</span>
-        [FieldOffset(<span class="number">34</span>)]
-        <span class="keyword">public</span> <span class="keyword">short</span> BitPerSample;<span class="comment">//采样一次占的Bit数</span>
-        [FieldOffset(<span class="number">36</span>)]
-        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = <span class="number">5</span>)]
-        <span class="keyword">public</span> <span class="keyword">string</span> data;<span class="comment">//"data"</span>
-        [FieldOffset(<span class="number">40</span>)]
-        <span class="keyword">public</span> <span class="keyword">int</span> ByteData;<span class="comment">//数据区的字节数,  文件长度-44</span>
-    }
-    <span class="keyword">public</span> <span class="keyword">class</span> <span class="title">ByteStructTrans</span>
-    {
-        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">byte</span>[] <span class="title">StructToBytes</span>(<span class="params"><span class="keyword">object</span> structObj</span>)
-        </span>{
-            <span class="keyword">int</span> size = Marshal.SizeOf(structObj);
-            IntPtr buffer = Marshal.AllocHGlobal(size);
-            <span class="keyword">try</span>
-            {
-                Marshal.StructureToPtr(structObj, buffer, <span class="literal">false</span>);
-                <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[size];
-                Marshal.Copy(buffer, bytes, <span class="number">0</span>, size);
-                <span class="keyword">return</span> bytes;
-            }
-            <span class="keyword">finally</span>
-            {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
-        <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">object</span> <span class="title">BytesToStruct</span>(<span class="params"><span class="keyword">byte</span>[] bytes, <span class="keyword">int</span> startIndex, Type strcutType</span>)
-        </span>{
-            <span class="keyword">int</span> size = Marshal.SizeOf(strcutType);
-            IntPtr buffer = Marshal.AllocHGlobal(size);
-            <span class="keyword">try</span>
-            {
-                Marshal.Copy(bytes, startIndex, buffer, size);
-                <span class="keyword">return</span> Marshal.PtrToStructure(buffer, strcutType);
-            }
-            <span class="keyword">finally</span>
-            {
-                Marshal.FreeHGlobal(buffer);
-            }
-        }
-    }
-}
-</code></pre>
-<p>需要引用<code>System.Runtime.InteropServices</code>。 WAV文件的44字节头的含义可以通过观察HeaderWAV44Byte得到，不再赘述了。 该名空间中也给出了字节数组和非托管内存的转换方法。</p>
-<h2 id="三-调用控件"><a href="#三-调用控件" class="headerlink" title="三. 调用控件"></a>三. 调用控件</h2><p>在控件后台代码中，我们把原来int 型的Num修改成string 型的NameStr，相应的在调用控<br>件部分的xaml代码中将Num改为NameStr即可，其他没有任何变化。</p>
-<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="Images/WPF/Tutorial3_2.jpg" alt=""><br>不同文件可以同时播放，原有的单频播放功能也保留下来了。</p>
-<h2 id="四-总结"><a href="#四-总结" class="headerlink" title="四. 总结"></a>四. 总结</h2><ol>
-<li>调用代码几乎不需做任何修改，进一步说明了自定义控件的好处。</li>
-<li>本文增加了文件播放的模式，下一篇将增加网络数据流的播放模式。</li>
-</ol>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;strong&gt;目标：&lt;/strong&gt;&lt;br&gt;添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;关键词：&lt;/strong&gt;：RadioButton；WAV文件；绑定&lt;br&gt;
-    
-    </summary>
-    
-    
-      <category term="C#" scheme="http://yoursite.com/tags/C/"/>
-    
-      <category term="WPF" scheme="http://yoursite.com/tags/WPF/"/>
     
   </entry>
   
