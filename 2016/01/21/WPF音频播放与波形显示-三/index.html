@@ -96,7 +96,7 @@
 关键词：：RadioButton；WAV文件；绑定">
 <meta property="og:image" content="http://yoursite.com/Images/WPF/Tutorial3_1.jpg">
 <meta property="og:image" content="http://yoursite.com/Images/WPF/Tutorial3_2.jpg">
-<meta property="og:updated_time" content="2016-01-30T04:34:22.286Z">
+<meta property="og:updated_time" content="2016-10-24T03:04:22.381Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="WPF音频播放与波形显示(三)">
 <meta name="twitter:description" content="目标：添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。
@@ -346,7 +346,7 @@
       
         <p><strong>目标：</strong><br>添加播放本地音频文件的功能。能够显示波形，不需要模拟实时效果，暂支持wav格式。</p>
 <p><strong>关键词：</strong>：RadioButton；WAV文件；绑定<br><a id="more"></a></p>
-<h2 id="一-控件外观修改"><a href="#一-控件外观修改" class="headerlink" title="一. 控件外观修改"></a>一. 控件外观修改</h2><p>添加一个RadioButton，被选中时为默认的单频声音，否则为文件播放。相当于控件具有两<br>种工作模式。处于文件播放模式时，频率的输入被禁用，这是用WPF的绑定实现的，将<br>TextBox的IsEnable属性绑定到RadioButton的IsCheck属性。<br><img src="Images/WPF/Tutorial3_1.jpg" alt=""></p>
+<h2 id="一-控件外观修改"><a href="#一-控件外观修改" class="headerlink" title="一. 控件外观修改"></a>一. 控件外观修改</h2><p>添加一个RadioButton，被选中时为默认的单频声音，否则为文件播放。相当于控件具有两<br>种工作模式。处于文件播放模式时，频率的输入被禁用，这是用WPF的绑定实现的，将<br>TextBox的IsEnable属性绑定到RadioButton的IsCheck属性。<br><img src="/Images/WPF/Tutorial3_1.jpg" alt=""></p>
 <h3 id="1-1-Xaml代码"><a href="#1-1-Xaml代码" class="headerlink" title="1.1 Xaml代码"></a>1.1 Xaml代码</h3><pre><code class="csharp">&lt;UserControl x:Class=<span class="string">"libUserC.User1"</span>
              xmlns=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml/presentation"</span>
              xmlns:x=<span class="string">"http://schemas.microsoft.com/winfx/2006/xaml"</span>
@@ -555,7 +555,7 @@
 </code></pre>
 <p>需要引用<code>System.Runtime.InteropServices</code>。 WAV文件的44字节头的含义可以通过观察HeaderWAV44Byte得到，不再赘述了。 该名空间中也给出了字节数组和非托管内存的转换方法。</p>
 <h2 id="三-调用控件"><a href="#三-调用控件" class="headerlink" title="三. 调用控件"></a>三. 调用控件</h2><p>在控件后台代码中，我们把原来int 型的Num修改成string 型的NameStr，相应的在调用控<br>件部分的xaml代码中将Num改为NameStr即可，其他没有任何变化。</p>
-<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="Images/WPF/Tutorial3_2.jpg" alt=""><br>不同文件可以同时播放，原有的单频播放功能也保留下来了。</p>
+<h3 id="运行结果"><a href="#运行结果" class="headerlink" title="运行结果"></a>运行结果</h3><p><img src="/Images/WPF/Tutorial3_2.jpg" alt=""><br>不同文件可以同时播放，原有的单频播放功能也保留下来了。</p>
 <h2 id="四-总结"><a href="#四-总结" class="headerlink" title="四. 总结"></a>四. 总结</h2><ol>
 <li>调用代码几乎不需做任何修改，进一步说明了自定义控件的好处。</li>
 <li>本文增加了文件播放的模式，下一篇将增加网络数据流的播放模式。</li>
